@@ -8,11 +8,13 @@
   res.PCAOS,
   choice = "screeplot",
   comp = c(1, 2),
-  coloring.ind = NULL,
+  coloring.indiv = NULL,
   supp.var = FALSE,
   sub.var.quantif = NULL,
   conf.ellipsises = FALSE,
-  level.conf = 0.95
+  level.conf = 0.95,
+  size.label = 3.5,
+  size.legend = 10
 )
 }
 \arguments{
@@ -22,7 +24,7 @@
 
 \item{comp}{a length 2 vector with the components to plot}
 
-\item{coloring.ind}{A vector of length N to color individuals. If NULL, no coloring is applied.}
+\item{coloring.indiv}{A vector of length N to color individuals. If NULL, no coloring is applied.}
 
 \item{supp.var}{TRUE or FALSE; if TRUE supplementary variables are added in factorial representation}
 
@@ -31,6 +33,10 @@
 \item{conf.ellipsises}{boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable as supplementary.}
 
 \item{level.conf}{level of confidence ellipses}
+
+\item{size.label}{size of label in graphs}
+
+\item{size.legend}{size of label in graphs}
 }
 \value{
 A ggplot object

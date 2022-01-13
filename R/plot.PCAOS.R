@@ -5,11 +5,13 @@
 #' @param res.PCAOS an object of class PCAOS
 #' @param choice the graph to plot possible values are "screeplot","quantif","indiv","cor","modalities","mixed","squared loadings". See Details.
 #' @param comp a length 2 vector with the components to plot
-#' @param coloring.ind A vector of length N to color individuals. If NULL, no coloring is applied.
+#' @param coloring.indiv A vector of length N to color individuals. If NULL, no coloring is applied.
 #' @param sub.var.quantif a vector with variable of interest
 #' @param supp.var TRUE or FALSE; if TRUE supplementary variables are added in factorial representation
 #' @param conf.ellipsises boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable as supplementary.
 #' @param level.conf level of confidence ellipses
+#' @param size.label size of label in graphs
+#' @param size.legend size of label in graphs
 
 #' @return
 #'A ggplot object
@@ -73,11 +75,13 @@ plot.PCAOS <-
   function(res.PCAOS,
            choice = "screeplot",
            comp = c(1,2),
-           coloring.ind = NULL,
+           coloring.indiv = NULL,
            supp.var = FALSE,
            sub.var.quantif = NULL,
            conf.ellipsises = FALSE,
-           level.conf = 0.95
+           level.conf = 0.95,
+           size.label = 3.5,
+           size.legend = 10
            ) {
     nb.comp <- ncol(res.PCAOS$components)
     check.plot.arg(choice,res.PCAOS$nature,res.PCAOS$nature.supp,supp.var,comp,nb.comp)
@@ -131,7 +135,7 @@ plot.PCAOS <-
         ggplot2::xlab("Component") +
         ggplot2::ylab("Percentage of inertia restituate (%)") +
         ggplot2::ggtitle("Screeplot") +
-        ggplot2::theme_classic(base_size = 18)
+        ggplot2::theme_classic(base_size = size.legend)
 
       return (screeplot)
     }
@@ -147,10 +151,10 @@ plot.PCAOS <-
                           x = as.numeric(weight.num[,comp[1]]),
                           y = as.numeric(weight.num[,comp[2]])
                         )) +
-        ggplot2::geom_label(ggplot2::aes(label = row.names(weight.num)), color = "black",size = 8) +
+        ggplot2::geom_label(ggplot2::aes(label = row.names(weight.num)), color = "black",size = size.label) +
         ggplot2::ggtitle("Factorial representation of numeric variables") +
-        ggplot2::xlab(paste(nom.comp[1], inertie[comp[1],2]," %")) +
-        ggplot2::ylab(paste(nom.comp[2], inertie[comp[2],2]," %")) +
+        ggplot2::xlab(paste(nom.comp[1], inertie[comp[1],1]," %")) +
+        ggplot2::ylab(paste(nom.comp[2], inertie[comp[2],1]," %")) +
         ggplot2::geom_hline(
           yintercept = 0,
           linetype = "dotted",
@@ -163,18 +167,18 @@ plot.PCAOS <-
           color = "black",
           size = 1
         ) +
-        ggplot2::theme_classic(base_size = 15) + ggplot2::annotate(
+        ggplot2::theme_classic(base_size = size.legend) + ggplot2::annotate(
           geom = "segment",
           x = rep(0,nrow(weight.num)),
           xend = weight.num[,comp[1]],
           y = rep(0,nrow(weight.num)),
           yend = weight.num[,comp[2]],
           col = "black",
-          arrow = ggplot2::arrow(length = grid::unit(0.2, "cm")),size = 0.70
+          arrow = ggplot2::arrow(length = grid::unit(0.1, "cm")),size = 0.70
         )  +
         ggplot2::annotate("path",
                       x = 0 + 1 * cos(seq(0, 2 * pi, length.out = 100)),
-                      y = 0 + 1* sin(seq(0, 2 * pi, length.out = 100)),size = 0.80)
+                      y = 0 + 1* sin(seq(0, 2 * pi, length.out = 100)),size = 0.50)
 
 
       #Si il y a une variable qualitative supplementaire
@@ -195,7 +199,7 @@ plot.PCAOS <-
             x = loading.supp[,comp[1]],
             y = loading.supp[,comp[2]],
             label = rownames(loading.supp),
-            col = "blue",size = 8
+            col = "blue",size = size.label
           )
 
       }
@@ -220,9 +224,9 @@ plot.PCAOS <-
         ) +
         ggplot2::ggtitle("Factorial representation of individuals") +
         ggplot2::geom_point() +
-        ggplot2::geom_text(ggplot2::aes(label=rownames(res.PCAOS$components), color = coloring.ind),hjust=1, vjust=1)+
-        ggplot2::xlab(paste(paste(nom.comp[1], inertie[comp[1],2]," %"))) +
-        ggplot2::ylab(paste(paste(nom.comp[2], inertie[comp[2],2]," %"))) +
+        ggplot2::geom_text(ggplot2::aes(label=rownames(res.PCAOS$components), color = coloring.indiv),hjust=1, vjust=1,size = size.label)+
+        ggplot2::xlab(paste(paste(nom.comp[1], inertie[comp[1],1]," %"))) +
+        ggplot2::ylab(paste(paste(nom.comp[2], inertie[comp[2],1]," %"))) +
         ggplot2::scale_x_continuous(limits = as.numeric(limit.x)) +
         ggplot2::scale_y_continuous(limits = as.numeric(limit.y)) +
         ggplot2::geom_hline(
@@ -237,7 +241,57 @@ plot.PCAOS <-
           color = "black",
           size = 1
         ) +
-        ggplot2::theme_classic(base_size = 18)
+        ggplot2::theme_classic(base_size = size.legend)
+
+      #Si il y a une variable qualitative supplementaire
+      if (supp.var == TRUE){
+        barycentre <-
+          do.call(rbind.data.frame, res.PCAOS$coord.supp.quali)
+
+        Graph.observations <-
+          Graph.observations  + ggplot2::annotate(geom = "label",x = barycentre[,comp[1]], y = barycentre[,comp[2]],label =  rownames(barycentre),size = size.label,col = "blue")
+
+        if(conf.ellipsises == TRUE){
+          mat = list(NULL)
+
+          for (var.supp in 1:ncol(res.PCAOS$quali.var.supp)){
+
+            var.quali = res.PCAOS$quali.var.supp[,var.supp]
+            coord.ellipse <- cbind.data.frame(ellipses.coord(var.quali = var.quali,components = res.PCAOS$components,level.conf = level.conf))
+            modalites <- levels(as.factor(var.quali))
+            nb.modal <- length(modalites)
+
+            x <- matrix(NA,nrow(coord.ellipse),nb.modal)
+            y <- matrix(NA,nrow(coord.ellipse),nb.modal)
+
+            compteur <- 1
+            for (modal in seq(from = 1,
+                              to = (nb.modal * 2),
+                              by = 2)) {
+              x[, compteur] <- coord.ellipse[, modal]
+              y[, compteur] <- coord.ellipse[, modal + 1]
+              compteur <- compteur + 1
+            }
+
+            mat[[var.supp]] <- cbind(c(x),c(y))
+            mat[[var.supp]] <- cbind.data.frame(mat[[var.supp]], as.vector(unlist(sapply(1:nb.modal, function(j) {rep(modalites[j],nrow(coord.ellipse))}))))
+
+
+          }
+          mat.d <- do.call(rbind.data.frame,mat)
+          Graph.observations <- Graph.observations +  ggplot2::annotate(
+            geom = "path",
+            x =  mat.d[,1],
+            y = mat.d[,2],
+            size = 0.5,
+            color = "darkblue",
+            group = as.factor(mat.d[,3])
+          )
+
+        }
+
+      }
+
       return(Graph.observations)
     }
 
@@ -251,42 +305,42 @@ plot.PCAOS <-
           colnames(data.pour.graph) <- c("quantification","modalities")
           graphs.list[[var]] <- ggplot2::ggplot(data = data.frame(data.pour.graph),
                                                 ggplot2::aes(x=modalities, y=as.numeric(quantification))) +
-            ggplot2::geom_point(size = 4) +
+            ggplot2::geom_point(size = 3) +
             ggplot2::scale_y_continuous(limits=limit) +
             ggplot2::xlab("Categories") +
             ggplot2::ylab("Quantifications") +
             ggplot2::ggtitle(variables[var])+
-            ggplot2::theme_classic(base_size = 18)
+            ggplot2::theme_classic(base_size = size.legend)
         }
         if (nature[var] == "ord"){
           data.pour.graph <- cbind(as.numeric(quantification[[var]]),rownames(quantification[[var]]))
           colnames(data.pour.graph) <- c("quantification","modalities")
           graphs.list[[var]] <- ggplot2::ggplot(data = data.frame(data.pour.graph), ggplot2::aes(x=modalities, y=as.numeric(quantification))) +
-            ggplot2::geom_point(size = 4) +
+            ggplot2::geom_point(size = 3) +
             ggplot2::scale_y_continuous(limits=limit) +
             ggplot2::xlab("Categories") +
             ggplot2::ylab("Quantifications") +
             ggplot2::ggtitle(variables[var]) +
-            ggplot2::theme_classic(base_size = 18)
+            ggplot2::theme_classic(base_size = size.legend)
         }
         if (nature[var] == "num"){
           colnames(quantification[[var]]) <- c("quantification","values")
           graphs.list[[var]] <-
             ggplot2::ggplot(data = data.frame(quantification[[var]]), ggplot2::aes(x = as.numeric(quantification),
                                                                                    y = as.numeric(values))) +
-            ggplot2::geom_point(size = 4) +
+            ggplot2::geom_point(size = 3) +
             ggplot2::scale_y_continuous(limits=limit) +
             ggplot2::xlab("Values") +
             ggplot2::ylab("Quantifications") +
             ggplot2::ggtitle(paste(variables[var]))+
             ggplot2::geom_line()+
-            ggplot2::theme_classic(base_size = 18)
+            ggplot2::theme_classic(base_size = size.legend)
         }
       }
 
       if(is.null(sub.var.quantif)){
         plot.tot <- ggpubr::ggarrange(plotlist=graphs.list)
-        return(ggpubr::annotate_figure(plot.tot,top = text_grob("Quantification of ..", color = "Black", face = "bold", size = 15)))
+        return(ggpubr::annotate_figure(plot.tot,top = ggpubr::text_grob("Quantification of ..", color = "Black", face = "bold", size = 10)))
 
       }
 
@@ -359,7 +413,7 @@ plot.PCAOS <-
           label = data.modal[, 1],
           fill = as.character(identification.variable)
         ),
-        size = 5) +
+        size = size.label) +
         ggplot2::geom_line(ggplot2::aes(
           x = as.numeric(data.modal[,2]),
           y = as.numeric(data.modal[,3]),
@@ -380,61 +434,10 @@ plot.PCAOS <-
           size = 1
         ) +
         ggplot2::ggtitle("Factorial representation of qualitative variables") +
-        ggplot2::xlab(paste(nom.comp[1], inertie[comp[1], 2], " %")) +
-        ggplot2::ylab(paste(nom.comp[2], inertie[comp[2], 2], " %")) +
-        ggplot2::theme_classic(base_size = 15) + ggplot2::guides(fill = ggplot2::guide_legend(title = "Variables",
+        ggplot2::xlab(paste(nom.comp[1], inertie[comp[1], 1], " %")) +
+        ggplot2::ylab(paste(nom.comp[2], inertie[comp[2], 1], " %")) +
+        ggplot2::theme_classic(base_size = size.legend) + ggplot2::guides(fill = ggplot2::guide_legend(title = "Variables",
                                                                                               override.aes = ggplot2::aes(label = "")))
-
-      #Si il y a une variable qualitative supplementaire
-      if (supp.var == TRUE){
-        barycentre <-
-          do.call(rbind.data.frame, res.PCAOS$coord.supp.quali)
-
-        graph.modalites <-
-          graph.modalites  + ggplot2::annotate(geom = "label",x = barycentre[,comp[1]], y = barycentre[,comp[2]],label =  rownames(barycentre),size = 5,col = "blue")
-
-        if(conf.ellipsises == TRUE){
-          mat = list(NULL)
-
-          for (var.supp in 1:ncol(res.PCAOS$quali.var.supp)){
-
-            var.quali = res.PCAOS$quali.var.supp[,var.supp]
-            coord.ellipse <- cbind.data.frame(ellipses.coord(var.quali = var.quali,components = res.PCAOS$components,level.conf = level.conf))
-            modalites <- levels(as.factor(var.quali))
-            nb.modal <- length(modalites)
-
-            x <- matrix(NA,nrow(coord.ellipse),nb.modal)
-            y <- matrix(NA,nrow(coord.ellipse),nb.modal)
-
-            compteur <- 1
-            for (modal in seq(from = 1,
-                             to = (nb.modal * 2),
-                             by = 2)) {
-              x[, compteur] <- coord.ellipse[, modal]
-              y[, compteur] <- coord.ellipse[, modal + 1]
-              compteur <- compteur + 1
-            }
-
-            mat[[var.supp]] <- cbind(c(x),c(y))
-            mat[[var.supp]] <- cbind.data.frame(mat[[var.supp]], as.vector(unlist(sapply(1:nb.modal, function(j) {rep(modalites[j],nrow(coord.ellipse))}))))
-
-
-          }
-          mat.d <- do.call(rbind.data.frame,mat)
-
-          graph.modalites <-
-            graph.modalites + ggplot2::geom_path(
-              data = mat.d,
-              ggplot2::aes(x =  mat.d[, 1] ,
-                           y =  mat.d[, 2]),
-              size = 0.5,
-              color = "darkblue",
-              group = as.factor(mat.d[, 3])
-            )
-
-        }
-
-      }
 
       return(graph.modalites)
 
@@ -459,7 +462,7 @@ plot.PCAOS <-
           x = as.numeric(weight.num[,comp[1]]),
           y = as.numeric(weight.num[,comp[2]]),
           label = rownames(weight.num)
-        ),color = "black",size = 5) +
+        ),color = "black",size = size.label) +
         ggplot2::annotate(
           geom = "segment",
           x = rep(0,nrow(weight.num)),
@@ -487,7 +490,7 @@ plot.PCAOS <-
           label = data.modal[, 1],
           fill = as.character(identification.variable)
         ),
-        size = 5) +
+        size = size.label) +
         ggplot2::geom_line(ggplot2::aes(
           x = as.numeric(data.modal[,2]),
           y = as.numeric(data.modal[,3]),
@@ -496,66 +499,11 @@ plot.PCAOS <-
         ),
         size = 1,show.legend = F) +
         ggplot2::ggtitle("Factorial representation of mixed variables") +
-        ggplot2::xlab(paste(nom.comp[1], inertie[comp[1],2]," %")) +
-        ggplot2::ylab(paste(nom.comp[2], inertie[comp[2],2]," %")) +
-        ggplot2::theme_classic(base_size = 15)  + ggplot2::guides(fill = ggplot2::guide_legend(title = "Variables",
+        ggplot2::xlab(paste(nom.comp[1], inertie[comp[1],1]," %")) +
+        ggplot2::ylab(paste(nom.comp[2], inertie[comp[2],1]," %")) +
+        ggplot2::theme_classic(base_size = size.legend)  + ggplot2::guides(fill = ggplot2::guide_legend(title = "Variables",
                                                                     override.aes = ggplot2::aes(label = "")))
       if(supp.var == TRUE){
-        if(any(res.PCAOS$nature.supp == "nom" | res.PCAOS$nature.supp == "ord")){
-          #Qualitative variables
-          barycentre <-
-            do.call(rbind.data.frame, res.PCAOS$coord.supp.quali)
-          mix.graph <-
-            mix.graph  +  ggplot2::annotate(
-              geom = "label",
-              x = barycentre[, comp[1]],
-              y = barycentre[, comp[2]],
-              label =  rownames(barycentre),
-              size = 5,
-              col = "blue"
-            )
-          if(conf.ellipsises == TRUE){
-            mat = list(NULL)
-
-            for (var.supp in 1:ncol(res.PCAOS$quali.var.supp)){
-
-              var.quali = res.PCAOS$quali.var.supp[,var.supp]
-              coord.ellipse <- cbind.data.frame(ellipses.coord(var.quali = var.quali,components = res.PCAOS$components,level.conf = level.conf))
-              modalites <- levels(as.factor(var.quali))
-              nb.modal <- length(modalites)
-
-              x <- matrix(NA,nrow(coord.ellipse),nb.modal)
-              y <- matrix(NA,nrow(coord.ellipse),nb.modal)
-
-              compteur <- 1
-              for (modal in seq(from = 1,
-                                to = (nb.modal * 2),
-                                by = 2)) {
-                x[, compteur] <- coord.ellipse[, modal]
-                y[, compteur] <- coord.ellipse[, modal + 1]
-                compteur <- compteur + 1
-              }
-
-              mat[[var.supp]] <- cbind(c(x),c(y))
-              mat[[var.supp]] <- cbind.data.frame(mat[[var.supp]], as.vector(unlist(sapply(1:nb.modal, function(j) {rep(modalites[j],nrow(coord.ellipse))}))))
-
-
-            }
-            mat.d <- do.call(rbind.data.frame,mat)
-
-            mix.graph <-
-              mix.graph + ggplot2::geom_path(
-                data = mat.d,
-                ggplot2::aes(x =  mat.d[, 1] ,
-                             y =  mat.d[, 2]),
-                size = 0.5,
-                color = "darkblue",
-                group = as.factor(mat.d[, 3])
-              )
-
-          }
-        }
-
         if(any(res.PCAOS$nature.supp == "num" )){
           #Numeric variables
           loading.supp <- do.call(rbind.data.frame,res.PCAOS$coord.supp.num)
@@ -573,7 +521,7 @@ plot.PCAOS <-
               x = loading.supp[,comp[1]],
               y = loading.supp[,comp[2]],
               label = rownames(loading.supp),
-              col = "blue",size = 5
+              col = "blue",size = size.label
             )
         }
       }

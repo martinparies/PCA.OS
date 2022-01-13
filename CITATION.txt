@@ -3,6 +3,6 @@ message: "If you use this software, please cite it as below."
 authors:
   - family-names: Paries
     given-names: Martin
-title: "PCAOS"
+title: "PCAOS: Principal Component Analysis with Optimal Scaling"
 version: 0.1
 date-released: 2022-01-10
