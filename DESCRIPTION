@@ -4,7 +4,7 @@ Title: PCAOS
 Version: 0.1.0
 Author: Martin PARIES, Evelyne Vigneau, Stephanie Bougeard
 Maintainer: Martin PARIES <martinparies@gmail.com>
-Description: Analyse en Composantes Principales avec Optimal Scaling / Principal Components Analysis with Optimal Scaling features
+Description: Principal Components Analysis with Optimal Scaling features
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
