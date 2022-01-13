@@ -11,7 +11,7 @@
 #' @param conf.ellipsises boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable as supplementary.
 #' @param level.conf level of confidence ellipses
 #' @param size.label size of label in graphs
-#' @param size.legend size of label in graphs
+#' @param size.legend size of label in graphss
 
 #' @return
 #'A ggplot object
