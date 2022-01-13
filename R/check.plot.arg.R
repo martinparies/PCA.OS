@@ -19,6 +19,9 @@ check.plot.arg <- function(choice,nature,nature.supp,supp.var, comp, nb.comp){
     if (!any(nature == "nom")){
       stop("No variable defined as qualitative (i.e nominal or ordinal")
     }
+  }
+
+  if (choice == "ind"){
     if(supp.var == TRUE & !any(nature.supp == "nom" | nature.supp == "ord")){
       stop("Supplementary variable is not qualitative")
     }
