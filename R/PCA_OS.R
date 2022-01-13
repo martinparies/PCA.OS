@@ -7,7 +7,7 @@
 #'
 #' @details
 #' \itemize{
-#'   \item Package : PCAOSproject
+#'   \item Package : PCAOS
 #'   \item Version : 0.1
 #'   \item Date : 14/12/2021
 #'   \item License :
@@ -24,5 +24,5 @@
 #' @import ggpubr
 #'
 #'
-#' @name PCAOSproject
+#' @name PCAOS
 NULL
