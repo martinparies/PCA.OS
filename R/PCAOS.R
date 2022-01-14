@@ -55,7 +55,10 @@
 #'  supp.var = 1
 #')
 #'
-#'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "ind",coloring = antibiotic$Atb.conso)
+#'PCA.OS::plot.PCAOS(
+#'  res.PCAOS = res.PCAOS,
+#'  choice = "ind",
+#'  coloring = antibiotic$Atb.conso)
 #'
 #' @export
 PCAOS <- function(data,

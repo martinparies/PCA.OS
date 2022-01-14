@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.PCAOS.R
 \name{plot.PCAOS}
 \alias{plot.PCAOS}
-\title{PCAOS.plot}
+\title{plot.PCAOS}
 \usage{
 \method{plot}{PCAOS}(
   res.PCAOS,
