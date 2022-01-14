@@ -41,33 +41,33 @@
 #'
 #' @examples
 #' data (antibiotic)
-#' res.mix <- PCAOS::mix.data(antibiotic)
+#' res.mix <- PCA.OS::mix.data(antibiotic)
 #' nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
 #' nature[res.mix$p.numeric] <- "num"
 #' nature[res.mix$p.quali] <- "nom"
 #' nature[c(1,15)] <- "ord"
 #' nature
 #'
-#'res.PCAOS <- PCAOS::PCAOS(
+#'res.PCAOS <- PCA.OS::PCAOS(
 #'  data = antibiotic,
 #'  nature = nature,
 #'  supp.var = c(1,2)
 #')
 #'
 #'#Individuals graph
-#'PCAOS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "ind",coloring = antibiotic$Atb.conso)
+#'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "ind",coloring = antibiotic$Atb.conso)
 #'
 #'#Quantifications
-#'PCAOS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "quantif",sub.var.quantif =  c(4,8))
+#'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "quantif",sub.var.quantif =  c(4,8))
 #'
 #'#Qualitative variables
-#'PCAOS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative",supp.var = TRUE,conf.ellipsises = TRUE)
+#'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative",supp.var = TRUE,conf.ellipsises = TRUE)
 #'
 #'#Numeric variables
-#'PCAOS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "numeric",supp.var = TRUE)
+#'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "numeric",supp.var = TRUE)
 #'
 #'#Mixed variables
-#'PCAOS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed",supp.var = TRUE,conf.ellipsises = TRUE)
+#'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed",supp.var = TRUE,conf.ellipsises = TRUE)
 #'
 #' @export plot.PCAOS
 #' @export

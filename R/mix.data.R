@@ -16,7 +16,7 @@
 #'
 #' @examples
 #' data (antibiotic)
-#' res.mix <- PCAOS::mix.data(antibiotic)
+#' res.mix <- PCA.OS::mix.data(antibiotic)
 #' res.mix$p.numeric
 #' head(res.mix$data.numeric)
 #' res.mix$p.quali
@@ -26,7 +26,7 @@
 #' nature[res.mix$p.quali] <- "nom"
 #' nature[c(1,15)] <- "ord"
 #' nature
-#'
+#' @export
 mix.data <- function(data){
   if(!is.data.frame(data)){
     stop("Data should be a data.frame")

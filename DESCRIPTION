@@ -1,6 +1,6 @@
-Package: PCAOS
+Package: PCA.OS
 Type: Package
-Title: PCAOS
+Title: PCA.OS
 Version: 0.1.0
 Author: Martin PARIES, Evelyne Vigneau, Stephanie Bougeard
 Maintainer: Martin PARIES <martinparies@gmail.com>

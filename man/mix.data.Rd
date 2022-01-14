@@ -24,7 +24,7 @@ Splits a mixed data matrix according to the nature of variables. Columns of clas
 }
 \examples{
 data (antibiotic)
-res.mix <- PCAOS::mix.data(antibiotic)
+res.mix <- PCA.OS::mix.data(antibiotic)
 res.mix$p.numeric
 head(res.mix$data.numeric)
 res.mix$p.quali
@@ -34,5 +34,4 @@ nature[res.mix$p.numeric] <- "num"
 nature[res.mix$p.quali] <- "nom"
 nature[c(1,15)] <- "ord"
 nature
-
 }

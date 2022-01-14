@@ -1,4 +1,4 @@
-#' PCAOS
+#' PCA.OS
 #'
 #' Principal Components Analysis with Optimal Scaling features
 #'
@@ -7,7 +7,7 @@
 #'
 #' @details
 #' \itemize{
-#'   \item Package : PCAOS
+#'   \item Package : PCA.OS
 #'   \item Version : 0.1
 #'   \item Date : 14/12/2021
 #'   \item License :
@@ -24,5 +24,5 @@
 #' @import ggpubr
 #'
 #'
-#' @name PCAOS
+#' @name PCA.OS
 NULL

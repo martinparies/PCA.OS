@@ -58,19 +58,19 @@ Perform PCAOS
 }
 \examples{
 data (antibiotic)
-res.mix <- PCAOS::mix.data(antibiotic)
+res.mix <- PCA.OS::mix.data(antibiotic)
 nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
 nature[res.mix$p.numeric] <- "num"
 nature[res.mix$p.quali] <- "nom"
 nature[c(1,15)] <- "ord"
 nature
 
-res.PCAOS <- PCAOS::PCAOS(
+res.PCAOS <- PCA.OS::PCAOS(
  data = antibiotic,
  nature = nature,
  supp.var = 1
 )
 
-PCAOS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "ind",coloring = antibiotic$Atb.conso)
+PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "ind",coloring = antibiotic$Atb.conso)
 
 }
