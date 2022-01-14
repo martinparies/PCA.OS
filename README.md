@@ -9,3 +9,4 @@ if (!require("devtools")) install.packages("devtools")
 library(devtools)
 install_github("martinparies/PCAOS")
 ```
+"# PCA.OS" 
