@@ -27,6 +27,7 @@
 #' nature[c(1,15)] <- "ord"
 #' nature
 #' @export
+#'
 mix.data <- function(data){
   if(!is.data.frame(data)){
     stop("Data should be a data.frame")

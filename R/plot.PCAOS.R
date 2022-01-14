@@ -1,4 +1,4 @@
-#' PCAOS.plot
+#' plot.PCAOS
 #'
 #' Visualisation of results from PCAOS method. See details for available plot.
 #'
