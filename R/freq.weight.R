@@ -1,11 +1,11 @@
-#' freq.weight
-#'
-#' freq.weight
-#'
-#' @param dummy dummy coded variables
-#'
-#' @return pretreated dummy coded variables by khi-deux metrics
-#'
+# freq.weight
+#
+# freq.weight
+#
+# @param dummy dummy coded variables
+#
+# @return pretreated dummy coded variables by khi-deux metrics
+#
 freq.weight <- function(dummy){
   #standardisation par la proportion
   N <- rep (length(dummy[,1]),length(dummy[1,]))

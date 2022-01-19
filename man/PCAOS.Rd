@@ -71,6 +71,9 @@ res.PCAOS <- PCA.OS::PCAOS(
  supp.var = 1
 )
 
-PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "ind",coloring = antibiotic$Atb.conso)
+PCA.OS::plot.PCAOS(
+ res.PCAOS = res.PCAOS,
+ choice = "ind",
+ coloring = antibiotic$Atb.conso)
 
 }

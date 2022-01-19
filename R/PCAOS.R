@@ -400,7 +400,9 @@ PCAOS <- function(data,
       coord.supp.quali = coord.supp.quali,
       coord.supp.num = coord.supp.num,
       quali.var.supp = tri.supp$data.supp.quali
-
     )
+
+  class(res) = "PCAOS"
+  return(res)
 
 }

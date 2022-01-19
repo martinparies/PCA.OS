@@ -1,12 +1,12 @@
-#' polynom.data
-#'
-#' polynom.data
-#'
-#' @param var variable to pretreat
-#' @param D Degree of the relation between quantified variables and components
-#'
-#' @return dummy coded variables
-#'
+# polynom.data
+#
+# polynom.data
+#
+# @param var variable to pretreat
+# @param D Degree of the relation between quantified variables and components
+#
+# @return dummy coded variables
+#
 polynom.data<- function(var,D){
   nbINDIV <- nrow(var)
   nbCOL <- ncol(var)

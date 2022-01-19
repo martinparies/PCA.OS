@@ -8,7 +8,7 @@
 #' @param coloring.indiv A vector of length N to color individuals. If NULL, no coloring is applied.
 #' @param sub.var.quantif a vector with variable of interest
 #' @param supp.var TRUE or FALSE; if TRUE supplementary variables are added in factorial representation
-#' @param conf.ellipsises boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable as supplementary.
+#' @param ellipse boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable as supplementary.
 #' @param level.conf level of confidence ellipses
 #' @param size.label size of label in graphs
 #' @param size.legend size of label in graphs
@@ -71,6 +71,7 @@
 #'
 #' @export plot.PCAOS
 #' @export
+#'
 plot.PCAOS <-
   function(res.PCAOS,
            choice = "ind",
@@ -78,11 +79,14 @@ plot.PCAOS <-
            coloring.indiv = NULL,
            supp.var = FALSE,
            sub.var.quantif = NULL,
-           conf.ellipsises = FALSE,
+           ellipse = FALSE,
            level.conf = 0.95,
            size.label = 3.5,
            size.legend = 10
            ) {
+
+    if(!inherits(res.PCAOS,"PCAOS")) stop("Non convenient object")
+
     nb.comp <- ncol(res.PCAOS$components)
     check.plot.arg(choice,res.PCAOS$nature,res.PCAOS$nature.supp,supp.var,comp,nb.comp)
 
@@ -251,7 +255,7 @@ plot.PCAOS <-
         Graph.observations <-
           Graph.observations  + ggplot2::annotate(geom = "label",x = barycentre[,comp[1]], y = barycentre[,comp[2]],label =  rownames(barycentre),size = size.label,col = "blue")
 
-        if(conf.ellipsises == TRUE){
+        if(ellipse == TRUE){
           mat = list(NULL)
 
           for (var.supp in 1:ncol(res.PCAOS$quali.var.supp)){

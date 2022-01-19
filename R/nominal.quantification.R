@@ -1,24 +1,24 @@
-#' nominal.quantification
-#'
-#' nominal.quantification
-#'
-#' @param var raw nominal variables to be quantified
-#'
-#' @param t components scores obtain trough PCAOS method
-#'
-#' @param rank.restriction whether the quantification should be restricted or not
+# nominal.quantification
+#
+# nominal.quantification
+#
+# @param var raw nominal variables to be quantified
+#
+# @param t components scores obtain trough PCAOS method
+#
+# @param rank.restriction whether the quantification should be restricted or not
 
-#' @return
-#'  \itemize{
-#'   \item var.quant : optimally quantified variables
-#'   \item w : loadings
-#'   \item Yj : quantification of the categories
-#'   \item Yjhat : rank one quantification of the categories
-#' }
-#'
-#' @details
-#' Do NOT use this function unless you are ME, a package developer, or a jedi user who really knows what is doing.
-#'
+# @return
+#  \itemize{
+#   \item var.quant : optimally quantified variables
+#   \item w : loadings
+#   \item Yj : quantification of the categories
+#   \item Yjhat : rank one quantification of the categories
+# }
+#
+# @details
+# Do NOT use this function unless you are ME, a package developer, or a jedi user who really knows what is doing.
+#
 nominal.quantification <- function (var,t,rank.restriction){
   nbindiv <- nrow(var)
   var.dis <- dummy.coding(var)$data

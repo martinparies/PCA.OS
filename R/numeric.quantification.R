@@ -1,22 +1,22 @@
-#' numeric.quantification
-#'
-#' numeric.quantification
-#'
-#' @param var raw numeric variables to be quantified
-#' @param D degree assumed between variable and component
-#' @param t components scores obtain trough PCAOS method
-#'
-#' @return
-#'  \itemize{
-#'   \item var.quant : optimally quantified variables
-#'   \item w : loadings
-#'   \item Yj : quantification of the categories
-#'   \item Yjhat : rank one quantification of the categories
-#' }
-#'
-#' @details
-#' Do NOT use this function unless you are ME, a package developer, or a jedi user who really knows what is doing.
-#'
+# numeric.quantification
+#
+# numeric.quantification
+#
+# @param var raw numeric variables to be quantified
+# @param D degree assumed between variable and component
+# @param t components scores obtain trough PCAOS method
+#
+# @return
+#  \itemize{
+#   \item var.quant : optimally quantified variables
+#   \item w : loadings
+#   \item Yj : quantification of the categories
+#   \item Yjhat : rank one quantification of the categories
+# }
+#
+# @details
+# Do NOT use this function unless you are ME, a package developer, or a jedi user who really knows what is doing.
+#
 numeric.quantification <- function (var,t,D){
 nbindiv <- nrow(var)
 var=scale(var)*sqrt(nbindiv/(nbindiv-1))

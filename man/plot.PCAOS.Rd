@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{PCAOS}(
   res.PCAOS,
-  choice = "screeplot",
+  choice = "ind",
   comp = c(1, 2),
   coloring.indiv = NULL,
   supp.var = FALSE,
