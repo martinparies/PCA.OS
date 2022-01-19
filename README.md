@@ -7,7 +7,7 @@ How do you install an use the latest version of PCAOS available on GitHub?
 ```{r}
 if (!require("devtools")) install.packages("devtools")
 library(devtools)
-install_github("martinparies/PCAOS")
+install_github("martinparies/PCA.OS")
 library(PCA.OS)
 help(PCA.OS)
 ```
