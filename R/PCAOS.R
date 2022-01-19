@@ -367,6 +367,8 @@ PCAOS <- function(data,
 
   if(any(rank.restriction == "one")){
     quantified.data <- matrix(unlist(quantified.data),nrow=nb.indiv,ncol=nb.var.init)
+    row.names(quantified.data) <- row.names(data)
+    colnames(quantified.data) <- colnames(data)
   }
 
   # Percentage of inertia for each component

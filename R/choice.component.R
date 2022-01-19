@@ -29,7 +29,7 @@ choice.component <- function(data,nature = rep("num",ncol(data)),nb.comp.to.inve
     ggplot2::geom_bar(stat="identity", width=0.5) + ggplot2::theme_classic(base_size = 10) +
     ggplot2::xlab("Number of components in the model") +
     ggplot2::ylab("Improvement of inertia") +
-    ggplot2::geom_text(ggplot2::aes(label=paste(round(delta,2),"%")), vjust= -0.1, color="black", size=3.5)
+    ggplot2::geom_text(ggplot2::aes(label=paste(round(delta,2),"%")), vjust= -0.1, hjust = 0.3, color="black", size=3.5)
   print(choice.inertia)
   return(data)
 }

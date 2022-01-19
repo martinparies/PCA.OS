@@ -212,7 +212,7 @@ plot.PCAOS <-
     }
 
     #INDIVIDUAL
-    if (choice == "ind"){
+    if (choice == "ind" | (choice == "qualitative" & supp.var == TRUE)){
       nom.indiv <- rownames(res.PCAOS$data)
       limit.x = c(min(res.PCAOS$components[,comp[1]]), max(res.PCAOS$components[,comp[1]]))
       limit.y = c(min(res.PCAOS$components[,comp[2]]), max(res.PCAOS$components[,comp[2]]))
@@ -246,6 +246,8 @@ plot.PCAOS <-
           size = 1
         ) +
         ggplot2::theme_classic(base_size = size.legend)
+
+      if(choice == "qualitative" & supp.var == TRUE) {message("Modalities are represented as barycenter")}
 
       #Si il y a une variable qualitative supplementaire
       if (supp.var == TRUE){
@@ -404,7 +406,7 @@ plot.PCAOS <-
     }
 
     #MODALITIES REPRESENTATION
-    if (choice == "qualitative" ){
+    if (choice == "qualitative" &  supp.var == FALSE){
       nb.modal <- unlist(lapply(category.coord,nrow))
       nb.var <- length(nb.modal)
       identification.variable <- as.vector(unlist(sapply(1:nb.var, function(j) {rep(colnames(data[,var.quali])[j],nb.modal[j])})))
