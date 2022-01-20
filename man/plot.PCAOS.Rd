@@ -11,7 +11,7 @@
   coloring.indiv = NULL,
   supp.var = FALSE,
   sub.var.quantif = NULL,
-  conf.ellipsises = FALSE,
+  ellipse = FALSE,
   level.conf = 0.95,
   size.label = 3.5,
   size.legend = 10
@@ -30,7 +30,7 @@
 
 \item{sub.var.quantif}{a vector with variable of interest}
 
-\item{conf.ellipsises}{boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable as supplementary.}
+\item{ellipse}{boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable as supplementary.}
 
 \item{level.conf}{level of confidence ellipses}
 
@@ -84,17 +84,18 @@ res.PCAOS <- PCA.OS::PCAOS(
 
 #Individuals graph
 PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "ind",coloring = antibiotic$Atb.conso)
+PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "ind",supp.var = TRUE,ellipse = TRUE)
 
 #Quantifications
 PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "quantif",sub.var.quantif =  c(4,8))
 
 #Qualitative variables
-PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative",supp.var = TRUE,conf.ellipsises = TRUE)
+PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative")
 
 #Numeric variables
 PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "numeric",supp.var = TRUE)
 
 #Mixed variables
-PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed",supp.var = TRUE,conf.ellipsises = TRUE)
+PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed",supp.var = TRUE,ellipse = TRUE)
 
 }

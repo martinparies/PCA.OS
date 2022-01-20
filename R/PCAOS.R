@@ -4,7 +4,7 @@
 #'
 #' @param data a data frame with n rows (individuals) and p columns (numeric, nominal and/or ordinal variables)
 #'
-#' @param nature vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num"
+#' @param nature vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num". The order of categories for an ordinal variable should be indicated by the level
 
 #' @param nb.comp number of components of the model (by default 2)
 
