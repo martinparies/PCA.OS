@@ -26,7 +26,6 @@
 #' #Charging the data
 #' data("antibiotic")
 #' summary(antibiotic)
-#'
 #' #Construction of the "nature" argument for this dataset
 #' nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
 #' nature[c(2,3,4)] <- "num"

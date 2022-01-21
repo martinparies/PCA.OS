@@ -3,7 +3,6 @@
 S3method(plot,PCAOS)
 export(PCAOS)
 export(choice.component)
-export(dummy.coding)
 export(plot.PCAOS)
 import(ggplot2)
 import(ggpubr)
