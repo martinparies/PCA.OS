@@ -1,6 +1,6 @@
 #' PCA.OS
 #'
-#' Principal Components Analysis with Optimal Scaling features
+#' Principal Component Analysis with Optimal Scaling features
 #'
 #'
 #' @docType package
@@ -13,9 +13,12 @@
 #'   \item License :
 #' }
 #'
-#' @author Martin PARIES, Evelyne Vigneau, St?phanie Bougeard
-#' Maintainer: \email{martinparies@gmail.com}
-#'
+#' @author
+#' \itemize{
+#'   \item Martin PARIES (Maintainer: \email{martin.paries@oniris-nantes.fr})
+#'   \item Evelyne Vigneau
+#'   \item Stephanie Bougeard
+#' }
 #'
 #' @references
 #' @import stats

@@ -1,6 +1,6 @@
 #' choice.component
 #'
-#' Helps user choose appropriate number of component to optimise for PCAOS method.
+#' Helps the user to choose the appropriate number of PCAOS component to optimize
 #'
 #' @param data a data frame with n rows (individuals) and p columns (numeric, nominal and/or ordinal variables)
 #'
@@ -9,6 +9,25 @@
 #' @param nb.comp.to.investigate Number of components to investigate (default=ncol(data))
 #'
 #' @return Data frame with global Loss value and percentage of the quantified variables inertia explained, for different model dimensionality (H). The last column provides the variation in percentage between to two successive size of dimensionality.
+#'
+#' @author
+#' \itemize{
+#'   \item Martin PARIES (Maintainer: \email{martin.paries@oniris-nantes.fr})
+#'   \item Evelyne Vigneau
+#'   \item Stephanie Bougeard
+#' }
+#'
+#' @examples
+#' data("antibiotic")
+#'
+#' #Construction of the "nature" argument for this dataset
+#' nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
+#' nature[c(2,3,4)] <- "num"
+#' nature[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
+#' nature[c(1,15)] <- "ord"
+#'
+#' res.choice <- choice.component(antibiotic,nature)
+#' res.choice
 #'
 #' @export
 #'

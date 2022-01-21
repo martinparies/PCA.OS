@@ -3,12 +3,12 @@
 #' Visualisation of results from PCAOS method. See details for available plot.
 #'
 #' @param res.PCAOS an object of class PCAOS
-#' @param choice the graph to plot possible values are "screeplot","quantif","indiv","cor","modalities","mixed","squared loadings". See Details.
+#' @param choice the available graphs are "screeplot","quantif","indiv","cor","modalities","mixed","squared loadings". See Details.
 #' @param comp a length 2 vector with the components to plot
 #' @param coloring.indiv A vector of length N to color individuals. If NULL, no coloring is applied.
 #' @param sub.var.quantif a vector with variable of interest
 #' @param supp.var TRUE or FALSE; if TRUE supplementary variables are added in factorial representation
-#' @param ellipse boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable as supplementary.
+#' @param ellipse boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable considered as supplementary.
 #' @param level.conf level of confidence ellipses
 #' @param size.label size of label in graphs
 #' @param size.legend size of label in graphs
@@ -41,10 +41,9 @@
 #'
 #' @examples
 #' data (antibiotic)
-#' res.mix <- PCA.OS::mix.data(antibiotic)
 #' nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
-#' nature[res.mix$p.numeric] <- "num"
-#' nature[res.mix$p.quali] <- "nom"
+#' nature[c(2,3,4)] <- "num"
+#' nature[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
 #' nature[c(1,15)] <- "ord"
 #' nature
 #'
@@ -69,6 +68,13 @@
 #'
 #'#Mixed variables
 #'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed",supp.var = TRUE,ellipse = TRUE)
+#'
+#' @author
+#' \itemize{
+#'   \item Martin PARIES (Maintainer: \email{martin.paries@oniris-nantes.fr})
+#'   \item Evelyne Vigneau
+#'   \item Stephanie Bougeard
+#' }
 #'
 #' @export plot.PCAOS
 #' @export

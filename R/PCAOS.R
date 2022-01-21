@@ -1,16 +1,16 @@
-#' Principal Components Analysis with Optimal Scaling features
+#' Principal Component Analysis with Optimal Scaling
 #'
 #' Perform PCAOS
 #'
 #' @param data a data frame with n rows (individuals) and p columns (numeric, nominal and/or ordinal variables)
 #'
-#' @param nature vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num". The order of categories for an ordinal variable should be indicated by the level
+#' @param nature vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num". The order of categories for an ordinal variable is indicated by it's level.
 
 #' @param nb.comp number of components of the model (by default 2)
 
-#' @param maxiter maximum number of iterations.
+#' @param maxiter maximum number of iterations
 #'
-#' @param threshold the threshold for assessing convergence
+#' @param threshold threshold for assessing convergence
 #'
 #' @param D degree of the relation between quantified variables and components (only for numeric variables, default = 1)
 #
@@ -18,22 +18,22 @@
 #'
 #' @param rank.restriction restriction of the quantification matrix for nominal variable, possible values are :
 #' \itemize{
-#'   \item "one" (default) : apply a rank one restriction (i.e single quantification of each variable)
+#'   \item "one" (default) : apply a rank-one restriction (i.e single quantification of each variable)
 #'   \item "no.restriction": apply no restriction (i.e multiple quantification of each variable)
 #' }
 
 #' @return
 #'
 #' \itemize{
-#'   \item weigths : list of weights of the variables (loadings and weights are the same in PCA like model)
-#'   \item components : data.frame with individuals scores on each dimension.
+#'   \item weigths : list of weights of the variables (loadings and weights are the same in PCA-like model)
+#'   \item components : data.frame with individuals scores for each dimension
 #'   \item quantified.data : Optimally quantified variables
-#'   \item summary : summary of number of variables and it's nature
+#'   \item summary : summary of the number of variables according to their nature
 #'   \item quantification.categories.nom : list of optimally quantified categories (nominal variables)
 #'   \item quantification.categories.ord : list of optimally quantified categories (ordinal variables)
 #'   \item inertia : percentage and cumulative percentage of variance of the quantified variables explained
 #'   \item loss.tot : global loss for all variables
-#'   \item stockiter : evolution of criterion for each ieration
+#'   \item stockiter : evolution of the criterion for each ieration
 #'   \item data : orginal dataset
 #'   \item nature : nature of scaling choosen for each variable
 #'   \item quali.var.supp : supplementary variable
@@ -42,10 +42,9 @@
 #'
 #' @examples
 #' data (antibiotic)
-#' res.mix <- PCA.OS::mix.data(antibiotic)
 #' nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
-#' nature[res.mix$p.numeric] <- "num"
-#' nature[res.mix$p.quali] <- "nom"
+#' nature[c(2,3,4)] <- "num"
+#' nature[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
 #' nature[c(1,15)] <- "ord"
 #' nature
 #'
@@ -59,6 +58,16 @@
 #'  res.PCAOS = res.PCAOS,
 #'  choice = "ind",
 #'  coloring = antibiotic$Atb.conso)
+#'
+#' @author
+#' \itemize{
+#'   \item Martin PARIES (Maintainer: \email{martin.paries@oniris-nantes.fr})
+#'   \item Evelyne Vigneau
+#'   \item Stephanie Bougeard
+#' }
+#'
+#' @references
+#' Paries, Bougeard, Vigneau (2022), Multivariate analysis of Just-About-Right data with optimal scaling approach. Food Quality and Preference (submit)
 #'
 #' @export
 PCAOS <- function(data,

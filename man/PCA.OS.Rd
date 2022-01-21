@@ -5,7 +5,7 @@
 \alias{PCA.OS}
 \title{PCA.OS}
 \description{
-Principal Components Analysis with Optimal Scaling features
+Principal Component Analysis with Optimal Scaling features
 }
 \details{
 \itemize{
@@ -19,6 +19,9 @@ Principal Components Analysis with Optimal Scaling features
 
 }
 \author{
-Martin PARIES, Evelyne Vigneau, St?phanie Bougeard
-Maintainer: \email{martinparies@gmail.com}
+\itemize{
+  \item Martin PARIES (Maintainer: \email{martin.paries@oniris-nantes.fr})
+  \item Evelyne Vigneau
+  \item Stephanie Bougeard
+}
 }

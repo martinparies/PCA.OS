@@ -20,7 +20,7 @@
 \arguments{
 \item{res.PCAOS}{an object of class PCAOS}
 
-\item{choice}{the graph to plot possible values are "screeplot","quantif","indiv","cor","modalities","mixed","squared loadings". See Details.}
+\item{choice}{the available graphs are "screeplot","quantif","indiv","cor","modalities","mixed","squared loadings". See Details.}
 
 \item{comp}{a length 2 vector with the components to plot}
 
@@ -30,7 +30,7 @@
 
 \item{sub.var.quantif}{a vector with variable of interest}
 
-\item{ellipse}{boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable as supplementary.}
+\item{ellipse}{boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable considered as supplementary.}
 
 \item{level.conf}{level of confidence ellipses}
 
@@ -69,10 +69,9 @@ All graph are ggplot object
 }
 \examples{
 data (antibiotic)
-res.mix <- PCA.OS::mix.data(antibiotic)
 nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
-nature[res.mix$p.numeric] <- "num"
-nature[res.mix$p.quali] <- "nom"
+nature[c(2,3,4)] <- "num"
+nature[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
 nature[c(1,15)] <- "ord"
 nature
 
@@ -98,4 +97,11 @@ PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "numeric",supp.var = TRUE)
 #Mixed variables
 PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed",supp.var = TRUE,ellipse = TRUE)
 
+}
+\author{
+\itemize{
+  \item Martin PARIES (Maintainer: \email{martin.paries@oniris-nantes.fr})
+  \item Evelyne Vigneau
+  \item Stephanie Bougeard
+}
 }

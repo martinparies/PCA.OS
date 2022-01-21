@@ -1,12 +1,11 @@
-#' dummy.coding
-#'
-#' dummy.coding
-#'
-#' @param data raw variables (vector or matrix)
-#'
-#' @return dummy coded variables
-#'
-#' @export
+# dummy.coding
+#
+# dummy.coding
+#
+# @param data raw variables (vector or matrix)
+#
+# @return dummy coded variables
+#
 
 dummy.coding <- function(data){
   resDIS <- NULL
