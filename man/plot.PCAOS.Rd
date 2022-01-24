@@ -95,7 +95,7 @@ PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative")
 PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "numeric",supp.var = TRUE)
 
 #Mixed variables
-PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed",supp.var = TRUE,ellipse = TRUE)
+PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed",supp.var = TRUE)
 
 }
 \author{

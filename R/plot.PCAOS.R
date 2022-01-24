@@ -67,7 +67,7 @@
 #'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "numeric",supp.var = TRUE)
 #'
 #'#Mixed variables
-#'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed",supp.var = TRUE,ellipse = TRUE)
+#'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed",supp.var = TRUE)
 #'
 #' @author
 #' \itemize{
@@ -375,7 +375,7 @@ plot.PCAOS <-
     }
 
     #COMMON ELEMENTS
-    if (choice =="qualitative" | choice == "mixed" ){
+    if (choice == "qualitative" | choice == "mixed" ){
       category.coord <- list(NULL)
       compteur <- 1
       var.quali <- which(nature == "nom" | nature =="ord")
