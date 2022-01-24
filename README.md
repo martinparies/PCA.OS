@@ -20,12 +20,9 @@ help(antibiotic)
 
 # Setting of nature of variables
 ```{r}
-nature <- rep(NA,ncol(antibiotic))
-help(PCA.OS::mix.data)
-res.mix <- PCA.OS::mix.data(antibiotic)
-nature[res.mix$p.numeric] <- "num"
-nature[res.mix$p.quali] <- "nom"
-#No automatic solution for ordinal data, setting by hand
+nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
+nature[c(2,3,4)] <- "num"
+nature[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
 nature[c(1,15)] <- "ord"
 ```
 
@@ -40,7 +37,7 @@ res.choice
 ```{r}
 help(PCAOS)
 res.PCAOS <-
-  PCAOS::PCAOS(
+  PCAOS(
     data = antibiotic,
     nature = nature,
     rank.restriction = "one",
@@ -51,15 +48,16 @@ res.PCAOS <-
 #PLOTS
 help(plot.PCAOS)
 #Individuals
-PCAOS::plot.PCAOS(
+plot.PCAOS(
   res.PCAOS = res.PCAOS,
   choice = "ind",
   coloring.indiv = antibiotic$Atb.conso,
   supp.var = TRUE,
-  conf.ellipsises = TRUE,
+  ellipse = TRUE,
   size.legend = 12,
   size.label = 4
 )
+
 #Variables
-PCAOS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed")
+plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed")
 ```
