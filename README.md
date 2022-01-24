@@ -18,7 +18,7 @@ data("antibiotic")
 help(antibiotic)
 ```
 
-# Setting of nature of variables
+# Setting nature of each variable
 ```{r}
 nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
 nature[c(2,3,4)] <- "num"
