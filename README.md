@@ -29,7 +29,7 @@ nature[c(1,15)] <- "ord"
 # Choice of number of components
 ```{r}
 help(choice.component)
-res.choice <- PCAOS::choice.component(antibiotic,nature)
+res.choice <- choice.component(antibiotic,nature)
 res.choice
 ```
 
