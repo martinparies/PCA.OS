@@ -46,7 +46,7 @@ res.PCAOS <-
   )
 ```
 
-# PLOTS
+# Plots
 ```{r}
 help(plot.PCAOS)
 #Individuals
