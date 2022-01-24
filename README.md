@@ -26,7 +26,7 @@ nature[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
 nature[c(1,15)] <- "ord"
 ```
 
-# Choice of components
+# Choice of number of components
 ```{r}
 help(choice.component)
 res.choice <- PCAOS::choice.component(antibiotic,nature)
