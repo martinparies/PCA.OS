@@ -33,7 +33,7 @@ res.choice <- PCAOS::choice.component(antibiotic,nature)
 res.choice
 ```
 
-# Analysis and plot
+# PCAOS Analysis
 ```{r}
 help(PCAOS)
 res.PCAOS <-
@@ -44,8 +44,10 @@ res.PCAOS <-
     nb.comp = 4,
     supp.var = 1
   )
+```
 
-#PLOTS
+# PLOTS
+```{r}
 help(plot.PCAOS)
 #Individuals
 plot.PCAOS(
