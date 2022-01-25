@@ -21,6 +21,8 @@
 #'   \item "one" (default) : apply a rank-one restriction (i.e single quantification of each variable)
 #'   \item "no.restriction": apply no restriction (i.e multiple quantification of each variable)
 #' }
+#'
+#' @param print.order  boolean (TRUE by default), if TRUE ther order of the categories of ordinal variables are print
 
 #' @return
 #'
@@ -77,9 +79,10 @@ PCAOS <- function(data,
                   threshold = 1e-6,
                   D = 1,
                   rank.restriction = "one",
-                  supp.var = NULL) {
+                  supp.var = NULL,
+                  print.order = TRUE) {
   #Checking arguments
-  check.arg(data,nature,rank.restriction)
+  check.arg(data,nature,rank.restriction,print.order)
 
   #Supplementary variable
   nature.supp = NULL

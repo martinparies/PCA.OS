@@ -5,10 +5,11 @@
 # @param data raw variables (vector or matrix)
 # @param nature vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num"
 # @param rank.restriction restriction of the quantification matrix for nominal variable
+# @param print.order  boolean (TRUE by default), if TRUE ther order of the categories of ordinal variables are print
 #
 # @return stop function if argument or data ar wrong
 #
-check.arg <- function(data,nature,rank.restriction){
+check.arg <- function(data,nature,rank.restriction,print.order){
   check = list(NULL)
   #Structure of data
   if(!is.data.frame(data)){
@@ -53,7 +54,7 @@ check.arg <- function(data,nature,rank.restriction){
       }
     }
 
-    if(any(nature == "ord")){
+    if(any(nature == "ord") & print.order == TRUE){
       data.ord <-  data[,which(nature =="ord"),drop = F]
       order.detect <- list(NULL)
       order.detect <- sapply(1:ncol(data.ord),function(var){levels(as.factor(data.ord[,var]))},simplify = F)

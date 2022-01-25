@@ -12,7 +12,8 @@ PCAOS(
   threshold = 1e-06,
   D = 1,
   rank.restriction = "one",
-  supp.var = NULL
+  supp.var = NULL,
+  print.order = TRUE
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ PCAOS(
 }}
 
 \item{supp.var}{a vector indicating the indexes of the supplementary variables}
+
+\item{print.order}{boolean (TRUE by default), if TRUE ther order of the categories of ordinal variables are print}
 }
 \value{
 \itemize{

@@ -32,7 +32,7 @@
 #' @export
 #'
 choice.component <- function(data,nature = rep("num",ncol(data)),nb.comp.to.investigate = ncol(data)){
-  res <- sapply(1:nb.comp.to.investigate,function(x){PCAOS(data,nature,nb.comp = x)$loss.tot})
+  res <- sapply(1:nb.comp.to.investigate,function(x){PCAOS(data,nature,nb.comp = x,print.order = FALSE)$loss.tot})
   pourcentage = rep(NA,nb.comp.to.investigate)
   for (H in 1:nb.comp.to.investigate){
     pourcentage[H] = H * (1 - res[H]) * 100
