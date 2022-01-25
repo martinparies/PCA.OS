@@ -16,19 +16,19 @@ check.plot.arg <- function(choice,nature,nature.supp,supp.var, comp, nb.comp){
     stop("Values of choice should be one of : screeplot,numeric,qualitative,quantif,ind,mixed")
   }
   if (choice == "qualitative"){
-    if (!any(nature == "nom")){
+    if (!any(nature == "nom"|nature == "ord")){
       stop("No variable defined as qualitative (i.e nominal or ordinal")
     }
   }
 
   if (choice == "ind"){
     if(supp.var == TRUE & !any(nature.supp == "nom" | nature.supp == "ord")){
-      stop("Supplementary variable is not qualitative")
+      stop("Supplementary variable is not qualitative)")
     }
   }
 
   if (choice == "numeric"){
-    if (!any(nature == "nom")){
+    if (!any(nature == "num")){
       stop("No variable defined as numeric")
     }
     if(supp.var == TRUE & !any(nature.supp == "num")){
@@ -36,11 +36,11 @@ check.plot.arg <- function(choice,nature,nature.supp,supp.var, comp, nb.comp){
     }
   }
 
-  if (choice == "mixed"){
-    if ((!any(nature == "nom") | !(any(nature == "ord"))) & !any(nature == "num") ){
-      stop("Variables are not mixed")
-    }
-  }
+  # if (choice == "mixed"){
+  #   if ((!any(nature == "nom") | !(any(nature == "ord"))) & !any(nature == "num") ){
+  #     stop("Variables are not mixed")
+  #   }
+  # }
 
   if (any(comp > nb.comp)){
     stop("Wrong axes to plot")
