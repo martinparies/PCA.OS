@@ -151,7 +151,7 @@ plot.PCAOS <-
     }
 
     #LOADPLOT
-    if (choice == "numeric"){
+    if (choice == "numeric" | (choice == "mixed" & (identical (nature,rep("num",length(nature)))))){
       data.graph.var <- data.frame(t(data.frame(res.PCAOS$weights)))
       weight.num <- data.graph.var[which(nature == "num"),]
 
@@ -374,7 +374,7 @@ plot.PCAOS <-
     }
 
     #COMMON ELEMENTS
-    if (choice == "qualitative" | choice == "mixed" ){
+    if (choice == "qualitative" | choice == "mixed" & any(nature == "nom" | nature == "ord")){
       category.coord <- list(NULL)
       compteur <- 1
       var.quali <- which(nature == "nom" | nature =="ord")
@@ -456,7 +456,8 @@ plot.PCAOS <-
     }
 
     #MIXED VARIABLES
-    if (choice == "mixed"){
+    if (choice == "mixed" & ((!any(nature == "nom") | !(any(nature == "ord"))) & !any(nature == "num")) ){
+
       #NUM DATA
       data.graph.var <- data.frame(t(data.frame(res.PCAOS$weights)))
       weight.num <- data.graph.var[which(nature == "num"),]
@@ -467,7 +468,6 @@ plot.PCAOS <-
       nb.var <- length(nb.modal)
       identification.variable <- as.vector(unlist(sapply(1:nb.var, function(j) {rep(colnames(data[,var.quali])[j],nb.modal[j])})))
       data.modal <- data.frame(data.modal,identification.variable)
-
 
       mix.graph <- ggplot2::ggplot() +
         ggplot2::geom_label(ggplot2::aes(
