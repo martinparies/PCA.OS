@@ -20,7 +20,7 @@
 \arguments{
 \item{res.PCAOS}{an object of class PCAOS}
 
-\item{choice}{the available graphs are "screeplot","quantif","indiv","cor","modalities","mixed","squared loadings". See Details.}
+\item{choice}{the available graphs are "screeplot","quantif","indiv","numeric","qualitative","mixed". See Details.}
 
 \item{comp}{a length 2 vector with the components to plot}
 
@@ -62,7 +62,6 @@ For qualitative (i.e nominal and ordinal) variables
 For mixed  variables
  \itemize{
   \item  mixed: factorial representation of mixed variables (weight for numeric variables, and categories for qualitative variables)
-  \item  squared.loadings: plot of the squared loadings of all the variables.
 }
 
 All graph are ggplot object

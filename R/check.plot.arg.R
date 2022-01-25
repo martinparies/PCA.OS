@@ -13,7 +13,7 @@
 #
 check.plot.arg <- function(choice,nature,nature.supp,supp.var, comp, nb.comp){
   if (!(choice %in% c("screeplot","numeric","qualitative","quantif","ind","quali.supp","mixed"))){
-    stop("Values of choice should be one of : screeplot,numeric,qualitative,quantif,ind,quali.supp,mixed")
+    stop("Values of choice should be one of : screeplot,numeric,qualitative,quantif,ind,mixed")
   }
   if (choice == "qualitative"){
     if (!any(nature == "nom")){
