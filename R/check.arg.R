@@ -56,7 +56,7 @@ check.arg <- function(data,nature,rank.restriction){
     if(any(nature == "ord")){
       data.ord <-  data[,which(nature =="ord"),drop = F]
       order.detect <- list(NULL)
-      order.detect <- sapply(1:ncol(data.ord),function(var){levels(data.ord[,var])},simplify = F)
+      order.detect <- sapply(1:ncol(data.ord),function(var){levels(as.factor(data.ord[,var]))},simplify = F)
       names(order.detect) <- colnames(data.ord)
       for(var.ord in 1:ncol(data.ord)){
         print(paste("Order detect for variable",colnames(data.ord[,var.ord,drop = F]),"is"))
