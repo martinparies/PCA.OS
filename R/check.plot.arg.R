@@ -12,7 +12,7 @@
 # @return stop function if argument are wrong
 #
 check.plot.arg <- function(choice,nature,nature.supp,supp.var, comp, nb.comp){
-  if (!(choice %in% c("screeplot","numeric","qualitative","quantif","ind","quali.supp","mixed"))){
+  if (!(choice %in% c("screeplot","quantif","ind","numeric","qualitative","mixed"))){
     stop("Values of choice should be one of : screeplot,numeric,qualitative,quantif,ind,mixed")
   }
   if (choice == "qualitative"){

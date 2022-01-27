@@ -3,7 +3,7 @@
 #' Visualisation of results from PCAOS method. See details for available plot.
 #'
 #' @param res.PCAOS an object of class PCAOS
-#' @param choice the available graphs are "screeplot","quantif","indiv","numeric","qualitative","mixed". See Details.
+#' @param choice the available graphs are "screeplot","quantif","ind","numeric","qualitative","mixed". See Details.
 #' @param comp a length 2 vector with the components to plot
 #' @param coloring.indiv A vector of length N to color individuals. If NULL, no coloring is applied.
 #' @param sub.var.quantif a vector with variable of interest
