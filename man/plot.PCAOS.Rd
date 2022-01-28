@@ -20,7 +20,7 @@
 \arguments{
 \item{res.PCAOS}{an object of class PCAOS}
 
-\item{choice}{the available graphs are "screeplot","quantif","indiv","numeric","qualitative","mixed". See Details.}
+\item{choice}{the available graphs are "screeplot","quantif","ind","numeric","qualitative","mixed". See Details.}
 
 \item{comp}{a length 2 vector with the components to plot}
 
