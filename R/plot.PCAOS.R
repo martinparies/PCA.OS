@@ -29,7 +29,7 @@
 #'   }
 #' For qualitative (i.e nominal and ordinal) variables
 #' \itemize{
-#'   \item  qualitative: factorial representation of qualitatives variables trough the representation of it's categories. Coordinates of each category is calculted such as the single quantification of the category multiplied by the loading of the associated variable.
+#'   \item  qualitative: factorial representation of qualitatives variables trough the representation of it's categories. Coordinates of each category is calculted such as the single quantification of the category multiplied by the loading of the associated variable (rank.restriction = one). Or by averaging, per component, the principal component scores for all individuals in the same categories of a particular variable (rank.restriction = no.restriction).
 #' }
 #' For mixed  variables
 #'  \itemize{
