@@ -322,6 +322,7 @@ PCAOS <- function(data,
   if(is.null(tri$nbvarORD)){tri$nbvarORD <- 0 }
   if(is.null(tri$nbvarNUM)){tri$nbvarNUM <- 0 }
   summary <- data.frame(NB.var.nom = tri$nbvarNOM,NB.var.ord = tri$nbvarORD,NB.var.num = tri$nbvarNUM)
+  summary <- list(summary = summary,rank = rank.restriction[1])
 
   if (any(nature == "num")){
     for (j in 1:tri$nbvarNUM) {

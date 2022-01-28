@@ -380,34 +380,59 @@ plot.PCAOS <-
       var.quali <- which(nature == "nom" | nature =="ord")
       nb.var.quali <- length(var.quali)
 
-      for (var in var.quali){
-        category.coord[[compteur]] <- rep(NA,3)
-        category.coord[[compteur]] <-
-          cbind(
-            paste(colnames(data[,var,drop = FALSE]),rownames(quantification[[var]]),sep = "_"),
-            as.numeric(quantification[[var]]) * res.PCAOS$weights[[var]][comp[1]],
-            as.numeric(quantification[[var]]) * res.PCAOS$weights[[var]][comp[2]]
-          )
-        colnames(category.coord[[compteur]]) <- c("Modalites",nom.comp)
-        category.coord[[compteur]] <- data.frame(category.coord[[compteur]])
-        compteur <- compteur + 1
+      if (res.PCAOS$summary$rank == "one"){
+        for (var in var.quali){
+          category.coord[[compteur]] <- rep(NA,3)
+          category.coord[[compteur]] <-
+            cbind(
+              paste(colnames(data[,var,drop = FALSE]),rownames(quantification[[var]]),sep = "_"),
+              as.numeric(quantification[[var]]) * res.PCAOS$weights[[var]][comp[1]],
+              as.numeric(quantification[[var]]) * res.PCAOS$weights[[var]][comp[2]]
+            )
+          colnames(category.coord[[compteur]]) <- c("Modalites",nom.comp)
+          category.coord[[compteur]] <- data.frame(category.coord[[compteur]])
+          compteur <- compteur + 1
+        }
+        names(category.coord) <- colnames(data[,var.quali])
+
+        data.modal <- category.coord[[1]]
+        for (i in 2:length(category.coord)){
+          data.modal <- rbind(data.modal,category.coord[[i]])
+        }
+        colnames(data.modal) <- colnames(category.coord[[1]])
       }
-      names(category.coord) <- colnames(data[,var.quali])
 
-      max.x <- max(c(as.numeric(unlist(lapply(1:nb.var.quali, function(v)category.coord[[v]][,2]))),res.PCAOS$weights[[var]][1]))
-      min.x <- min(c(as.numeric(unlist(lapply(1:nb.var.quali, function(v)category.coord[[v]][,2]))),res.PCAOS$weights[[var]][1]))
+      if (res.PCAOS$summary$rank == "no.restriction"){
+        data.quali <- data.frame(res.PCAOS$data[,var.quali,drop = F])
+        variables.quali <- colnames(data.quali)
+        modalite <- sapply(1:ncol(data.quali),function(var){unique(data.quali[,var])},simplify = FALSE)
+        nb.modal <- unlist(lapply(modalite,length))
+        category.coord <- lapply(1:nb.var.quali, function(var) matrix(NA,nb.modal[var],nb.comp))
 
-      max.y <- max(c(as.numeric(unlist(lapply(1:nb.var.quali, function(v)category.coord[[v]][,3]))),res.PCAOS$weights[[var]][2]))
-      min.y <- min(c(as.numeric(unlist(lapply(1:nb.var.quali, function(v)category.coord[[v]][,3]))),res.PCAOS$weights[[var]][2]))
+        for (var in 1:nb.var.quali){
+          for (modal in 1:nb.modal[var]){
+            category.coord[[var]][modal,] <- colMeans(res.PCAOS$components[which(data.quali[,var,drop = FALSE] == modalite[[var]][modal]),],)
+          }
+          colnames(category.coord[[var]]) <- colnames(res.PCAOS$components)
+          rownames(category.coord[[var]]) <- modalite[[var]]
+          #category.coord[[var]] <- category.coord[[var]][order(rownames(category.coord[[var]])),]
+        }
+        names(category.coord) <- variables.quali
+        fill.arg <- NULL
+        for (var in 1:length(var.quali)){fill.arg <- c(fill.arg,rep (variables.quali[var],nb.modal[var]))}
+        modalities <- unlist(sapply(1:nb.var.quali,function(var){paste(variables.quali[var],modalite[[var]],sep = "_")},simplify = F))
+        category.coord.tot <- do.call("rbind", category.coord)
+        data.modal <- data.frame(modalities = modalities,category.coord.tot,fill.arg = fill.arg)
+      }
+
+      max.x <- as.numeric(max(data.modal[,2]))
+      min.x <- as.numeric(min(data.modal[,2]))
+
+      max.y <- as.numeric(max(data.modal[,3]))
+      min.y <- as.numeric(min(data.modal[,3]))
 
       limit.x <- c(min.x-0.2,max.x+0.2)
       limit.y <- c(min.y-0.2,max.y+0.2)
-
-      data.modal <- category.coord[[1]]
-      for (i in 2:length(category.coord)){
-        data.modal <- rbind(data.modal,category.coord[[i]])
-      }
-      colnames(data.modal) <- colnames(category.coord[[1]])
 
     }
 
@@ -426,13 +451,6 @@ plot.PCAOS <-
           fill = as.character(identification.variable)
         ),
         size = size.label) +
-        ggplot2::geom_line(ggplot2::aes(
-          x = as.numeric(data.modal[,2]),
-          y = as.numeric(data.modal[,3]),
-          group = identification.variable,
-          col = as.character(identification.variable)
-        ),
-        size = 1,show.legend = F) +
         ggplot2::geom_hline(
           yintercept = 0,
           linetype = "dotted",
@@ -449,7 +467,17 @@ plot.PCAOS <-
         ggplot2::xlab(paste(nom.comp[1], inertie[comp[1], 1], " %")) +
         ggplot2::ylab(paste(nom.comp[2], inertie[comp[2], 1], " %")) +
         ggplot2::theme_classic(base_size = size.legend) + ggplot2::guides(fill = ggplot2::guide_legend(title = "Variables",
-                                                                                              override.aes = ggplot2::aes(label = "")))
+                                                                                                       override.aes = ggplot2::aes(label = "")))
+
+      if(res.PCAOS$summary$rank == "one"){
+        graph.modalites <- graph.modalites + ggplot2::geom_line(ggplot2::aes(
+          x = as.numeric(data.modal[,2]),
+          y = as.numeric(data.modal[,3]),
+          group = identification.variable,
+          col = as.character(identification.variable)
+        ),
+        size = 1,show.legend = F)
+      }
 
       return(graph.modalites)
 
@@ -503,13 +531,6 @@ plot.PCAOS <-
           fill = as.character(identification.variable)
         ),
         size = size.label) +
-        ggplot2::geom_line(ggplot2::aes(
-          x = as.numeric(data.modal[,2]),
-          y = as.numeric(data.modal[,3]),
-          group = as.character(identification.variable),
-          col = as.character(identification.variable)
-        ),
-        size = 1,show.legend = F) +
         ggplot2::ggtitle("Factorial representation of mixed variables") +
         ggplot2::xlab(paste(nom.comp[1], inertie[comp[1],1]," %")) +
         ggplot2::ylab(paste(nom.comp[2], inertie[comp[2],1]," %")) +
@@ -537,6 +558,17 @@ plot.PCAOS <-
             )
         }
       }
+
+      if(res.PCAOS$summary$rank == "one"){
+        mix.graph <- mix.graph + ggplot2::geom_line(ggplot2::aes(
+          x = as.numeric(data.modal[,2]),
+          y = as.numeric(data.modal[,3]),
+          group = identification.variable,
+          col = as.character(identification.variable)
+        ),
+        size = 1,show.legend = F)
+      }
+
 
       return(mix.graph)
     }
