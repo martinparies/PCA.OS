@@ -147,11 +147,11 @@ PCAOS <- function(data,
   # 3. Rank one restriction
   rank.restriction.nom <- NULL
   if (rank.restriction == "no.restriction" & any(nature == "nom")){
-    rank.restriction <- rep("one", nb.var.init)
-    rank.restriction[which(nature == "nom")] <- "no.restriction"
+    rank.restriction.nom <- rep("one", nb.var.init)
+    rank.restriction.nom[which(nature == "nom")] <- "no.restriction"
     rank.restriction.nom <- rep("no.restriction",tri$nbvarNOM)
   } else{
-    rank.restriction <- rep("one", nb.var.init)
+    #rank.restriction <- rep("one", nb.var.init)
     if(any(nature == "nom")){rank.restriction.nom <- rep("one",tri$nbvarNOM)}
   }
 
@@ -322,7 +322,7 @@ PCAOS <- function(data,
   if(is.null(tri$nbvarORD)){tri$nbvarORD <- 0 }
   if(is.null(tri$nbvarNUM)){tri$nbvarNUM <- 0 }
   summary <- data.frame(NB.var.nom = tri$nbvarNOM,NB.var.ord = tri$nbvarORD,NB.var.num = tri$nbvarNUM)
-  summary <- list(summary = summary,rank = rank.restriction[1])
+  summary <- list(summary = summary,rank = rank.restriction)
 
   if (any(nature == "num")){
     for (j in 1:tri$nbvarNUM) {
@@ -337,7 +337,7 @@ PCAOS <- function(data,
 
   if (any(nature == "ord")){
     for (j in 1:tri$nbvarORD) {
-      var.quant<-quantified.data[[tri$emplacement.ord[j]]]
+      var.quant <- quantified.data[[tri$emplacement.ord[j]]]
       var<-as.numeric(data[,tri$emplacement.ord[j]])
       w<-weights[[tri$emplacement.ord[j]]]
       s=as.numeric(sign(cor(var,var.quant)))
@@ -378,7 +378,7 @@ PCAOS <- function(data,
     names(quant.MODAL.ord) <- colnames(data[,nature == "ord"])
   }
 
-  if(any(rank.restriction == "one")){
+  if(rank.restriction == "one"){
     quantified.data <- matrix(unlist(quantified.data),nrow=nb.indiv,ncol=nb.var.init)
     row.names(quantified.data) <- row.names(data)
     colnames(quantified.data) <- colnames(data)

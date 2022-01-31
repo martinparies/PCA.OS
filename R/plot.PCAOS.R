@@ -94,7 +94,7 @@ plot.PCAOS <-
     if(!inherits(res.PCAOS,"PCAOS")) stop("Non convenient object")
 
     nb.comp <- ncol(res.PCAOS$components)
-    check.plot.arg(choice,res.PCAOS$nature,res.PCAOS$nature.supp,supp.var,comp,nb.comp)
+    check.plot.arg(choice,res.PCAOS$nature,res.PCAOS$nature.supp,supp.var,comp,nb.comp,rank = res.PCAOS$summary$rank)
 
     #INFORMATION ABOUT THE RESULTS
     data <- res.PCAOS$data
@@ -123,9 +123,17 @@ plot.PCAOS <-
       compteur <- compteur + 1
     }
     compteur <- 1
-    for (i in which(nature == "num")){
-      quantification[[i]] <- cbind(data[,i],res.PCAOS$quantified.data[,i])
-      compteur <- compteur + 1
+    if(res.PCAOS$summary$rank == "one"){
+      for (i in which(nature == "num")){
+        quantification[[i]] <- cbind(data[,i],res.PCAOS$quantified.data[,i])
+        compteur <- compteur + 1
+      }
+    }
+    if(res.PCAOS$summary$rank == "no.restriction"){
+      for (i in which(nature == "num")){
+        quantification[[i]] <- cbind(data[,i],res.PCAOS$quantified.data[[i]])
+        compteur <- compteur + 1
+      }
     }
     names (quantification) <- variables
 
@@ -411,7 +419,7 @@ plot.PCAOS <-
 
         for (var in 1:nb.var.quali){
           for (modal in 1:nb.modal[var]){
-            category.coord[[var]][modal,] <- colMeans(res.PCAOS$components[which(data.quali[,var,drop = FALSE] == modalite[[var]][modal]),],)
+            category.coord[[var]][modal,] <- colMeans(res.PCAOS$components[which(data.quali[,var] == as.factor(modalite[[var]][modal])),],)
           }
           colnames(category.coord[[var]]) <- colnames(res.PCAOS$components)
           rownames(category.coord[[var]]) <- modalite[[var]]
@@ -484,7 +492,7 @@ plot.PCAOS <-
     }
 
     #MIXED VARIABLES
-    if (choice == "mixed" & ((!any(nature == "nom") | !(any(nature == "ord"))) & !any(nature == "num")) ){
+    if (choice == "mixed"){
 
       #NUM DATA
       data.graph.var <- data.frame(t(data.frame(res.PCAOS$weights)))

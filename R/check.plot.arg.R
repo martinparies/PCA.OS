@@ -11,7 +11,7 @@
 #
 # @return stop function if argument are wrong
 #
-check.plot.arg <- function(choice,nature,nature.supp,supp.var, comp, nb.comp){
+check.plot.arg <- function(choice,nature,nature.supp,supp.var, comp, nb.comp,rank){
   if (!(choice %in% c("screeplot","quantif","ind","numeric","qualitative","mixed"))){
     stop("Values of choice should be one of : screeplot,numeric,qualitative,quantif,ind,mixed")
   }
@@ -25,6 +25,10 @@ check.plot.arg <- function(choice,nature,nature.supp,supp.var, comp, nb.comp){
     if(supp.var == TRUE & !any(nature.supp == "nom" | nature.supp == "ord")){
       stop("Supplementary variable is not qualitative")
     }
+  }
+
+  if (choice == "quantif" & rank == "no.restriction"){
+    stop("Quantification plot not available for multiple quantification")
   }
 
   if (choice == "numeric"){
