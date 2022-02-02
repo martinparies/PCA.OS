@@ -28,7 +28,11 @@ A data frame with 122 row (agricultural explotation) and 15 columns (variables).
 antibiotic
 }
 \description{
-This data set contains information about 15 variables about medical practice, antibiotic consumption
-in 122 agricultural explotation of Turkey
+This data set contains information about 15 variables measured during an on-farm pharmaco-epidemiological survey of 246 turkey broiler flocks from
+131 farms (N = 122 after removing farms with missing values). The survey was carried out to assess the homogeneity of antimicrobial use between flocks on the same
+farm and to explore the possible relationships between farm and farmer characteristics and the level of antimicrobial (i.e antibiotics) use.
+}
+\references{
+Chauvin, C., Bouvarel, I., Beloil, P. A., Orand, J. P., Guillemot, D., & Sanders, P. (2005). A pharmaco-epidemiological analysis of factors associated with antimicrobial consumption level in turkey broiler flocks. Veterinary research, 36(2), 199-211.
 }
 \keyword{datasets}

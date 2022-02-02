@@ -103,7 +103,6 @@ plot.PCAOS <-
     inertie <- res.PCAOS$inertia
 
     #QUANTIFICATIONS
-    graphs.list <- list(NA)
     variables <- colnames(data)
     nb.var <- length(variables)
     quantification <- vector("list", length = nb.var)
@@ -317,7 +316,7 @@ plot.PCAOS <-
 
     #QUANTIFICATION
     if (choice == "quantif"){
-      #LIMITS OF GRAPHS
+      graphs.list <- list(NA)
       limit = c(min(res.PCAOS$quantified.data)-0.1, max(res.PCAOS$quantified.data)+0.1)
       for (var in 1:nb.var){
         if(nature[var] == "nom"){

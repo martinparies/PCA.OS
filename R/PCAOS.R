@@ -266,20 +266,12 @@ PCAOS <- function(data,
       }
     }
 
-    # 6.4 Computing scores
-    tANCIEN<-t
-    S<-matrix(0,nb.indiv,nb.comp)
-    Matj<- list(NULL)
-    for (j in 1:nb.var.init){
-      Matj[[j]]<-quantified.data[[j]]%*% weights[[j]]
-      S<-S+Matj[[j]]
-    }
-    t<-scale(S,center=TRUE,scale=FALSE)
+    XX=NULL
+    ressvd<-svd(data.frame(quantified.data))
+    t<-ressvd$u[,1:nb.comp]*sqrt(nb.indiv) # pour que t't = NI
+    t<-scale(t,center=TRUE,scale=FALSE)
 
-    #orthogonalisation of t
-    ressvd<-svd(t)
-    torth<-ressvd$u*sqrt(nb.indiv)
-    t<-torth
+
   }
   ############  end while #####################################
 
@@ -378,11 +370,14 @@ PCAOS <- function(data,
     names(quant.MODAL.ord) <- colnames(data[,nature == "ord"])
   }
 
-  if(rank.restriction == "one"){
-    quantified.data <- matrix(unlist(quantified.data),nrow=nb.indiv,ncol=nb.var.init)
-    row.names(quantified.data) <- row.names(data)
-    colnames(quantified.data) <- colnames(data)
+  # Computing Matj
+  S<-matrix(0,nb.indiv,nb.comp)
+  Matj<- list(NULL)
+  for (j in 1:nb.var.init){
+    Matj[[j]]<- quantified.data[[j]] %*% weights[[j]]
+    S<-S+Matj[[j]]
   }
+  #t<-scale(S,center=TRUE,scale=FALSE)
 
   # Percentage of inertia for each component
   valinertia=rep(0,nb.comp)
@@ -397,6 +392,15 @@ PCAOS <- function(data,
   inertia <-
     data.frame(inertia = round(valinertia,4) * 100,
                cumulative.percentage.of.inertia = round(cumul,4) * 100)
+
+  if(rank.restriction == "one"){
+    quantified.data <- matrix(unlist(quantified.data),nrow=nb.indiv,ncol=nb.var.init)
+    row.names(quantified.data) <- row.names(data)
+    colnames(quantified.data) <- colnames(data)
+  }
+  if(rank.restriction == "no.restriction"){
+    names(quantified.data) <-  colnames(data)
+  }
 
   res <-
     list(
