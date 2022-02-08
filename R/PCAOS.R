@@ -266,10 +266,27 @@ PCAOS <- function(data,
       }
     }
 
-    XX=NULL
-    ressvd<-svd(data.frame(quantified.data))
-    t<-ressvd$u[,1:nb.comp]*sqrt(nb.indiv) # pour que t't = NI
-    t<-scale(t,center=TRUE,scale=FALSE)
+    if(rank.restriction == "one"){
+      XX=NULL
+      ressvd<-svd(data.frame(quantified.data))
+      t<-ressvd$u[,1:nb.comp]*sqrt(nb.indiv) # pour que t't = NI
+      t<-scale(t,center=TRUE,scale=FALSE)
+    }
+    if(rank.restriction == "no.restriction"){
+      S<-matrix(0,nb.indiv,nb.comp)
+      # Computing Matj
+      S<-matrix(0,nb.indiv,nb.comp)
+      Matj<- list(NULL)
+      for (j in 1:nb.var.init){
+        Matj[[j]]<- quantified.data[[j]] %*% weights[[j]]
+        S<-S+Matj[[j]]
+      }
+      t<-scale(S,center=TRUE,scale=FALSE)
+      ressvd<-svd(t)
+      torth<-ressvd$u*sqrt(nb.indiv)
+      t<-torth
+
+    }
 
 
   }
