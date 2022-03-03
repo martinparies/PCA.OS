@@ -34,14 +34,14 @@ check.arg <- function(data,nature,rank.restriction,print.order){
     #Nature of variables
     mix <- mix.data(data)
 
-    if(any(nature == "num")){
-      data.num = data[,which(nature == "num"),drop = F]
-      if(mix$nb.numeric != length(which(nature == "num"))){
-        var.facto.def.as.num = colnames(data.num[,which(sapply(1:ncol(data.num),function(i){any(is.factor(data.num[1,i]))})),drop=F])
-        #var.character.def.as.num = colnames(data.num[,which(sapply(1:ncol(data.num),function(i){any(is.character(data.num[,i]))})),drop=F])
-        stop(paste("Warning, factors variables ",var.facto.def.as.num ," defined as numeric"))
-      }
-    }
+    # if(any(nature == "num")){
+    #   data.num = data[,which(nature == "num"),drop = F]
+    #   if(mix$nb.numeric != length(which(nature == "num"))){
+    #     var.facto.def.as.num = colnames(data.num[,which(sapply(1:ncol(data.num),function(i){any(is.factor(data.num[1,i]))})),drop=F])
+    #     #var.character.def.as.num = colnames(data.num[,which(sapply(1:ncol(data.num),function(i){any(is.character(data.num[,i]))})),drop=F])
+    #     stop(paste("Warning, factors variables ",var.facto.def.as.num ," defined as numeric"))
+    #   }
+    # }
 
     if(any(nature == "nom") | any(nature == "ord")){
       data.nom <-  data[,which(nature == "nom" | nature =="ord"),drop = F]

@@ -59,8 +59,8 @@
 #'#Quantifications
 #'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "quantif",sub.var.quantif =  c(4,8))
 #'
-#'#Qualitative variables
-#'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative")
+#'#'#Numeric variables
+#'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative",supp.var = TRUE)
 #'
 #'#Numeric variables
 #'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "numeric",supp.var = TRUE)
@@ -225,7 +225,7 @@ plot.PCAOS <-
     }
 
     #INDIVIDUAL
-    if (choice == "ind" | (choice == "qualitative" & supp.var == TRUE)){
+    if (choice == "ind" | (choice == "qualitative" & (supp.var == TRUE & all(res.PCAOS$nature.supp == "nom")))){
       nom.indiv <- rownames(res.PCAOS$data)
       limit.x = c(min(res.PCAOS$components[,comp[1]]), max(res.PCAOS$components[,comp[1]]))
       limit.y = c(min(res.PCAOS$components[,comp[2]]), max(res.PCAOS$components[,comp[2]]))
@@ -260,7 +260,7 @@ plot.PCAOS <-
         ) +
         ggplot2::theme_classic(base_size = size.legend)
 
-      if(choice == "qualitative" & supp.var == TRUE) {message("Modalities are represented as barycenter")}
+      # if(choice == "qualitative" & supp.var == TRUE) {message("Modalities are represented as barycenter")}
 
       #Si il y a une variable qualitative supplementaire
       if (supp.var == TRUE){
@@ -441,23 +441,30 @@ plot.PCAOS <-
       limit.x <- c(min.x-0.2,max.x+0.2)
       limit.y <- c(min.y-0.2,max.y+0.2)
 
+      #Calcul frequence de citation
+      data.quali <- data.frame(res.PCAOS$data[,var.quali,drop = F])
+      freq <- unlist(sapply(1:ncol(data.quali),function(var){table(data.quali[,var])},simplify = F))
+      freq <- freq/nrow(res.PCAOS$data) *100
     }
 
     #MODALITIES REPRESENTATION
-    if (choice == "qualitative" &  supp.var == FALSE){
+    if (choice == "qualitative"){
       nb.modal <- unlist(lapply(category.coord,nrow))
       nb.var <- length(nb.modal)
       identification.variable <- as.vector(unlist(sapply(1:nb.var, function(j) {rep(colnames(data[,var.quali])[j],nb.modal[j])})))
       data.modal <- data.frame(data.modal,identification.variable)
+      data.modal <- data.frame(data.modal,freq)
 
       graph.modalites <- ggplot2::ggplot(data = data.modal) +
-        ggplot2::geom_label(ggplot2::aes(
-          x = as.numeric(data.modal[,2]),
-          y =  as.numeric(data.modal[,3]),
-          label = data.modal[, 1],
-          fill = as.character(identification.variable)
-        ),
-        size = size.label) +
+          ggplot2::geom_label(
+          ggplot2::aes(
+            x = as.numeric(data.modal[, 2]),
+            y =  as.numeric(data.modal[, 3]),
+            label = data.modal[, 1],
+            size = as.numeric(data.modal[,5])
+          ),
+          #size = size.label
+        ) +
         ggplot2::geom_hline(
           yintercept = 0,
           linetype = "dotted",
@@ -473,18 +480,90 @@ plot.PCAOS <-
         ggplot2::ggtitle("Factorial representation of qualitative variables") +
         ggplot2::xlab(paste(nom.comp[1], inertie[comp[1], 1], " %")) +
         ggplot2::ylab(paste(nom.comp[2], inertie[comp[2], 1], " %")) +
-        ggplot2::theme_classic(base_size = size.legend) + ggplot2::guides(fill = ggplot2::guide_legend(title = "Variables",
-                                                                                                       override.aes = ggplot2::aes(label = "")))
+        ggplot2::theme_classic(base_size = size.legend) +
+        ggplot2::guides(size = ggplot2::guide_legend(title = "Citation frequency (%)"))
 
-      if(res.PCAOS$summary$rank == "one"){
-        graph.modalites <- graph.modalites + ggplot2::geom_line(ggplot2::aes(
-          x = as.numeric(data.modal[,2]),
-          y = as.numeric(data.modal[,3]),
-          group = identification.variable,
-          col = as.character(identification.variable)
-        ),
-        size = 1,show.legend = F)
+      # if(res.PCAOS$summary$rank == "one"){
+      #   graph.modalites <- graph.modalites + ggplot2::geom_line(ggplot2::aes(
+      #     x = as.numeric(data.modal[,2]),
+      #     y = as.numeric(data.modal[,3]),
+      #     group = identification.variable,
+      #     col = as.character(identification.variable)
+      #   ),
+      #   size = 1,show.legend = F)
+      # }
+
+      if(supp.var == TRUE){
+        if(any(res.PCAOS$nature.supp == "num" )){
+          loading.supp <- do.call(rbind.data.frame,res.PCAOS$coord.supp.num)
+          graph.modalites <-
+            graph.modalites  + ggplot2::annotate(
+              geom = "segment",
+              x = rep(0,nrow(loading.supp)),
+              xend = loading.supp[,comp[1]],
+              y = rep(0,nrow(loading.supp)),
+              yend = loading.supp[,comp[2]],
+              col = "black",
+              arrow = ggplot2::arrow(length = grid::unit(0.2, "cm")),size = 0.70
+            ) + ggplot2::annotate(
+              geom = "label",
+              x = loading.supp[,comp[1]],
+              y = loading.supp[,comp[2]],
+              label = rownames(loading.supp),
+              col = "blue",size = size.label
+            )
+        }
+
+        if(any(res.PCAOS$nature.supp == "nom" ) | any(res.PCAOS$nature.supp == "ord" )){
+          barycentre <-
+            do.call(rbind.data.frame, res.PCAOS$coord.supp.quali)
+
+          graph.modalites <-
+            graph.modalites  + ggplot2::annotate(geom = "label",x = barycentre[,comp[1]], y = barycentre[,comp[2]],label =  rownames(barycentre),size = size.label,col = "blue")
+
+          if(ellipse == TRUE){
+            mat = list(NULL)
+
+            for (var.supp in 1:ncol(res.PCAOS$quali.var.supp)){
+
+              var.quali = res.PCAOS$quali.var.supp[,var.supp]
+              coord.ellipse <- cbind.data.frame(ellipses.coord(var.quali = var.quali,components = res.PCAOS$components,level.conf = level.conf))
+              modalites <- levels(as.factor(var.quali))
+              nb.modal <- length(modalites)
+
+              x <- matrix(NA,nrow(coord.ellipse),nb.modal)
+              y <- matrix(NA,nrow(coord.ellipse),nb.modal)
+
+              compteur <- 1
+              for (modal in seq(from = 1,
+                                to = (nb.modal * 2),
+                                by = 2)) {
+                x[, compteur] <- coord.ellipse[, modal]
+                y[, compteur] <- coord.ellipse[, modal + 1]
+                compteur <- compteur + 1
+              }
+
+              mat[[var.supp]] <- cbind(c(x),c(y))
+              mat[[var.supp]] <- cbind.data.frame(mat[[var.supp]], as.vector(unlist(sapply(1:nb.modal, function(j) {rep(modalites[j],nrow(coord.ellipse))}))))
+
+
+            }
+            mat.d <- do.call(rbind.data.frame,mat)
+            graph.modalites <- graph.modalites +  ggplot2::annotate(
+              geom = "path",
+              x =  mat.d[,1],
+              y = mat.d[,2],
+              size = 0.5,
+              color = "darkblue",
+              group = as.factor(mat.d[,3])
+            )
+
+          }
+        }
+
       }
+
+
 
       return(graph.modalites)
 
@@ -503,6 +582,7 @@ plot.PCAOS <-
       nb.var <- length(nb.modal)
       identification.variable <- as.vector(unlist(sapply(1:nb.var, function(j) {rep(colnames(data[,var.quali])[j],nb.modal[j])})))
       data.modal <- data.frame(data.modal,identification.variable)
+      data.modal <- data.frame(data.modal,freq)
 
       mix.graph <- ggplot2::ggplot() +
         ggplot2::geom_label(ggplot2::aes(
@@ -531,18 +611,17 @@ plot.PCAOS <-
           color = "black",
           size = 1
         ) +
-        ggplot2::geom_label(ggplot2::aes(
+        ggplot2::geom_text(ggplot2::aes(
           x = as.numeric(data.modal[,2]),
           y =  as.numeric(data.modal[,3]),
           label = data.modal[, 1],
-          fill = as.character(identification.variable)
-        ),
-        size = size.label) +
+          size = data.modal[, 5]
+        ),color = "black") +
         ggplot2::ggtitle("Factorial representation of mixed variables") +
         ggplot2::xlab(paste(nom.comp[1], inertie[comp[1],1]," %")) +
         ggplot2::ylab(paste(nom.comp[2], inertie[comp[2],1]," %")) +
-        ggplot2::theme_classic(base_size = size.legend)  + ggplot2::guides(fill = ggplot2::guide_legend(title = "Variables",
-                                                                    override.aes = ggplot2::aes(label = "")))
+        ggplot2::theme_classic(base_size = size.legend)  + ggplot2::guides(size = ggplot2::guide_legend(title = "Citation frequency for qualitative variables (%)"))
+
       if(supp.var == TRUE){
         if(any(res.PCAOS$nature.supp == "num" )){
           #Numeric variables
@@ -564,17 +643,64 @@ plot.PCAOS <-
               col = "blue",size = size.label
             )
         }
+        if(any(res.PCAOS$nature.supp == "nom" ) | any(res.PCAOS$nature.supp == "ord" )){
+          barycentre <-
+            do.call(rbind.data.frame, res.PCAOS$coord.supp.quali)
+
+          mix.graph <-
+            mix.graph  + ggplot2::annotate(geom = "label",x = barycentre[,comp[1]], y = barycentre[,comp[2]],label =  rownames(barycentre),size = size.label,col = "blue")
+
+          if(ellipse == TRUE){
+            mat = list(NULL)
+
+            for (var.supp in 1:ncol(res.PCAOS$quali.var.supp)){
+
+              var.quali = res.PCAOS$quali.var.supp[,var.supp]
+              coord.ellipse <- cbind.data.frame(ellipses.coord(var.quali = var.quali,components = res.PCAOS$components,level.conf = level.conf))
+              modalites <- levels(as.factor(var.quali))
+              nb.modal <- length(modalites)
+
+              x <- matrix(NA,nrow(coord.ellipse),nb.modal)
+              y <- matrix(NA,nrow(coord.ellipse),nb.modal)
+
+              compteur <- 1
+              for (modal in seq(from = 1,
+                                to = (nb.modal * 2),
+                                by = 2)) {
+                x[, compteur] <- coord.ellipse[, modal]
+                y[, compteur] <- coord.ellipse[, modal + 1]
+                compteur <- compteur + 1
+              }
+
+              mat[[var.supp]] <- cbind(c(x),c(y))
+              mat[[var.supp]] <- cbind.data.frame(mat[[var.supp]], as.vector(unlist(sapply(1:nb.modal, function(j) {rep(modalites[j],nrow(coord.ellipse))}))))
+
+
+            }
+            mat.d <- do.call(rbind.data.frame,mat)
+            mix.graph <- mix.graph +  ggplot2::annotate(
+              geom = "path",
+              x =  mat.d[,1],
+              y = mat.d[,2],
+              size = 0.5,
+              color = "darkblue",
+              group = as.factor(mat.d[,3])
+            )
+
+          }
+        }
+
       }
 
-      if(res.PCAOS$summary$rank == "one"){
-        mix.graph <- mix.graph + ggplot2::geom_line(ggplot2::aes(
-          x = as.numeric(data.modal[,2]),
-          y = as.numeric(data.modal[,3]),
-          group = identification.variable,
-          col = as.character(identification.variable)
-        ),
-        size = 1,show.legend = F)
-      }
+      # if(res.PCAOS$summary$rank == "one"){
+      #   mix.graph <- mix.graph + ggplot2::geom_line(ggplot2::aes(
+      #     x = as.numeric(data.modal[,2]),
+      #     y = as.numeric(data.modal[,3]),
+      #     group = identification.variable,
+      #     col = as.character(identification.variable)
+      #   ),
+      #   size = 1,show.legend = F)
+      # }
 
 
       return(mix.graph)

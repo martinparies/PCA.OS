@@ -87,8 +87,8 @@ PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "ind",supp.var = TRUE,ellipse 
 #Quantifications
 PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "quantif",sub.var.quantif =  c(4,8))
 
-#Qualitative variables
-PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative")
+#'#Numeric variables
+PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative",supp.var = TRUE)
 
 #Numeric variables
 PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "numeric",supp.var = TRUE)
