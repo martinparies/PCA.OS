@@ -425,11 +425,11 @@ plot.PCAOS <-
           #category.coord[[var]] <- category.coord[[var]][order(rownames(category.coord[[var]])),]
         }
         names(category.coord) <- variables.quali
-        fill.arg <- NULL
-        for (var in 1:length(var.quali)){fill.arg <- c(fill.arg,rep (variables.quali[var],nb.modal[var]))}
-        modalities <- unlist(sapply(1:nb.var.quali,function(var){paste(variables.quali[var],modalite[[var]],sep = "_")},simplify = F))
-        category.coord.tot <- do.call("rbind", category.coord)
-        data.modal <- data.frame(modalities = modalities,category.coord.tot,fill.arg = fill.arg)
+        # fill.arg <- NULL
+        # for (var in 1:length(var.quali)){fill.arg <- c(fill.arg,rep (variables.quali[var],nb.modal[var]))}
+        # modalities <- unlist(sapply(1:nb.var.quali,function(var){paste(variables.quali[var],modalite[[var]],sep = "_")},simplify = F))
+        # category.coord.tot <- do.call("rbind", category.coord)
+        data.modal <- data.frame(modalities = modalities,category.coord.tot[,c(comp[1],comp[2])])
       }
 
       max.x <- as.numeric(max(data.modal[,2]))
@@ -691,17 +691,6 @@ plot.PCAOS <-
         }
 
       }
-
-      # if(res.PCAOS$summary$rank == "one"){
-      #   mix.graph <- mix.graph + ggplot2::geom_line(ggplot2::aes(
-      #     x = as.numeric(data.modal[,2]),
-      #     y = as.numeric(data.modal[,3]),
-      #     group = identification.variable,
-      #     col = as.character(identification.variable)
-      #   ),
-      #   size = 1,show.legend = F)
-      # }
-
 
       return(mix.graph)
     }
