@@ -3,21 +3,21 @@
 # check if data and arguments are good to be analysed by PCAOS function
 #
 # @param data raw variables (vector or matrix)
-# @param nature vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num"
+# @param level.scale vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num"
 # @param rank.restriction restriction of the quantification matrix for nominal variable
 # @param print.order  boolean (TRUE by default), if TRUE ther order of the categories of ordinal variables are print
 #
 # @return stop function if argument or data ar wrong
 #
-check.arg <- function(data,nature,rank.restriction,print.order){
+check.arg <- function(data,level.scale,rank.restriction,print.order){
   check = list(NULL)
   #Structure of data
   if(!is.data.frame(data)){
     stop("Argument data should be a data.frame")
   }else{
     #nature
-    if (ncol(data) != length(nature)){
-      stop(paste("Error, the length of nature is different from the number of variable data."))
+    if (ncol(data) != length(level.scale)){
+      stop(paste("Error, the length of level.scale is different from the number of variable data."))
     }
 
     #Données manquantes
@@ -43,8 +43,8 @@ check.arg <- function(data,nature,rank.restriction,print.order){
     #   }
     # }
 
-    if(any(nature == "nom") | any(nature == "ord")){
-      data.nom <-  data[,which(nature == "nom" | nature =="ord"),drop = F]
+    if(any(level.scale == "nom") | any(level.scale == "ord")){
+      data.nom <-  data[,which(level.scale == "nom" | level.scale =="ord"),drop = F]
       #A variable with only one categories
       table = sapply(1:ncol(data.nom),function(x){table(data.nom[,x])},simplify = F)
       length = lapply(table,length)
@@ -54,8 +54,8 @@ check.arg <- function(data,nature,rank.restriction,print.order){
       }
     }
 
-    if(any(nature == "ord") & print.order == TRUE){
-      data.ord <-  data[,which(nature =="ord"),drop = F]
+    if(any(level.scale == "ord") & print.order == TRUE){
+      data.ord <-  data[,which(level.scale =="ord"),drop = F]
       order.detect <- list(NULL)
       order.detect <- sapply(1:ncol(data.ord),function(var){levels(as.factor(data.ord[,var]))},simplify = F)
       names(order.detect) <- colnames(data.ord)

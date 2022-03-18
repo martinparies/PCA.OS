@@ -40,15 +40,15 @@
 #'
 #' @examples
 #' data (antibiotic)
-#' nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
-#' nature[c(2,3,4)] <- "num"
-#' nature[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
-#' nature[c(1,15)] <- "ord"
-#' nature
+#' level.scale <- rep(NA,ncol(antibiotic)) #Setting level.scale argument
+#' level.scale[c(2,3,4)] <- "num"
+#' level.scale[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
+#' level.scale[c(1,15)] <- "ord"
+#' level.scale
 #'
 #'res.PCAOS <- PCA.OS::PCAOS(
 #'  data = antibiotic,
-#'  nature = nature,
+#'  level.scale = level.scale,
 #'  supp.var = c(1,2)
 #')
 #'
@@ -94,11 +94,11 @@ plot.PCAOS <-
     if(!inherits(res.PCAOS,"PCAOS")) stop("Non convenient object")
 
     nb.comp <- ncol(res.PCAOS$components)
-    check.plot.arg(choice,res.PCAOS$nature,res.PCAOS$nature.supp,supp.var,comp,nb.comp,rank = res.PCAOS$summary$rank)
+    check.plot.arg(choice,res.PCAOS$level.scale,res.PCAOS$level.scale.supp,supp.var,comp,nb.comp,rank = res.PCAOS$summary$rank)
 
     #INFORMATION ABOUT THE RESULTS
     data <- res.PCAOS$data
-    nature <- res.PCAOS$nature
+    level.scale <- res.PCAOS$level.scale
     nom.comp <- c(paste("PC",comp[1],sep=""),paste("PC",comp[2],sep=""))
     inertie <- res.PCAOS$inertia
 
@@ -110,26 +110,26 @@ plot.PCAOS <-
     quantification.ord <- res.PCAOS$quantification.categories.ord
     var.nom <- names(quantification.nom)
     var.ord <- names(quantification.ord)
-    var.num <- names(data[which(nature == "num")])
+    var.num <- names(data[which(level.scale == "num")])
     compteur <- 1
-    for (i in which(nature == "nom")) {
+    for (i in which(level.scale == "nom")) {
       quantification[[i]] <- res.PCAOS$quantification.categories.nom[[compteur]]
       compteur <- compteur + 1
     }
     compteur <- 1
-    for (i in which(nature == "ord")) {
+    for (i in which(level.scale == "ord")) {
       quantification[[i]] <- res.PCAOS$quantification.categories.ord[[compteur]]
       compteur <- compteur + 1
     }
     compteur <- 1
     if(res.PCAOS$summary$rank == "one"){
-      for (i in which(nature == "num")){
+      for (i in which(level.scale == "num")){
         quantification[[i]] <- cbind(data[,i],res.PCAOS$quantified.data[,i])
         compteur <- compteur + 1
       }
     }
     if(res.PCAOS$summary$rank == "no.restriction"){
-      for (i in which(nature == "num")){
+      for (i in which(level.scale == "num")){
         quantification[[i]] <- cbind(data[,i],res.PCAOS$quantified.data[[i]])
         compteur <- compteur + 1
       }
@@ -158,9 +158,9 @@ plot.PCAOS <-
     }
 
     #LOADPLOT
-    if (choice == "numeric" | (choice == "mixed" & (identical (nature,rep("num",length(nature)))))){
+    if (choice == "numeric" | (choice == "mixed" & (identical (level.scale,rep("num",length(level.scale)))))){
       data.graph.var <- data.frame(t(data.frame(res.PCAOS$weights)))
-      weight.num <- data.graph.var[which(nature == "num"),]
+      weight.num <- data.graph.var[which(level.scale == "num"),]
 
       graph.var <-
         ggplot2::ggplot(data = data.frame(weight.num),
@@ -225,7 +225,7 @@ plot.PCAOS <-
     }
 
     #INDIVIDUAL
-    if (choice == "ind" | (choice == "qualitative" & (supp.var == TRUE & all(res.PCAOS$nature.supp == "nom")))){
+    if (choice == "ind" | (choice == "qualitative" & (supp.var == TRUE & all(res.PCAOS$level.scale.supp == "nom")))){
       nom.indiv <- rownames(res.PCAOS$data)
       limit.x = c(min(res.PCAOS$components[,comp[1]]), max(res.PCAOS$components[,comp[1]]))
       limit.y = c(min(res.PCAOS$components[,comp[2]]), max(res.PCAOS$components[,comp[2]]))
@@ -319,7 +319,7 @@ plot.PCAOS <-
       graphs.list <- list(NA)
       limit = c(min(res.PCAOS$quantified.data)-0.1, max(res.PCAOS$quantified.data)+0.1)
       for (var in 1:nb.var){
-        if(nature[var] == "nom"){
+        if(level.scale[var] == "nom"){
           data.pour.graph <- cbind(as.numeric(quantification[[var]]),rownames(quantification[[var]]))
           colnames(data.pour.graph) <- c("quantification","modalities")
           graphs.list[[var]] <- ggplot2::ggplot(data = data.frame(data.pour.graph),
@@ -331,7 +331,7 @@ plot.PCAOS <-
             ggplot2::ggtitle(variables[var])+
             ggplot2::theme_classic(base_size = size.legend)
         }
-        if (nature[var] == "ord"){
+        if (level.scale[var] == "ord"){
           data.pour.graph <- cbind(as.numeric(quantification[[var]]),rownames(quantification[[var]]))
           colnames(data.pour.graph) <- c("quantification","modalities")
           graphs.list[[var]] <- ggplot2::ggplot(data = data.frame(data.pour.graph), ggplot2::aes(x=modalities, y=as.numeric(quantification))) +
@@ -342,7 +342,7 @@ plot.PCAOS <-
             ggplot2::ggtitle(variables[var]) +
             ggplot2::theme_classic(base_size = size.legend)
         }
-        if (nature[var] == "num"){
+        if (level.scale[var] == "num"){
           colnames(quantification[[var]]) <- c("quantification","values")
           graphs.list[[var]] <-
             ggplot2::ggplot(data = data.frame(quantification[[var]]), ggplot2::aes(x = as.numeric(quantification),
@@ -381,10 +381,10 @@ plot.PCAOS <-
     }
 
     #COMMON ELEMENTS
-    if (choice == "qualitative" | choice == "mixed" & any(nature == "nom" | nature == "ord")){
+    if (choice == "qualitative" | choice == "mixed" & any(level.scale == "nom" | level.scale == "ord")){
       category.coord <- list(NULL)
       compteur <- 1
-      var.quali <- which(nature == "nom" | nature =="ord")
+      var.quali <- which(level.scale == "nom" | level.scale =="ord")
       nb.var.quali <- length(var.quali)
 
       if (res.PCAOS$summary$rank == "one"){
@@ -494,7 +494,7 @@ plot.PCAOS <-
       # }
 
       if(supp.var == TRUE){
-        if(any(res.PCAOS$nature.supp == "num" )){
+        if(any(res.PCAOS$level.scale.supp == "num" )){
           loading.supp <- do.call(rbind.data.frame,res.PCAOS$coord.supp.num)
           graph.modalites <-
             graph.modalites  + ggplot2::annotate(
@@ -514,7 +514,7 @@ plot.PCAOS <-
             )
         }
 
-        if(any(res.PCAOS$nature.supp == "nom" ) | any(res.PCAOS$nature.supp == "ord" )){
+        if(any(res.PCAOS$level.scale.supp == "nom" ) | any(res.PCAOS$level.scale.supp == "ord" )){
           barycentre <-
             do.call(rbind.data.frame, res.PCAOS$coord.supp.quali)
 
@@ -574,7 +574,7 @@ plot.PCAOS <-
 
       #NUM DATA
       data.graph.var <- data.frame(t(data.frame(res.PCAOS$weights)))
-      weight.num <- data.graph.var[which(nature == "num"),]
+      weight.num <- data.graph.var[which(level.scale == "num"),]
 
       #NOM ET ORD DATA
       #Identification of the number of modalities per variable (for fill argument)
@@ -623,7 +623,7 @@ plot.PCAOS <-
         ggplot2::theme_classic(base_size = size.legend)  + ggplot2::guides(size = ggplot2::guide_legend(title = "Citation frequency for qualitative variables (%)"))
 
       if(supp.var == TRUE){
-        if(any(res.PCAOS$nature.supp == "num" )){
+        if(any(res.PCAOS$level.scale.supp == "num" )){
           #Numeric variables
           loading.supp <- do.call(rbind.data.frame,res.PCAOS$coord.supp.num)
           mix.graph <-
@@ -643,7 +643,7 @@ plot.PCAOS <-
               col = "blue",size = size.label
             )
         }
-        if(any(res.PCAOS$nature.supp == "nom" ) | any(res.PCAOS$nature.supp == "ord" )){
+        if(any(res.PCAOS$level.scale.supp == "nom" ) | any(res.PCAOS$level.scale.supp == "ord" )){
           barycentre <-
             do.call(rbind.data.frame, res.PCAOS$coord.supp.quali)
 

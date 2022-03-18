@@ -3,26 +3,26 @@
 # check if data and arguments are good to be plot
 #
 # @param choice the graph to plot possible values are "screeplot","quantif","indiv","cor","modalities","mixed","squared loadings". See Details.
-# @param nature vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num"
-# @param nature.supp nature of supplementary variables
+# @param level.scale vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num"
+# @param level.scale.supp nature of supplementary variables
 # @param supp.var if the user asked to plot the supplementary variable or not
 # @param comp axes to use in the plots
 # @param nb.comp number of components in the PCAOS model
 #
 # @return stop function if argument are wrong
 #
-check.plot.arg <- function(choice,nature,nature.supp,supp.var, comp, nb.comp,rank){
+check.plot.arg <- function(choice,level.scale,level.scale.supp,supp.var, comp, nb.comp,rank){
   if (!(choice %in% c("screeplot","quantif","ind","numeric","qualitative","mixed"))){
     stop("Values of choice should be one of : screeplot,numeric,qualitative,quantif,ind,mixed")
   }
   if (choice == "qualitative"){
-    if (!any(nature == "nom"|nature == "ord")){
+    if (!any(level.scale == "nom"|level.scale == "ord")){
       stop("No variable defined as qualitative (i.e nominal or ordinal)")
     }
   }
 
   if (choice == "ind"){
-    if(supp.var == TRUE & !any(nature.supp == "nom" | nature.supp == "ord")){
+    if(supp.var == TRUE & !any(level.scale.supp == "nom" | level.scale.supp == "ord")){
       stop("Supplementary variable is not qualitative")
     }
   }
@@ -32,10 +32,10 @@ check.plot.arg <- function(choice,nature,nature.supp,supp.var, comp, nb.comp,ran
   }
 
   if (choice == "numeric"){
-    if (!any(nature == "num")){
+    if (!any(level.scale == "num")){
       stop("No variable defined as numeric")
     }
-    if(supp.var == TRUE & !any(nature.supp == "num")){
+    if(supp.var == TRUE & !any(level.scale.supp == "num")){
       stop("Supplementary variable is not numeric")
     }
   }

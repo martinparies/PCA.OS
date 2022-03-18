@@ -4,7 +4,7 @@
 #'
 #' @param data a data frame with n rows (individuals) and p columns (numeric, nominal and/or ordinal variables)
 #'
-#' @param nature vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num". The order of categories for an ordinal variable is indicated by it's level.
+#' @param level.scale vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num". The order of categories for an ordinal variable is indicated by it's level.
 
 #' @param nb.comp number of components of the model (by default 2)
 
@@ -44,15 +44,15 @@
 #'
 #' @examples
 #' data (antibiotic)
-#' nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
-#' nature[c(2,3,4)] <- "num"
-#' nature[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
-#' nature[c(1,15)] <- "ord"
-#' nature
+#' level.scale <- rep(NA,ncol(antibiotic)) #Setting nature argument
+#' level.scale[c(2,3,4)] <- "num"
+#' level.scale[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
+#' level.scale[c(1,15)] <- "ord"
+#' level.scale
 #'
 #'res.PCAOS <- PCA.OS::PCAOS(
 #'  data = antibiotic,
-#'  nature = nature,
+#'  level.scale = level.scale,
 #'  supp.var = 1
 #')
 #'
@@ -73,7 +73,7 @@
 #'
 #' @export
 PCAOS <- function(data,
-                  nature = rep("num",ncol(data)),
+                  level.scale = rep("num",ncol(data)),
                   nb.comp = 2,
                   maxiter = 100,
                   threshold = 1e-6,
@@ -82,43 +82,43 @@ PCAOS <- function(data,
                   supp.var = NULL,
                   print.order = TRUE) {
   #Checking arguments
-  check.arg(data,nature,rank.restriction,print.order)
+  check.arg(data,level.scale,rank.restriction,print.order)
 
   #Supplementary variable
-  nature.supp = NULL
+  level.scale.supp = NULL
   tri.supp <- list()
   if(!is.null(supp.var)){
     data.var.supp <- data[, supp.var,drop = FALSE]
-    nature.supp <- nature[supp.var]
+    level.scale.supp <- level.scale[supp.var]
     data <- data[, -supp.var]
-    nature <- nature[-supp.var]
-    if(any(nature.supp == "ord"|nature.supp == "nom")){
-      tri.supp$nb.var.supp.quali <-  length(which(nature.supp == "ord"|nature.supp == "nom"))
-      tri.supp$emplacement.var.supp.quali  <- which(nature.supp =="ord"|nature.supp == "nom")
+    level.scale <- level.scale[-supp.var]
+    if(any(level.scale.supp == "ord"|level.scale.supp == "nom")){
+      tri.supp$nb.var.supp.quali <-  length(which(level.scale.supp == "ord"|level.scale.supp == "nom"))
+      tri.supp$emplacement.var.supp.quali  <- which(level.scale.supp =="ord"|level.scale.supp == "nom")
       tri.supp$data.supp.quali <- data.var.supp[,tri.supp$emplacement.var.supp.quali,drop = FALSE]
     }
-    if(any(nature.supp == "num")){
-      tri.supp$nb.var.supp.num <-  length(which(nature.supp == "num"))
-      tri.supp$emplacement.var.supp.num <- which(nature.supp =="num")
+    if(any(level.scale.supp == "num")){
+      tri.supp$nb.var.supp.num <-  length(which(level.scale.supp == "num"))
+      tri.supp$emplacement.var.supp.num <- which(level.scale.supp =="num")
       tri.supp$data.supp.num <- data.var.supp[,tri.supp$emplacement.var.supp.num,drop = FALSE]
     }
   }
 
   # 1. Nature of variables
   tri <- list()
-  if(any(nature == "ord")){
-    tri$nbvarORD <-  length(which(nature == "ord"))
-    tri$emplacement.ord <- which(nature =="ord")
+  if(any(level.scale == "ord")){
+    tri$nbvarORD <-  length(which(level.scale == "ord"))
+    tri$emplacement.ord <- which(level.scale =="ord")
     tri$data.ord <- data[,tri$emplacement.ord,drop = FALSE]
   }
-  if(any(nature == "nom")){
-    tri$nbvarNOM <-  length(which(nature == "nom"))
-    tri$emplacement.nom <- which(nature =="nom")
+  if(any(level.scale == "nom")){
+    tri$nbvarNOM <-  length(which(level.scale == "nom"))
+    tri$emplacement.nom <- which(level.scale =="nom")
     tri$data.nom <- data[,tri$emplacement.nom,drop = FALSE]
   }
-  if(any(nature == "num")){
-    tri$nbvarNUM <-  length(which(nature == "num"))
-    tri$emplacement.num <- which(nature =="num")
+  if(any(level.scale == "num")){
+    tri$nbvarNUM <-  length(which(level.scale == "num"))
+    tri$emplacement.num <- which(level.scale =="num")
     tri$data.num <- data[,tri$emplacement.num,drop = FALSE]
   }
 
@@ -146,13 +146,13 @@ PCAOS <- function(data,
 
   # 3. Rank one restriction
   rank.restriction.nom <- NULL
-  if (rank.restriction == "no.restriction" & any(nature == "nom")){
+  if (rank.restriction == "no.restriction" & any(level.scale == "nom")){
     rank.restriction.nom <- rep("one", nb.var.init)
-    rank.restriction.nom[which(nature == "nom")] <- "no.restriction"
+    rank.restriction.nom[which(level.scale == "nom")] <- "no.restriction"
     rank.restriction.nom <- rep("no.restriction",tri$nbvarNOM)
   } else{
     #rank.restriction <- rep("one", nb.var.init)
-    if(any(nature == "nom")){rank.restriction.nom <- rep("one",tri$nbvarNOM)}
+    if(any(level.scale == "nom")){rank.restriction.nom <- rep("one",tri$nbvarNOM)}
   }
 
   # # Not useful if random initialisation of t
@@ -225,8 +225,8 @@ PCAOS <- function(data,
     critd=matrix(NA,nb.var.init,5)
     colnames(critd)=c("lossv1","lossv2","mloss","sloss","nujh2")
     for (j in 1:nb.var.init) {
-      if (nature[j]!="num") Zj=dummy.coding(data[,j,drop=FALSE])$data
-      if (nature[j]=="num") {
+      if (level.scale[j]!="num") Zj=dummy.coding(data[,j,drop=FALSE])$data
+      if (level.scale[j]=="num") {
         var=data[,j,drop=FALSE]
         var=scale(var)*sqrt(nb.indiv/(nb.indiv-1))
         Zj=polynom.data(var,D)
@@ -303,7 +303,7 @@ PCAOS <- function(data,
   coord.supp.quali = list(NULL)
   coord.supp.num = list(NULL)
   if(!is.null(supp.var)){
-    if(any(nature.supp == "nom" | nature.supp == "ord")){
+    if(any(level.scale.supp == "nom" | level.scale.supp == "ord")){
       for(var in 1:tri.supp$nb.var.supp.quali){
         var.supp.quali <- (tri.supp$data.supp.quali[,var])
         modal <- levels(as.factor(var.supp.quali))
@@ -313,12 +313,12 @@ PCAOS <- function(data,
         rownames( coord.supp.quali[[var]]) <- modal
         nbvar <- ncol(data)
         for (mod in 1:nb.modal) {
-          coord.supp.quali[[var]][mod,] <- colMeans(components[which(var.supp.quali == modal[mod]), ])
+          coord.supp.quali[[var]][mod,] <- colMeans(components[which(var.supp.quali == modal[mod]), ,drop = F])
         }
       }
     }
 
-    if(any(nature.supp == "num")){
+    if(any(level.scale.supp == "num")){
       for(var in 1:tri.supp$nb.var.supp.num){
         coord.supp.num[[var]] <- cor(scale(tri.supp$data.supp.num),components)
       }
@@ -332,7 +332,7 @@ PCAOS <- function(data,
   summary <- data.frame(NB.var.nom = tri$nbvarNOM,NB.var.ord = tri$nbvarORD,NB.var.num = tri$nbvarNUM)
   summary <- list(summary = summary,rank = rank.restriction)
 
-  if (any(nature == "num")){
+  if (any(level.scale == "num")){
     for (j in 1:tri$nbvarNUM) {
       var.quant<-quantified.data[[tri$emplacement.num[j]]]
       var<-data[,tri$emplacement.num[j]]
@@ -343,7 +343,7 @@ PCAOS <- function(data,
     }
   }
 
-  if (any(nature == "ord")){
+  if (any(level.scale == "ord")){
     for (j in 1:tri$nbvarORD) {
       var.quant <- quantified.data[[tri$emplacement.ord[j]]]
       var<-as.numeric(data[,tri$emplacement.ord[j]])
@@ -354,7 +354,7 @@ PCAOS <- function(data,
     }
   }
 
-  if (any(nature == "nom")){
+  if (any(level.scale == "nom")){
     for (i in 1:tri$nbvarNOM) {
       var.quant=as.matrix(quantified.data[[tri$emplacement.nom[i]]])
       var=as.factor(data[,tri$emplacement.nom[i]])
@@ -367,10 +367,10 @@ PCAOS <- function(data,
       rownames(quant.MODAL.nom[[i]])<-levels(var)
       colnames(quant.MODAL.nom[[i]])<-paste("CP",1:ncol(var.quant),sep="")
     }
-    names(quant.MODAL.nom) <- colnames(data[,nature == "nom"])
+    names(quant.MODAL.nom) <- colnames(data[,level.scale == "nom"])
   }
 
-  if (any(nature == "ord")){
+  if (any(level.scale == "ord")){
     for (i in 1:tri$nbvarORD) {
       var.quant=as.matrix(quantified.data[[tri$emplacement.ord[i]]])
       var=as.factor(data[,tri$emplacement.ord[i]])
@@ -383,7 +383,7 @@ PCAOS <- function(data,
       rownames(quant.MODAL.ord[[i]])<-levels(var)
       colnames(quant.MODAL.ord[[i]])<-paste("CP",1:ncol(var.quant),sep="")
     }
-    names(quant.MODAL.ord) <- colnames(data[,nature == "ord"])
+    names(quant.MODAL.ord) <- colnames(data[,level.scale == "ord"])
   }
 
   # Computing Matj
@@ -430,8 +430,8 @@ PCAOS <- function(data,
       loss.tot = loss,
       stockiter = stockiter,
       data = data,
-      nature = nature,
-      nature.supp = nature.supp,
+      level.scale = level.scale,
+      level.scale.supp = level.scale.supp,
       coord.supp.quali = coord.supp.quali,
       coord.supp.num = coord.supp.num,
       quali.var.supp = tri.supp$data.supp.quali

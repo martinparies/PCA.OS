@@ -68,15 +68,15 @@ All graph are ggplot object
 }
 \examples{
 data (antibiotic)
-nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
-nature[c(2,3,4)] <- "num"
-nature[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
-nature[c(1,15)] <- "ord"
-nature
+level.scale <- rep(NA,ncol(antibiotic)) #Setting level.scale argument
+level.scale[c(2,3,4)] <- "num"
+level.scale[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
+level.scale[c(1,15)] <- "ord"
+level.scale
 
 res.PCAOS <- PCA.OS::PCAOS(
  data = antibiotic,
- nature = nature,
+ level.scale = level.scale,
  supp.var = c(1,2)
 )
 

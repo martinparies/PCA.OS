@@ -6,7 +6,7 @@
 \usage{
 PCAOS(
   data,
-  nature = rep("num", ncol(data)),
+  level.scale = rep("num", ncol(data)),
   nb.comp = 2,
   maxiter = 100,
   threshold = 1e-06,
@@ -19,7 +19,7 @@ PCAOS(
 \arguments{
 \item{data}{a data frame with n rows (individuals) and p columns (numeric, nominal and/or ordinal variables)}
 
-\item{nature}{vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num". The order of categories for an ordinal variable is indicated by it's level.}
+\item{level.scale}{vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num". The order of categories for an ordinal variable is indicated by it's level.}
 
 \item{nb.comp}{number of components of the model (by default 2)}
 
@@ -61,15 +61,15 @@ Perform PCAOS
 }
 \examples{
 data (antibiotic)
-nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
-nature[c(2,3,4)] <- "num"
-nature[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
-nature[c(1,15)] <- "ord"
-nature
+level.scale <- rep(NA,ncol(antibiotic)) #Setting nature argument
+level.scale[c(2,3,4)] <- "num"
+level.scale[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
+level.scale[c(1,15)] <- "ord"
+level.scale
 
 res.PCAOS <- PCA.OS::PCAOS(
  data = antibiotic,
- nature = nature,
+ level.scale = level.scale,
  supp.var = 1
 )
 
