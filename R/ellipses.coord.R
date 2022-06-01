@@ -4,18 +4,19 @@ ellipses.coord <- function (var.quali, components, modal,level.conf){
   nb.modal <- length(modalites)
   coord.ellipse <- list(NULL)
 
-  #Boucle sur tous les produits
+  #Boucle sur chaques modalites de la variable quali
   for (modal in 1:nb.modal){
-    #Coordonnees individus pour produit sur CP1
+    #Coordonnees individus pour modal sur CP1
     CP1 <- components[which(var.quali == modalites[modal]),1]
-    #Coordonnees individus pour produit sur CP2
+    #Coordonnees individus pour modal sur CP2
     CP2 <- components[which(var.quali == modalites[modal]),2]
     #Moyenne (place le centre de l'ellipse)
     moy = colMeans(components[which(var.quali == modalites[modal]), ])
-    dat <- data.frame(x = CP1, y = CP2)
+    #Ecar-type des deux composantes
     sd.CP1 <- sd(CP1)/sqrt(length(CP1))
     sd.CP2 <- sd(CP2)/sqrt(length(CP2))
     #Cov entre CP1 et CP2
+    dat <- data.frame(x = CP1, y = CP2)
     dat.cov <- cov(dat)
     dat.cov - dat.cov / nrow(dat)
     #Utilisation fct ellipse du package ellipse

@@ -276,7 +276,7 @@ plot.PCAOS <-
           for (var.supp in 1:ncol(res.PCAOS$quali.var.supp)){
 
             var.quali = res.PCAOS$quali.var.supp[,var.supp]
-            coord.ellipse <- cbind.data.frame(ellipses.coord(var.quali = var.quali,components = res.PCAOS$components,level.conf = level.conf))
+            coord.ellipse <- cbind.data.frame(ellipses.coord(var.quali = var.quali,components = res.PCAOS$components[,comp],level.conf = level.conf))
             modalites <- levels(as.factor(var.quali))
             nb.modal <- length(modalites)
 
@@ -410,15 +410,16 @@ plot.PCAOS <-
       }
 
       if (res.PCAOS$summary$rank == "no.restriction"){
-        data.quali <- data.frame(res.PCAOS$data[,var.quali,drop = F])
+        var.nom <- which(level.scale == "nom")
+        data.quali <- data.frame(res.PCAOS$data[,var.nom,drop = F])
         variables.quali <- colnames(data.quali)
         modalite <- sapply(1:ncol(data.quali),function(var){unique(data.quali[,var])},simplify = FALSE)
         nb.modal <- unlist(lapply(modalite,length))
-        category.coord <- lapply(1:nb.var.quali, function(var) matrix(NA,nb.modal[var],nb.comp))
+        category.coord <- sapply(1:length(var.nom), function(var) matrix(NA,nb.modal[var],nb.comp),simplify = FALSE)
 
-        for (var in 1:nb.var.quali){
+        for (var in 1:length(var.nom)){
           for (modal in 1:nb.modal[var]){
-            category.coord[[var]][modal,] <- colMeans(res.PCAOS$components[which(data.quali[,var] == as.factor(modalite[[var]][modal])),],)
+            category.coord[[var]][modal,] <- colMeans(res.PCAOS$components[which(data.quali[,var] == as.factor(modalite[[var]][modal])),])
           }
           colnames(category.coord[[var]]) <- colnames(res.PCAOS$components)
           rownames(category.coord[[var]]) <- modalite[[var]]
@@ -427,8 +428,8 @@ plot.PCAOS <-
         names(category.coord) <- variables.quali
         # fill.arg <- NULL
         # for (var in 1:length(var.quali)){fill.arg <- c(fill.arg,rep (variables.quali[var],nb.modal[var]))}
-        # modalities <- unlist(sapply(1:nb.var.quali,function(var){paste(variables.quali[var],modalite[[var]],sep = "_")},simplify = F))
-        # category.coord.tot <- do.call("rbind", category.coord)
+        modalities <- unlist(sapply(1:length(var.nom),function(var){paste(variables.quali[var],modalite[[var]],sep = "_")},simplify = F))
+        category.coord.tot <- do.call("rbind", category.coord)
         data.modal <- data.frame(modalities = modalities,category.coord.tot[,c(comp[1],comp[2])])
       }
 

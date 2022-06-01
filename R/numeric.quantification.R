@@ -24,7 +24,13 @@ var.poly=polynom.data(var,D)
 # var.poly <- rep(1,nbindiv)
 # for (puiss in 1:D) {var.poly <- cbind(var.poly,var^puiss)}
 # var.poly=as.matrix(var.poly)
-Yj<- solve(t(var.poly) %*% var.poly) %*%  t(var.poly) %*% t
+Yj <- solve(t(var.poly) %*% var.poly) %*%  t(var.poly) %*% t
+# if(isna == 'TRUE'){
+#   var.poly.na <- var.poly[-which(is.na(var.poly[,2])),]
+#   t.na <- t[-which(is.na(var.poly[,2])),]
+#   Yj <- solve(t(var.poly.na) %*% var.poly.na) %*%  t(var.poly.na) %*% t.na
+#   var.poly[which(is.na(var.poly[,2])),] <- c(0,0)
+# }
 ressvd=svd(Yj)
 #qj=ressvd$u[,1]
 qj=ressvd$u[,1]

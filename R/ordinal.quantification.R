@@ -24,6 +24,7 @@ f12<-f121<-f122<-sqrt(diag(t(var.dis)%*%var.dis))
 Yj<-Yj1<-Yj2 <- solve(t(var.dis) %*% var.dis) %*% t(var.dis) %*% t
 ressvd=svd(diag(f12)%*%Yj,nu=1,nv=1)
 qj<-qj1<-qj2<-diag(1/f12)%*%ressvd$u
+rownames(qj) <- rownames(qj1) <- rownames(qj2) <- colnames(dataDIS2)
 aj<-aj1<-aj2<-ressvd$v*ressvd$d[1]
 var.quant.nom<-var.dis %*% qj
 
@@ -42,6 +43,7 @@ while (i<ncol(dataDIS1)) {
     } else {
       ressvd=svd(diag(f121, nrow = length(f121))%*%Yj1,nu=1,nv=1)
       qj1<-diag(1/f121, nrow = length(f121))%*%ressvd$u
+      rownames(qj1) <- colnames(dataDIS1)
       aj1<-ressvd$v*ressvd$d[1]
       if (ncol(t)==1) {
         s=as.numeric(sign(aj1*aj))

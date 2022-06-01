@@ -184,6 +184,11 @@ PCAOS <- function(data,
   loss.by.var = rep(loss/nb.var.init,nb.var.init)
   deltaloss=10000
 
+  # #6.Missing values
+  # na <- sapply(1:ncol(data), function(col){which(is.na(data[,col]))},simplify = F)
+  # names(na) <- colnames(data)
+  # unlist(na)
+
   # 6. OPTIMAL SCALING / MODEL ESTIMATION
   while(continue){
     # 6.1 QUANTIFICATION
