@@ -20,10 +20,10 @@ help(antibiotic)
 
 # Setting nature of each variable
 ```{r}
-nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
-nature[c(2,3,4)] <- "num"
-nature[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
-nature[c(1,15)] <- "ord"
+level.scale <- rep(NA,ncol(antibiotic)) #Setting level.scale argument
+level.scale[c(2,3,4)] <- "num"
+level.scale[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
+level.scale[c(1,15)] <- "ord"
 ```
 
 # Choice of number of components
@@ -39,7 +39,7 @@ help(PCAOS)
 res.PCAOS <-
   PCAOS(
     data = antibiotic,
-    nature = nature,
+    level.scale = level.scale,
     rank.restriction = "one",
     nb.comp = 4,
     supp.var = 1
