@@ -28,6 +28,9 @@ rownames(qj) <- rownames(qj1) <- rownames(qj2) <- colnames(dataDIS2)
 aj<-aj1<-aj2<-ressvd$v*ressvd$d[1]
 var.quant.nom<-var.dis %*% qj
 
+#missing data
+na <- which(is.na(var))
+
 #1.Decreasing
 nbcolDISini1 <- ncol(dataDIS1)
 i=1
@@ -58,7 +61,7 @@ while (i<ncol(dataDIS1)) {
   }
 }
 quantifRESTRICTED1 <- dataDIS1 %*% qj1
-
+quantifRESTRICTED1[na] <- mean(quantifRESTRICTED1,na.rm = T)
 
 #2.Increasing
 nbcolDISini2 <- ncol(dataDIS2)
@@ -88,10 +91,13 @@ while (i<ncol(dataDIS2)) {
     i=i+1
   }
 }
+
 quantifRESTRICTED2 <- dataDIS2 %*% qj2
+quantifRESTRICTED2[na] <- mean(quantifRESTRICTED2,na.rm = T)
 
 SSQ1=as.numeric((nbindiv-1)*var(quantifRESTRICTED1))
 SSQ2=as.numeric((nbindiv-1)*var(quantifRESTRICTED2))
+
 if (abs(SSQ1-SSQ2)<1e-5) {
   if (cor(var.quant.nom,quantifRESTRICTED1)>cor(var.quant.nom,quantifRESTRICTED2)) {
     dataDIS <- dataDIS1
@@ -122,14 +128,17 @@ if (abs(SSQ1-SSQ2)<1e-5) {
   }
 }
 
+unique.var <- unique(var[,1])
+if (any(is.na(var))){unique.var <- unique(var)[-which(is.na(unique(var))),]}
+
 if (ncol(dataDIS)<ncol(var.dis)) {
   qjreduced<-qj
   cpt=0
-  for (val in sort(unique(var[,1]))) {
+  for (val in sort(unique.var)) {
     cpt=cpt+1
     qj[cpt]<-var.quant[which(var[,1]==val)][1]
   }
-  corresp<-rep(0,nrow(unique(var)))
+  corresp<-rep(0,length(unique.var))
   cpt=0
   for (val in qj) {
     cpt=cpt+1

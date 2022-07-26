@@ -410,16 +410,17 @@ plot.PCAOS <-
       }
 
       if (res.PCAOS$summary$rank == "no.restriction"){
-        var.nom <- which(level.scale == "nom")
+        var.nom <- which(level.scale == "nom" )
         data.quali <- data.frame(res.PCAOS$data[,var.nom,drop = F])
+        for (i in 1:ncol(data.quali)){data.quali[,i] <- factor(data.quali[,i])}
         variables.quali <- colnames(data.quali)
-        modalite <- sapply(1:ncol(data.quali),function(var){unique(data.quali[,var])},simplify = FALSE)
+        modalite <- sapply(1:ncol(data.quali),function(var){levels(data.quali[,var])},simplify = FALSE)
         nb.modal <- unlist(lapply(modalite,length))
         category.coord <- sapply(1:length(var.nom), function(var) matrix(NA,nb.modal[var],nb.comp),simplify = FALSE)
 
         for (var in 1:length(var.nom)){
           for (modal in 1:nb.modal[var]){
-            category.coord[[var]][modal,] <- colMeans(res.PCAOS$components[which(data.quali[,var] == as.factor(modalite[[var]][modal])),])
+            category.coord[[var]][modal,] <- colMeans(res.PCAOS$components[which(data.quali[,var] == modalite[[var]][modal]),])
           }
           colnames(category.coord[[var]]) <- colnames(res.PCAOS$components)
           rownames(category.coord[[var]]) <- modalite[[var]]
@@ -431,6 +432,27 @@ plot.PCAOS <-
         modalities <- unlist(sapply(1:length(var.nom),function(var){paste(variables.quali[var],modalite[[var]],sep = "_")},simplify = F))
         category.coord.tot <- do.call("rbind", category.coord)
         data.modal <- data.frame(modalities = modalities,category.coord.tot[,c(comp[1],comp[2])])
+
+        var.ord <- which(level.scale == "ord" )
+        data.quali <- data.frame(res.PCAOS$data[,var.ord,drop = F])
+
+        category.coord.ord <- list(NULL)
+        for (var in var.ord){
+          category.coord.ord[[compteur]] <- rep(NA,3)
+          category.coord.ord[[compteur]] <-
+            cbind(
+              paste(colnames(data[,var,drop = FALSE]),rownames(quantification[[var]]),sep = "_"),
+              as.numeric(quantification[[var]]) * res.PCAOS$weights[[var]][comp[1]],
+              as.numeric(quantification[[var]]) * res.PCAOS$weights[[var]][comp[2]]
+            )
+          colnames(category.coord.ord[[compteur]]) <- c("Modalites",nom.comp)
+          category.coord.ord[[compteur]] <- data.frame(category.coord.ord[[compteur]])
+          compteur <- compteur + 1
+        }
+        category.coord.ord <- do.call(rbind.data.frame,category.coord.ord)
+        #rownames(category.coord.ord) <- category.coord.ord[,1]
+        category.coord.ord <- category.coord.ord[,-1,drop = F]
+        data.modal <- rbind(data.modal,category.coord.ord)
       }
 
       max.x <- as.numeric(max(data.modal[,2]))

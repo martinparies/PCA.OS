@@ -341,6 +341,8 @@ PCAOS <- function(data,
     for (j in 1:tri$nbvarNUM) {
       var.quant<-quantified.data[[tri$emplacement.num[j]]]
       var<-data[,tri$emplacement.num[j]]
+      na <- which(is.na(var))
+      var[na] <- mean(var,na.rm = T)
       w<-weights[[tri$emplacement.num[j]]]
       s=as.numeric(sign(cor(var,var.quant)))
       quantified.data[[tri$emplacement.num[j]]] <- var.quant * s
@@ -352,6 +354,8 @@ PCAOS <- function(data,
     for (j in 1:tri$nbvarORD) {
       var.quant <- quantified.data[[tri$emplacement.ord[j]]]
       var<-as.numeric(data[,tri$emplacement.ord[j]])
+      na <- which(is.na(var))
+      var[na] <- mean(var,na.rm = T)
       w<-weights[[tri$emplacement.ord[j]]]
       s=as.numeric(sign(cor(var,var.quant)))
       quantified.data[[tri$emplacement.ord[j]]] <- var.quant * s

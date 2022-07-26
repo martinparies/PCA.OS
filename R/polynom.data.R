@@ -8,6 +8,8 @@
 # @return dummy coded variables
 #
 polynom.data<- function(var,D){
+  var[which(is.na(var)),] <- 0
+
   nbINDIV <- nrow(var)
   nbCOL <- ncol(var)
   nbCOL <- nbCOL * (D+1)

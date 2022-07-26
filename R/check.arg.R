@@ -20,11 +20,11 @@ check.arg <- function(data,level.scale,rank.restriction,print.order){
       stop(paste("Error, the length of level.scale is different from the number of variable data."))
     }
 
-    #Données manquantes
-    if(any(is.na(data))){
-      var.with.na <- colnames(data[,which(sapply(1:ncol(data),function(i){any(is.na(data[,i]))})),drop=F])
-      stop(paste("Error",var.with.na,"have missing values. Please consider imputation.",sep= " "),)
-    }
+    # #Données manquantes
+    # if(any(is.na(data))){
+    #   var.with.na <- colnames(data[,which(sapply(1:ncol(data),function(i){any(is.na(data[,i]))})),drop=F])
+    #   stop(paste("Error",var.with.na,"have missing values. Please consider imputation.",sep= " "),)
+    # }
 
     #Restriction
     if(!(rank.restriction %in% c("one","no.restriction"))){

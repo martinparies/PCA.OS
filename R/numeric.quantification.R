@@ -43,6 +43,5 @@ w<-aj
 #var.quant <- var.quant * as.numeric(sign(cor(var,var.quant)))
 # changer le signe des weights aussi
 
-
 return(list(var.quant=var.quant,w=w,Yj=Yj,Yjhat=Yjhat))
 }

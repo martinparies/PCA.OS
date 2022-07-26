@@ -22,7 +22,7 @@
 nominal.quantification <- function (var,t,rank.restriction){
   nbindiv <- nrow(var)
   var.dis <- dummy.coding(var)$data
-  f12<-sqrt(diag(t(var.dis)%*%var.dis))
+  f12 <- sqrt(diag(t(var.dis)%*%var.dis))
   Yj <- solve(t(var.dis) %*% var.dis) %*% t(var.dis) %*% t
   coefnorm<-sqrt(nbindiv)
   if (rank.restriction == "one") param=1
