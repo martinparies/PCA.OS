@@ -468,6 +468,9 @@ plot.PCAOS <-
       data.quali <- data.frame(res.PCAOS$data[,var.quali,drop = F])
       freq <- unlist(sapply(1:ncol(data.quali),function(var){table(data.quali[,var])},simplify = F))
       freq <- freq/nrow(res.PCAOS$data) *100
+      freq[which(freq < 15)] <- 15
+      freq[which(freq > 75)] <- 75
+
     }
 
     #MODALITIES REPRESENTATION
