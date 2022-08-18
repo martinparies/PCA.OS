@@ -61,5 +61,5 @@ plot.PCAOS(
 )
 
 #Variables
-plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed")
+plot.PCAOS(res.PCAOS = res.PCAOS,choice = "all.var")
 ```
