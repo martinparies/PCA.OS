@@ -7,7 +7,8 @@
 choice.component(
   data,
   nature = rep("num", ncol(data)),
-  nb.comp.to.investigate = ncol(data)
+  nb.comp.to.investigate = ncol(data),
+  rank.restriction = "one"
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ choice.component(
 \item{nature}{vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num"}
 
 \item{nb.comp.to.investigate}{Number of components to investigate (default=ncol(data))}
+
+\item{rank.restriction}{rank restriction}
 }
 \value{
 Data frame with global Loss value and percentage of the quantified variables inertia explained, for different model dimensionality (H). The last column provides the variation in percentage between to two successive size of dimensionality.

@@ -12,8 +12,8 @@
 # @return stop function if argument are wrong
 #
 check.plot.arg <- function(choice,level.scale,level.scale.supp,supp.var, comp, nb.comp,rank){
-  if (!(choice %in% c("screeplot","quantif","ind","numeric","qualitative","mixed"))){
-    stop("Values of choice should be one of : screeplot,numeric,qualitative,quantif,ind,mixed")
+  if (!(choice %in% c("screeplot","quantif","ind","numeric","qualitative","all.var"))){
+    stop("Values of choice should be one of : screeplot, numeric, qualitative, quantif, ind, all.var")
   }
   if (choice == "qualitative"){
     if (!any(level.scale == "nom"|level.scale == "ord")){

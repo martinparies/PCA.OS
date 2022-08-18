@@ -8,6 +8,8 @@
 #'
 #' @param nb.comp.to.investigate Number of components to investigate (default=ncol(data))
 #'
+#' @param rank.restriction rank restriction
+
 #' @return Data frame with global Loss value and percentage of the quantified variables inertia explained, for different model dimensionality (H). The last column provides the variation in percentage between to two successive size of dimensionality.
 #'
 #' @author
@@ -31,8 +33,14 @@
 #'
 #' @export
 #'
-choice.component <- function(data,nature = rep("num",ncol(data)),nb.comp.to.investigate = ncol(data)){
-  res <- sapply(1:nb.comp.to.investigate,function(x){PCAOS(data,nature,nb.comp = x,print.order = FALSE)$loss.tot})
+choice.component <- function(data,nature = rep("num",ncol(data)),nb.comp.to.investigate = ncol(data),rank.restriction = 'one'){
+  res <- sapply(1:nb.comp.to.investigate,function(x){PCAOS(data,nature,nb.comp = x,print.order = FALSE,rank.restriction = rank.restriction)$loss.tot})
+
+  percentage <-
+    sapply(1:nb.comp.to.investigate, function(x) {
+      PCAOS(data,nature,nb.comp = x,print.order = FALSE,rank.restriction = rank.restriction)$inertia[x,2]
+    })
+
   pourcentage = rep(NA,nb.comp.to.investigate)
   for (H in 1:nb.comp.to.investigate){
     pourcentage[H] = H * (1 - res[H]) * 100

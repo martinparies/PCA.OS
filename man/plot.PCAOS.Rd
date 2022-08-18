@@ -14,13 +14,14 @@
   ellipse = FALSE,
   level.conf = 0.95,
   size.label = 3.5,
-  size.legend = 10
+  size.legend = 10,
+  min.contribution = 0
 )
 }
 \arguments{
 \item{res.PCAOS}{an object of class PCAOS}
 
-\item{choice}{the available graphs are "screeplot","quantif","ind","numeric","qualitative","mixed". See Details.}
+\item{choice}{the available graphs are "screeplot","quantif","ind","numeric","qualitative","all.var". See Details.}
 
 \item{comp}{a length 2 vector with the components to plot}
 
@@ -61,7 +62,7 @@ For qualitative (i.e nominal and ordinal) variables
 }
 For mixed  variables
  \itemize{
-  \item  mixed: factorial representation of mixed variables (weight for numeric variables, and categories for qualitative variables)
+  \item  all.var : factorial representation of mixed variables (weight for numeric variables, and categories for qualitative variables)
 }
 
 All graph are ggplot object
@@ -94,7 +95,7 @@ PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative",supp.var = TRUE)
 PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "numeric",supp.var = TRUE)
 
 #Mixed variables
-PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed",supp.var = TRUE)
+PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "all.var",supp.var = TRUE)
 
 }
 \author{

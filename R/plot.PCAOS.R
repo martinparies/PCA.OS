@@ -3,7 +3,7 @@
 #' Visualisation of results from PCAOS method. See details for available plot.
 #'
 #' @param res.PCAOS an object of class PCAOS
-#' @param choice the available graphs are "screeplot","quantif","ind","numeric","qualitative","mixed". See Details.
+#' @param choice the available graphs are "screeplot","quantif","ind","numeric","qualitative","all.var". See Details.
 #' @param comp a length 2 vector with the components to plot
 #' @param coloring.indiv A vector of length N to color individuals. If NULL, no coloring is applied.
 #' @param sub.var.quantif a vector with variable of interest
@@ -12,6 +12,7 @@
 #' @param level.conf level of confidence ellipses
 #' @param size.label size of label in graphs
 #' @param size.legend size of label in graphs
+#' @param min.contribution variables with a contribution (i.e loading) lower than this value will not be plotted in the 'all.var' graph (useful for dataset with a lot of variables)
 
 #' @return
 #'A ggplot object
@@ -33,7 +34,7 @@
 #' }
 #' For mixed  variables
 #'  \itemize{
-#'   \item  mixed: factorial representation of mixed variables (weight for numeric variables, and categories for qualitative variables)
+#'   \item  all.var : factorial representation of mixed variables (weight for numeric variables, and categories for qualitative variables)
 #' }
 #'
 #' All graph are ggplot object
@@ -66,7 +67,7 @@
 #'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "numeric",supp.var = TRUE)
 #'
 #'#Mixed variables
-#'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "mixed",supp.var = TRUE)
+#'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "all.var",supp.var = TRUE)
 #'
 #' @author
 #' \itemize{
@@ -88,7 +89,8 @@ plot.PCAOS <-
            ellipse = FALSE,
            level.conf = 0.95,
            size.label = 3.5,
-           size.legend = 10
+           size.legend = 10,
+           min.contribution = 0
            ) {
 
     if(!inherits(res.PCAOS,"PCAOS")) stop("Non convenient object")
@@ -158,7 +160,7 @@ plot.PCAOS <-
     }
 
     #LOADPLOT
-    if (choice == "numeric" | (choice == "mixed" & (identical (level.scale,rep("num",length(level.scale)))))){
+    if (choice == "numeric" | (choice == "all.var" & (identical (level.scale,rep("num",length(level.scale)))))){
       data.graph.var <- data.frame(t(data.frame(res.PCAOS$weights)))
       weight.num <- data.graph.var[which(level.scale == "num"),]
 
@@ -325,7 +327,7 @@ plot.PCAOS <-
           graphs.list[[var]] <- ggplot2::ggplot(data = data.frame(data.pour.graph),
                                                 ggplot2::aes(x=modalities, y=as.numeric(quantification))) +
             ggplot2::geom_point(size = 3) +
-            ggplot2::scale_y_continuous(limits=limit) +
+            #ggplot2::scale_y_continuous(limits=limit) +
             ggplot2::xlab("Categories") +
             ggplot2::ylab("Quantifications") +
             ggplot2::ggtitle(variables[var])+
@@ -336,7 +338,7 @@ plot.PCAOS <-
           colnames(data.pour.graph) <- c("quantification","modalities")
           graphs.list[[var]] <- ggplot2::ggplot(data = data.frame(data.pour.graph), ggplot2::aes(x=modalities, y=as.numeric(quantification))) +
             ggplot2::geom_point(size = 3) +
-            ggplot2::scale_y_continuous(limits=limit) +
+            #ggplot2::scale_y_continuous(limits=limit) +
             ggplot2::xlab("Categories") +
             ggplot2::ylab("Quantifications") +
             ggplot2::ggtitle(variables[var]) +
@@ -348,7 +350,7 @@ plot.PCAOS <-
             ggplot2::ggplot(data = data.frame(quantification[[var]]), ggplot2::aes(x = as.numeric(quantification),
                                                                                    y = as.numeric(values))) +
             ggplot2::geom_point(size = 3) +
-            ggplot2::scale_y_continuous(limits=limit) +
+            #ggplot2::scale_y_continuous(limits=limit) +
             ggplot2::xlab("Values") +
             ggplot2::ylab("Quantifications") +
             ggplot2::ggtitle(paste(variables[var]))+
@@ -381,7 +383,7 @@ plot.PCAOS <-
     }
 
     #COMMON ELEMENTS
-    if (choice == "qualitative" | choice == "mixed" & any(level.scale == "nom" | level.scale == "ord")){
+    if (choice == "qualitative" | choice == "all.var" & any(level.scale == "nom" | level.scale == "ord")){
       category.coord <- list(NULL)
       compteur <- 1
       var.quali <- which(level.scale == "nom" | level.scale =="ord")
@@ -464,12 +466,44 @@ plot.PCAOS <-
       limit.x <- c(min.x-0.2,max.x+0.2)
       limit.y <- c(min.y-0.2,max.y+0.2)
 
+      #Construction of matrix mixed, containing all coordinates of all variables and categories
+      #quali var
+      nb.modal <- unlist(lapply(category.coord,nrow))
+      nb.var <- length(nb.modal)
+
+      #Variables
+      i.variables <- as.vector(unlist(sapply(1:nb.var, function(j) {rep(colnames(res.PCAOS$data[,var.quali,drop = F])[j],nb.modal[j])})))
+      #data.modal <- cbind(data.modal,fill.arg)
+
+      #Quali var
+      p.nom <- 1:sum(nb.modal)
+      data.modal <- cbind(data.modal,i.variables,'quali')
+      row.names(data.modal) <- data.modal[,1]
+
+      #Numeric var
+      p.num <- 1:length(which(level.scale == "num"))
+      p.nom <- p.nom + length(p.num)
+      weight.num <- data.frame(t(data.frame(res.PCAOS$weights)))
+      weight.num <- weight.num[which(level.scale == "num"),]
+      weight.num <- cbind(weight.num[,comp],'num')
+      nb.var.num <- nrow(weight.num)
+      colnames(weight.num) <- c(nom.comp[1],nom.comp[2],'nature')
+
+      #Mixed var
+      nature <- c(weight.num[,3],data.modal[,5])
+      na <- rep(NA,(sum(nb.modal) + nb.var))
+      mixed <- data.frame()
+      mixed <- rbind(weight.num[,c(1,2)],data.modal[,c(2,3)])
+      mixed <- cbind(mixed,c(row.names(weight.num),i.variables),nature)
+
       #Calcul frequence de citation
       data.quali <- data.frame(res.PCAOS$data[,var.quali,drop = F])
       freq <- unlist(sapply(1:ncol(data.quali),function(var){table(data.quali[,var])},simplify = F))
       freq <- freq/nrow(res.PCAOS$data) *100
-      freq[which(freq < 15)] <- 15
+      freq[which(freq < 25)] <- 25
       freq[which(freq > 75)] <- 75
+
+      mixed <- cbind(mixed,c(rep(NA,length(which(mixed[,4] == "num"))),freq))
 
     }
 
@@ -596,32 +630,45 @@ plot.PCAOS <-
     }
 
     #MIXED VARIABLES
-    if (choice == "mixed"){
+    if (choice == "all.var"){
 
-      #NUM DATA
-      data.graph.var <- data.frame(t(data.frame(res.PCAOS$weights)))
-      weight.num <- data.graph.var[which(level.scale == "num"),]
+      # #NUM DATA
+      # data.graph.var <- data.frame(t(data.frame(res.PCAOS$weights)))
+      # weight.num <- data.graph.var[which(level.scale == "num"),]
+      #
+      # #NOM ET ORD DATA
+      # #Identification of the number of modalities per variable (for fill argument)
+      # nb.modal <- unlist(lapply(category.coord,nrow))
+      # nb.var <- length(nb.modal)
+      # identification.variable <- as.vector(unlist(sapply(1:nb.var, function(j) {rep(colnames(data[,var.quali])[j],nb.modal[j])})))
+      # data.modal <- data.frame(data.modal,identification.variable)
+      # data.modal <- data.frame(data.modal,freq)
 
-      #NOM ET ORD DATA
-      #Identification of the number of modalities per variable (for fill argument)
-      nb.modal <- unlist(lapply(category.coord,nrow))
-      nb.var <- length(nb.modal)
-      identification.variable <- as.vector(unlist(sapply(1:nb.var, function(j) {rep(colnames(data[,var.quali])[j],nb.modal[j])})))
-      data.modal <- data.frame(data.modal,identification.variable)
-      data.modal <- data.frame(data.modal,freq)
+      #invisible.var
+      if (min.contribution > 0){
+        weights <- t(data.frame(res.PCAOS$weights))
+        invisible.var <- intersect(which(abs(as.numeric(weights[,1])) < min.contribution), which(abs(as.numeric(weights[,2])) < min.contribution))
+        invisible.var <- rownames(weights[invisible.var,])
+        row.to.supp <- which(mixed[,3] %in% invisible.var)
+        if(length(row.to.supp) > 0){
+          mixed <- mixed[-row.to.supp,]
+          p.num <- which(mixed$nature == 'num')
+          p.nom <- which(mixed$nature == 'quali')
+        }
+      }
 
       mix.graph <- ggplot2::ggplot() +
         ggplot2::geom_label(ggplot2::aes(
-          x = as.numeric(weight.num[,comp[1]]),
-          y = as.numeric(weight.num[,comp[2]]),
-          label = rownames(weight.num)
+          x = as.numeric(mixed[p.num,1]),
+          y = as.numeric(mixed[p.num,2]),
+          label = rownames(mixed[p.num,])
         ),color = "black",size = size.label) +
         ggplot2::annotate(
           geom = "segment",
-          x = rep(0,nrow(weight.num)),
-          xend = weight.num[,comp[1]],
-          y = rep(0,nrow(weight.num)),
-          yend = weight.num[,comp[2]],
+          x = rep(0,nrow(mixed[p.num,])),
+          xend = as.numeric(mixed[p.num,1]),
+          y = rep(0,nrow(mixed[p.num,])),
+          yend = as.numeric(mixed[p.num,2]),
           col = "black",
           arrow = ggplot2::arrow(length = grid::unit(0.2, "cm")),size = 0.70
         ) +
@@ -638,10 +685,10 @@ plot.PCAOS <-
           size = 1
         ) +
         ggplot2::geom_text(ggplot2::aes(
-          x = as.numeric(data.modal[,2]),
-          y =  as.numeric(data.modal[,3]),
-          label = data.modal[, 1],
-          size = data.modal[, 5]
+          x = as.numeric(mixed[p.nom,1]),
+          y =  as.numeric(mixed[p.nom,2]),
+          label = rownames(mixed[p.nom,]),
+          size = mixed[p.nom, 5]
         ),color = "black") +
         ggplot2::ggtitle("Factorial representation of mixed variables") +
         ggplot2::xlab(paste(nom.comp[1], inertie[comp[1],1]," %")) +
