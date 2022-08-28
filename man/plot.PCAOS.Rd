@@ -38,6 +38,8 @@
 \item{size.label}{size of label in graphs}
 
 \item{size.legend}{size of label in graphs}
+
+\item{min.contribution}{variables with a contribution (i.e loading) lower than this value will not be plotted in the 'all.var' graph (useful for dataset with a lot of variables)}
 }
 \value{
 A ggplot object

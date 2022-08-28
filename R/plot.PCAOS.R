@@ -32,9 +32,9 @@
 #' \itemize{
 #'   \item  qualitative: factorial representation of qualitatives variables trough the representation of it's categories. Coordinates of each category is calculted such as the single quantification of the category multiplied by the loading of the associated variable (rank.restriction = one). Or by averaging, per component, the principal component scores for all individuals in the same categories of a particular variable (rank.restriction = no.restriction).
 #' }
-#' For mixed  variables
+#' For All  variables
 #'  \itemize{
-#'   \item  all.var : factorial representation of mixed variables (weight for numeric variables, and categories for qualitative variables)
+#'   \item  all.var : factorial representation of all variables (weight for numeric variables, and categories for qualitative variables)
 #' }
 #'
 #' All graph are ggplot object
@@ -66,7 +66,7 @@
 #'#Numeric variables
 #'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "numeric",supp.var = TRUE)
 #'
-#'#Mixed variables
+#'#All variables
 #'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "all.var",supp.var = TRUE)
 #'
 #' @author
@@ -90,7 +90,8 @@ plot.PCAOS <-
            level.conf = 0.95,
            size.label = 3.5,
            size.legend = 10,
-           min.contribution = 0
+           min.contribution = 0,
+           label.size.freq = TRUE
            ) {
 
     if(!inherits(res.PCAOS,"PCAOS")) stop("Non convenient object")
@@ -455,6 +456,7 @@ plot.PCAOS <-
         #rownames(category.coord.ord) <- category.coord.ord[,1]
         category.coord.ord <- category.coord.ord[,-1,drop = F]
         data.modal <- rbind(data.modal,category.coord.ord)
+        colnames(data.modal) <- c("Modalites",nom.comp)
       }
 
       max.x <- as.numeric(max(data.modal[,2]))
@@ -499,9 +501,11 @@ plot.PCAOS <-
       #Calcul frequence de citation
       data.quali <- data.frame(res.PCAOS$data[,var.quali,drop = F])
       freq <- unlist(sapply(1:ncol(data.quali),function(var){table(data.quali[,var])},simplify = F))
-      freq <- freq/nrow(res.PCAOS$data) *100
-      freq[which(freq < 25)] <- 25
-      freq[which(freq > 75)] <- 75
+      freq <- freq/nrow(res.PCAOS$data) * 100
+
+      # if(label.size.freq == FALSE){
+      #   freq <- rep(1,length(var.quali))
+      # }
 
       mixed <- cbind(mixed,c(rep(NA,length(which(mixed[,4] == "num"))),freq))
 
@@ -655,6 +659,7 @@ plot.PCAOS <-
           p.num <- which(mixed$nature == 'num')
           p.nom <- which(mixed$nature == 'quali')
         }
+        print(paste('Variable',invisible.var,'is  not ploted'))
       }
 
       mix.graph <- ggplot2::ggplot() +
@@ -690,10 +695,10 @@ plot.PCAOS <-
           label = rownames(mixed[p.nom,]),
           size = mixed[p.nom, 5]
         ),color = "black") +
-        ggplot2::ggtitle("Factorial representation of mixed variables") +
+        ggplot2::ggtitle("Factorial representation of all variables") +
         ggplot2::xlab(paste(nom.comp[1], inertie[comp[1],1]," %")) +
         ggplot2::ylab(paste(nom.comp[2], inertie[comp[2],1]," %")) +
-        ggplot2::theme_classic(base_size = size.legend)  + ggplot2::guides(size = ggplot2::guide_legend(title = "Citation frequency for qualitative variables (%)"))
+        ggplot2::theme_classic(base_size = size.legend)  + ggplot2::guides(size = ggplot2::guide_legend(title = "Citation frequency (%)"))
 
       if(supp.var == TRUE){
         if(any(res.PCAOS$level.scale.supp == "num" )){
