@@ -503,11 +503,13 @@ plot.PCAOS <-
       freq <- unlist(sapply(1:ncol(data.quali),function(var){table(data.quali[,var])},simplify = F))
       freq <- freq/nrow(res.PCAOS$data) * 100
 
-      # if(label.size.freq == FALSE){
-      #   freq <- rep(1,length(var.quali))
-      # }
-
       mixed <- cbind(mixed,c(rep(NA,length(which(mixed[,4] == "num"))),freq))
+
+      legend <- 'right'
+      if(label.size.freq == FALSE){
+        mixed[,5] <- 1
+        legend <- 'none'
+      }
 
     }
 
@@ -698,7 +700,8 @@ plot.PCAOS <-
         ggplot2::ggtitle("Factorial representation of all variables") +
         ggplot2::xlab(paste(nom.comp[1], inertie[comp[1],1]," %")) +
         ggplot2::ylab(paste(nom.comp[2], inertie[comp[2],1]," %")) +
-        ggplot2::theme_classic(base_size = size.legend)  + ggplot2::guides(size = ggplot2::guide_legend(title = "Citation frequency (%)"))
+        ggplot2::theme_classic(base_size = size.legend)  + ggplot2::guides(size = ggplot2::guide_legend(title = "Citation frequency (%)")) +
+        ggplot2::theme(legend.position = legend)
 
       if(supp.var == TRUE){
         if(any(res.PCAOS$level.scale.supp == "num" )){

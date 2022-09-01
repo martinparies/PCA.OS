@@ -15,7 +15,8 @@
   level.conf = 0.95,
   size.label = 3.5,
   size.legend = 10,
-  min.contribution = 0
+  min.contribution = 0,
+  label.size.freq = TRUE
 )
 }
 \arguments{
@@ -62,9 +63,9 @@ For qualitative (i.e nominal and ordinal) variables
 \itemize{
   \item  qualitative: factorial representation of qualitatives variables trough the representation of it's categories. Coordinates of each category is calculted such as the single quantification of the category multiplied by the loading of the associated variable (rank.restriction = one). Or by averaging, per component, the principal component scores for all individuals in the same categories of a particular variable (rank.restriction = no.restriction).
 }
-For mixed  variables
+For All  variables
  \itemize{
-  \item  all.var : factorial representation of mixed variables (weight for numeric variables, and categories for qualitative variables)
+  \item  all.var : factorial representation of all variables (weight for numeric variables, and categories for qualitative variables)
 }
 
 All graph are ggplot object
@@ -96,7 +97,7 @@ PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative",supp.var = TRUE)
 #Numeric variables
 PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "numeric",supp.var = TRUE)
 
-#Mixed variables
+#All variables
 PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "all.var",supp.var = TRUE)
 
 }
