@@ -13,7 +13,8 @@ PCAOS(
   D = 1,
   rank.restriction = "one",
   supp.var = NULL,
-  print.order = TRUE
+  print.order = TRUE,
+  init = "rdm"
 )
 }
 \arguments{

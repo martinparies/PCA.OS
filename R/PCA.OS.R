@@ -25,7 +25,8 @@
 #' @import graphics
 #' @import ggplot2
 #' @import ggpubr
-#'
+#' @import ggpubr
+#' @import isotone
 #'
 #' @name PCA.OS
 NULL

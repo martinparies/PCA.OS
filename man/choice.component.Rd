@@ -6,7 +6,7 @@
 \usage{
 choice.component(
   data,
-  nature = rep("num", ncol(data)),
+  level.scale = rep("num", ncol(data)),
   nb.comp.to.investigate = ncol(data),
   rank.restriction = "one"
 )
@@ -14,7 +14,7 @@ choice.component(
 \arguments{
 \item{data}{a data frame with n rows (individuals) and p columns (numeric, nominal and/or ordinal variables)}
 
-\item{nature}{vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num"}
+\item{level.scale}{vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num"}
 
 \item{nb.comp.to.investigate}{Number of components to investigate (default=ncol(data))}
 
@@ -29,13 +29,13 @@ Helps the user to choose the appropriate number of PCAOS component to optimize
 \examples{
 data("antibiotic")
 
-#Construction of the "nature" argument for this dataset
-nature <- rep(NA,ncol(antibiotic)) #Setting nature argument
-nature[c(2,3,4)] <- "num"
-nature[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
-nature[c(1,15)] <- "ord"
+#Construction of the "level.scale" argument for this dataset
+level.scale <- rep(NA,ncol(antibiotic))
+level.scale[c(2,3,4)] <- "num"
+level.scale[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
+level.scale[c(1,15)] <- "ord"
 
-res.choice <- choice.component(antibiotic,nature)
+res.choice <- choice.component(antibiotic,level.scale)
 res.choice
 
 }

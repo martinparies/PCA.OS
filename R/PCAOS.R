@@ -80,7 +80,8 @@ PCAOS <- function(data,
                   D = 1,
                   rank.restriction = "one",
                   supp.var = NULL,
-                  print.order = TRUE) {
+                  print.order = TRUE,
+                  init = 'rdm') {
   #Checking arguments
   check.arg(data,level.scale,rank.restriction,print.order)
 
@@ -156,29 +157,35 @@ PCAOS <- function(data,
   }
 
   # # Not useful if random initialisation of t
-  # #-NUMERIQUE
-  # if(!is.null(tri$nbvarNUM)){
-  #   dataQUANTI <- scale(tri$data.num, scale = TRUE)
-  # }  else {
-  #   dataQUANTI <- NULL
-  # }
-  # #-NOMINAL
-  # if(!is.null(tri$nbvarNOM)){
-  #   dis.nom <- dummy.coding(data.frame(data[,tri$emplacement.nom]))
-  #   dis.nomP <- freq.weight(dis.nom$data)
-  # }
-  # #-ORDINAL
-  # if(!is.null(tri$nbvarORD)){
-  #   dis.ord <- dummy.coding(data.frame(data[,tri$emplacement.ord]))
-  #   dis.ordP <- freq.weight(dis.ord$data)
-  # }
-
+  #-NUMERIQUE
+  if(init == 'svd'){
+    if(!is.null(tri$nbvarNUM)){
+      dataQUANTI <- scale(tri$data.num, scale = TRUE)
+    }  else {
+      dataQUANTI <- NULL
+    }
+    #-NOMINAL
+    if(!is.null(tri$nbvarNOM)){
+      dis.nom <- dummy.coding(data.frame(data[,tri$emplacement.nom]))
+      dis.nomP <- freq.weight(dis.nom$data)
+    }
+    #-ORDINAL
+    if(!is.null(tri$nbvarORD)){
+      dis.ord <- dummy.coding(data.frame(data[,tri$emplacement.ord]))
+      dis.ordP <- freq.weight(dis.ord$data)
+    }
+    init.dat <- cbind(dataQUANTI,dis.nomP,dis.ordP)
+    for (i in 1:ncol(init.dat)){init.dat[which(is.na(init.dat[,i])),i] <- 0}
+    ressvd<- svd(init.dat)
+  }
   # 5. Initialisation
   # random
-  t<-matrix(rnorm(n=nb.indiv*nb.var.init,mean=0,sd=1),nb.indiv,nb.var.init)
-  t<-scale(t)
-  ressvd<- svd(t)
-  #ressvd<- svd(cbind(dataQUANTI,dis.nomP,dis.ordP))
+  if(init == 'rdm'){
+    t<-matrix(rnorm(n=nb.indiv*nb.var.init,mean=0,sd=1),nb.indiv,nb.var.init)
+    t<-scale(t)
+    ressvd<- svd(t)
+  }
+
   t<-as.matrix(ressvd$u[,1:nb.comp]*sqrt(nb.indiv))
   loss=10000
   loss.by.var = rep(loss/nb.var.init,nb.var.init)
@@ -192,7 +199,7 @@ PCAOS <- function(data,
   # 6. OPTIMAL SCALING / MODEL ESTIMATION
   while(continue){
     # 6.1 QUANTIFICATION
-    # -Nominal variables
+    # -Qualitative variables
     if (!is.null(tri$nbvarNOM)){
       for (j in 1:tri$nbvarNOM){
         resnomquant<-nominal.quantification(tri$data.nom[,j,drop = FALSE],t,rank.restriction = rank.restriction.nom[j])
@@ -205,7 +212,7 @@ PCAOS <- function(data,
     # -Ordinal variables
     if(!is.null(tri$nbvarORD)){
       for (j in 1:tri$nbvarORD){
-        resordquant<-ordinal.quantification(tri$data.ord[,j,drop = FALSE],t)
+        resordquant<-ordinal.quantification(tri$data.ord[,j,drop = FALSE],t,ord)
         quantified.data[[tri$emplacement.ord[j]]]  <- resordquant$var.quant
         weights[[tri$emplacement.ord[j]]] <- resordquant$w
         stock.phi[[tri$emplacement.ord[j]]]<-resordquant$Yj
@@ -263,7 +270,6 @@ PCAOS <- function(data,
       if (iter>1) stock.delta.loss[iter] <- deltaloss
       if ((deltaloss < threshold) | (iter == maxiter)) {
         continue <- FALSE
-        par(mfrow=c(1, 2))
         # matplot(cbind(loss.by.var.ancien,loss.by.var))
         # plot(stock.delta.loss,main = paste("Delta loss (iteration number",iter,")"))
         # print(iter-1)

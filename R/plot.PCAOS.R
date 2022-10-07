@@ -5,14 +5,16 @@
 #' @param res.PCAOS an object of class PCAOS
 #' @param choice the available graphs are "screeplot","quantif","ind","numeric","qualitative","all.var". See Details.
 #' @param comp a length 2 vector with the components to plot
-#' @param coloring.indiv A vector of length N to color individuals. If NULL, no coloring is applied.
-#' @param sub.var.quantif a vector with variable of interest
-#' @param supp.var TRUE or FALSE; if TRUE supplementary variables are added in factorial representation
+#' @param coloring.indiv A vector of length N to color individuals. If NULL, no coloring is applied (works only if choice == 'ind').
+#' @param sub.var.quantif a vector with variable of interest (works only if choice == 'quantif')
+#' @param supp.var TRUE or FALSE; if TRUE supplementary variables are added in factorial representation.
 #' @param ellipse boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable considered as supplementary.
 #' @param level.conf level of confidence ellipses
 #' @param size.label size of label in graphs
 #' @param size.legend size of label in graphs
 #' @param min.contribution variables with a contribution (i.e loading) lower than this value will not be plotted in the 'all.var' graph (useful for dataset with a lot of variables)
+#' @param label.cat If == 'var+cat', the name of the variable is included in the labels of the categories; if == 'cat', only the name of the categorie is plotted (name of categories should be unique)
+#' @param ordinal.as.direction boolean (FALSE by default); if TRUE ordinal variables are represented as vectors (from the first categorie to the last one)
 
 #' @return
 #'A ggplot object
@@ -60,7 +62,7 @@
 #'#Quantifications
 #'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "quantif",sub.var.quantif =  c(4,8))
 #'
-#'#'#Numeric variables
+#'#Qualitative variables
 #'PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative",supp.var = TRUE)
 #'
 #'#Numeric variables
@@ -91,7 +93,9 @@ plot.PCAOS <-
            size.label = 3.5,
            size.legend = 10,
            min.contribution = 0,
-           label.size.freq = TRUE
+           label.size.freq = TRUE,
+           ordinal.as.direction = FALSE,
+           label.cat = 'var+cat'
            ) {
 
     if(!inherits(res.PCAOS,"PCAOS")) stop("Non convenient object")
@@ -329,6 +333,7 @@ plot.PCAOS <-
                                                 ggplot2::aes(x=modalities, y=as.numeric(quantification))) +
             ggplot2::geom_point(size = 3) +
             #ggplot2::scale_y_continuous(limits=limit) +
+            ggplot2::scale_x_discrete(limits= levels(data[,var])) +
             ggplot2::xlab("Categories") +
             ggplot2::ylab("Quantifications") +
             ggplot2::ggtitle(variables[var])+
@@ -340,6 +345,7 @@ plot.PCAOS <-
           graphs.list[[var]] <- ggplot2::ggplot(data = data.frame(data.pour.graph), ggplot2::aes(x=modalities, y=as.numeric(quantification))) +
             ggplot2::geom_point(size = 3) +
             #ggplot2::scale_y_continuous(limits=limit) +
+            ggplot2::scale_x_discrete(limits= levels(data[,var])) +
             ggplot2::xlab("Categories") +
             ggplot2::ylab("Quantifications") +
             ggplot2::ggtitle(variables[var]) +
@@ -388,14 +394,23 @@ plot.PCAOS <-
       category.coord <- list(NULL)
       compteur <- 1
       var.quali <- which(level.scale == "nom" | level.scale =="ord")
-      nb.var.quali <- length(var.quali)
+      var.nom <- which(level.scale == "nom" )
+      var.ord <- which(level.scale == "ord" )
 
+      nb.var.quali <- length(var.quali)
+      #colnames(data[,var,drop = FALSE]),
       if (res.PCAOS$summary$rank == "one"){
         for (var in var.quali){
           category.coord[[compteur]] <- rep(NA,3)
+          if(label.cat == 'var+cat'){
+            labels.of.cat <- paste(colnames(data[,var,drop = FALSE]),rownames(quantification[[var]]),sep = "_")
+          }
+          if(label.cat == 'cat'){
+            labels.of.cat <- paste(rownames(quantification[[var]]),sep = "_")
+          }
           category.coord[[compteur]] <-
             cbind(
-              paste(colnames(data[,var,drop = FALSE]),rownames(quantification[[var]]),sep = "_"),
+              labels.of.cat,
               as.numeric(quantification[[var]]) * res.PCAOS$weights[[var]][comp[1]],
               as.numeric(quantification[[var]]) * res.PCAOS$weights[[var]][comp[2]]
             )
@@ -454,7 +469,7 @@ plot.PCAOS <-
         }
         category.coord.ord <- do.call(rbind.data.frame,category.coord.ord)
         #rownames(category.coord.ord) <- category.coord.ord[,1]
-        category.coord.ord <- category.coord.ord[,-1,drop = F]
+        #category.coord.ord <- category.coord.ord[,-1,drop = F]
         data.modal <- rbind(data.modal,category.coord.ord)
         colnames(data.modal) <- c("Modalites",nom.comp)
       }
@@ -473,37 +488,54 @@ plot.PCAOS <-
       nb.modal <- unlist(lapply(category.coord,nrow))
       nb.var <- length(nb.modal)
 
-      #Variables
+      #Nominal var
       i.variables <- as.vector(unlist(sapply(1:nb.var, function(j) {rep(colnames(res.PCAOS$data[,var.quali,drop = F])[j],nb.modal[j])})))
       #data.modal <- cbind(data.modal,fill.arg)
+      #i.variables.ord <- as.vector(unlist(sapply(1:length(var.ord), function(j) {rep(colnames(res.PCAOS$data[,var.ord,drop = F])[j],nb.modal[j])})))
 
-      #Quali var
-      p.nom <- 1:sum(nb.modal)
-      data.modal <- cbind(data.modal,i.variables,'quali')
+      #Qualitative var
+      nature.quali <- NULL
+      level.scale.quali <- level.scale[which(level.scale == 'nom'|level.scale == 'ord')]
+      for (i in 1:length(nb.modal)){
+        nature.quali <- c(nature.quali,rep(level.scale.quali[i],nb.modal[i]))
+      }
+
+      p.nom <- which(nature.quali == 'nom')
+      p.ord <- which(nature.quali == 'ord')
+      p.quali <-  1:nrow(data.modal)
+      data.modal <- cbind(data.modal,i.variables,nature.quali)
       row.names(data.modal) <- data.modal[,1]
 
       #Numeric var
-      p.num <- 1:length(which(level.scale == "num"))
-      p.nom <- p.nom + length(p.num)
-      weight.num <- data.frame(t(data.frame(res.PCAOS$weights)))
-      weight.num <- weight.num[which(level.scale == "num"),]
-      weight.num <- cbind(weight.num[,comp],'num')
-      nb.var.num <- nrow(weight.num)
-      colnames(weight.num) <- c(nom.comp[1],nom.comp[2],'nature')
+      if(any(level.scale == 'num')){
+        p.num <- 1:length(which(level.scale == "num"))
+        p.nom <- p.nom + length(p.num)
+        p.quali <-  p.quali + length(which(level.scale == "num"))
+        weight.num <- data.frame(t(data.frame(res.PCAOS$weights)))
+        weight.num <- weight.num[which(level.scale == "num"),]
+        nb.var.num <- nrow(weight.num)
+        weight.num <- cbind(weight.num[,comp],'num')
+        colnames(weight.num) <- c(nom.comp[1],nom.comp[2],'nature')
 
-      #Mixed var
-      nature <- c(weight.num[,3],data.modal[,5])
-      na <- rep(NA,(sum(nb.modal) + nb.var))
-      mixed <- data.frame()
-      mixed <- rbind(weight.num[,c(1,2)],data.modal[,c(2,3)])
-      mixed <- cbind(mixed,c(row.names(weight.num),i.variables),nature)
+        #Mixed var
+        nature <- c(weight.num[,3],data.modal[,5])
+        #na <- rep(NA,(sum(nb.modal) + nb.var))
+        mixed <- data.frame()
+        mixed <- rbind(weight.num[,c(1,2)],data.modal[,c(2,3)])
+        mixed <- cbind(mixed,c(row.names(weight.num),i.variables),nature)
 
-      #Calcul frequence de citation
-      data.quali <- data.frame(res.PCAOS$data[,var.quali,drop = F])
-      freq <- unlist(sapply(1:ncol(data.quali),function(var){table(data.quali[,var])},simplify = F))
-      freq <- freq/nrow(res.PCAOS$data) * 100
-
-      mixed <- cbind(mixed,c(rep(NA,length(which(mixed[,4] == "num"))),freq))
+        #Calcul frequence de citation
+        data.quali <- data.frame(res.PCAOS$data[,var.quali,drop = F])
+        freq <- unlist(sapply(1:ncol(data.quali),function(var){table(data.quali[,var])},simplify = F))
+        freq <- freq/nrow(res.PCAOS$data) * 100
+        mixed <- cbind(mixed,c(rep(NA,length(which(mixed[,4] == "num"))),freq))
+      }else{
+        p.num <- 0
+        nature <- c(data.modal[,5])
+        #na <- rep(NA,(sum(nb.modal) + nb.var))
+        mixed <- rbind(data.modal[,c(2,3)])
+        mixed <- cbind(mixed,i.variables,nature)
+      }
 
       legend <- 'right'
       if(label.size.freq == FALSE){
@@ -664,44 +696,109 @@ plot.PCAOS <-
         print(paste('Variable',invisible.var,'is  not ploted'))
       }
 
-      mix.graph <- ggplot2::ggplot() +
-        ggplot2::geom_label(ggplot2::aes(
-          x = as.numeric(mixed[p.num,1]),
-          y = as.numeric(mixed[p.num,2]),
-          label = rownames(mixed[p.num,])
-        ),color = "black",size = size.label) +
-        ggplot2::annotate(
-          geom = "segment",
-          x = rep(0,nrow(mixed[p.num,])),
-          xend = as.numeric(mixed[p.num,1]),
-          y = rep(0,nrow(mixed[p.num,])),
-          yend = as.numeric(mixed[p.num,2]),
-          col = "black",
-          arrow = ggplot2::arrow(length = grid::unit(0.2, "cm")),size = 0.70
-        ) +
-        ggplot2::geom_hline(
-          yintercept = 0,
-          linetype = "dotted",
-          color = "black",
-          size = 1
-        ) +
-        ggplot2::geom_vline(
-          xintercept = 0,
-          linetype = "dotted",
-          color = "black",
-          size = 1
-        ) +
-        ggplot2::geom_text(ggplot2::aes(
-          x = as.numeric(mixed[p.nom,1]),
-          y =  as.numeric(mixed[p.nom,2]),
-          label = rownames(mixed[p.nom,]),
-          size = mixed[p.nom, 5]
-        ),color = "black") +
-        ggplot2::ggtitle("Factorial representation of all variables") +
-        ggplot2::xlab(paste(nom.comp[1], inertie[comp[1],1]," %")) +
-        ggplot2::ylab(paste(nom.comp[2], inertie[comp[2],1]," %")) +
-        ggplot2::theme_classic(base_size = size.legend)  + ggplot2::guides(size = ggplot2::guide_legend(title = "Citation frequency (%)")) +
-        ggplot2::theme(legend.position = legend)
+      if(ordinal.as.direction == TRUE){
+        data.ord <- mixed[which(mixed[,4] == 'ord'),]
+        ord.var <- unique(data.ord[,3])
+        x.max <- x.min <- rep(NA,length(ord.var))
+        y.max <- y.min <- rep(NA,length(ord.var))
+          for (i in 1:length(ord.var)){
+            data.var <- data.ord[which(data.ord[,3] == ord.var[i]),]
+
+            x.max[i] <- as.numeric(data.var[nrow(data.var),1])
+            x.min[i] <- as.numeric(data.var[1,1])
+            y.max[i] <- as.numeric(data.var[nrow(data.var),2])
+            y.min[i] <- as.numeric(data.var[1,2])
+          }
+
+          mix.graph <- ggplot2::ggplot() +
+          ggplot2::geom_label(ggplot2::aes(
+            x = as.numeric(mixed[p.num,1]),
+            y = as.numeric(mixed[p.num,2]),
+            label = rownames(mixed[p.num,])
+          ),color = "black",size = size.label) +
+          ggplot2::annotate(
+            geom = "segment",
+            x = rep(0,nrow(mixed[p.num,])),
+            xend = as.numeric(mixed[p.num,1]),
+            y = rep(0,nrow(mixed[p.num,])),
+            yend = as.numeric(mixed[p.num,2]),
+            col = "black",
+            arrow = ggplot2::arrow(length = grid::unit(0.2, "cm")),size = 0.70
+          ) +
+          ggplot2::geom_hline(
+            yintercept = 0,
+            linetype = "dotted",
+            color = "black",
+            size = 1
+          ) +
+          ggplot2::geom_vline(
+            xintercept = 0,
+            linetype = "dotted",
+            color = "black",
+            size = 1
+          ) +
+          ggplot2::geom_text(ggplot2::aes(
+            x = as.numeric(mixed[p.quali,1]),
+            y =  as.numeric(mixed[p.quali,2]),
+            label = rownames(mixed[p.quali,]),
+            size = mixed[p.quali, 5]
+          ),color = "black") +
+          ggplot2::annotate(
+            geom = "segment",
+            x = x.min,
+            xend = x.max,
+            y = y.min,
+            yend = y.max,
+            col = "black",
+            arrow = ggplot2::arrow(length = grid::unit(0.45, "cm")),size = 0.70
+          )+
+          ggplot2::ggtitle("Factorial representation of all variables") +
+          ggplot2::xlab(paste(nom.comp[1], inertie[comp[1],1]," %")) +
+          ggplot2::ylab(paste(nom.comp[2], inertie[comp[2],1]," %")) +
+          ggplot2::theme_classic(base_size = size.legend)  + ggplot2::guides(size = ggplot2::guide_legend(title = "Citation frequency (%)")) +
+          ggplot2::theme(legend.position = legend)
+
+      }else{
+        mix.graph <- ggplot2::ggplot() +
+          ggplot2::geom_label(ggplot2::aes(
+            x = as.numeric(mixed[p.num,1]),
+            y = as.numeric(mixed[p.num,2]),
+            label = rownames(mixed[p.num,])
+          ),color = "black",size = size.label) +
+          ggplot2::annotate(
+            geom = "segment",
+            x = rep(0,nrow(mixed[p.num,])),
+            xend = as.numeric(mixed[p.num,1]),
+            y = rep(0,nrow(mixed[p.num,])),
+            yend = as.numeric(mixed[p.num,2]),
+            col = "black",
+            arrow = ggplot2::arrow(length = grid::unit(0.2, "cm")),size = 0.70
+          ) +
+          ggplot2::geom_hline(
+            yintercept = 0,
+            linetype = "dotted",
+            color = "black",
+            size = 1
+          ) +
+          ggplot2::geom_vline(
+            xintercept = 0,
+            linetype = "dotted",
+            color = "black",
+            size = 1
+          ) +
+          ggplot2::geom_text(ggplot2::aes(
+            x = as.numeric(mixed[p.quali,1]),
+            y =  as.numeric(mixed[p.quali,2]),
+            label = rownames(mixed[p.quali,]),
+            size = mixed[p.quali, 5]
+          ),color = "black") +
+          ggplot2::ggtitle("Factorial representation of all variables") +
+          ggplot2::xlab(paste(nom.comp[1], inertie[comp[1],1]," %")) +
+          ggplot2::ylab(paste(nom.comp[2], inertie[comp[2],1]," %")) +
+          ggplot2::theme_classic(base_size = size.legend)  + ggplot2::guides(size = ggplot2::guide_legend(title = "Citation frequency (%)")) +
+          ggplot2::theme(legend.position = legend)
+      }
+
 
       if(supp.var == TRUE){
         if(any(res.PCAOS$level.scale.supp == "num" )){

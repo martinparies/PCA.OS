@@ -33,8 +33,8 @@ nominal.quantification <- function (var,t,rank.restriction){
   if ((rank.restriction == "no.restriction") & (param>1))    aj=ressvd$v%*%diag(ressvd$d[1:param])
   Yjhat=qj%*%t(aj)
   var.quant <- var.dis %*% qj
-  var.quant <- var.quant* coefnorm
+  var.quant <- var.quant * coefnorm
   w<-aj/coefnorm
 
-  return(list(var.quant=var.quant,w=t(w),Yj=Yj,Yjhat=Yjhat))
+  return(list(var.quant=var.quant,w=t(w),Yj=Yj,Yjhat=Yjhat,qj=qj))
 }

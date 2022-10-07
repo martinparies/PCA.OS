@@ -16,7 +16,9 @@
   size.label = 3.5,
   size.legend = 10,
   min.contribution = 0,
-  label.size.freq = TRUE
+  label.size.freq = TRUE,
+  ordinal.as.direction = FALSE,
+  label.cat = "var+cat"
 )
 }
 \arguments{
@@ -26,11 +28,11 @@
 
 \item{comp}{a length 2 vector with the components to plot}
 
-\item{coloring.indiv}{A vector of length N to color individuals. If NULL, no coloring is applied.}
+\item{coloring.indiv}{A vector of length N to color individuals. If NULL, no coloring is applied (works only if choice == 'ind').}
 
-\item{supp.var}{TRUE or FALSE; if TRUE supplementary variables are added in factorial representation}
+\item{supp.var}{TRUE or FALSE; if TRUE supplementary variables are added in factorial representation.}
 
-\item{sub.var.quantif}{a vector with variable of interest}
+\item{sub.var.quantif}{a vector with variable of interest (works only if choice == 'quantif')}
 
 \item{ellipse}{boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable considered as supplementary.}
 
@@ -41,6 +43,10 @@
 \item{size.legend}{size of label in graphs}
 
 \item{min.contribution}{variables with a contribution (i.e loading) lower than this value will not be plotted in the 'all.var' graph (useful for dataset with a lot of variables)}
+
+\item{ordinal.as.direction}{boolean (FALSE by default); if TRUE ordinal variables are represented as vectors (from the first categorie to the last one)}
+
+\item{label.cat}{If == 'var+cat', the name of the variable is included in the labels of the categories; if == 'cat', only the name of the categorie is plotted (name of categories should be unique)}
 }
 \value{
 A ggplot object
@@ -91,7 +97,7 @@ PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "ind",supp.var = TRUE,ellipse 
 #Quantifications
 PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "quantif",sub.var.quantif =  c(4,8))
 
-#'#Numeric variables
+#Qualitative variables
 PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative",supp.var = TRUE)
 
 #Numeric variables
