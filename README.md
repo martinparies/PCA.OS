@@ -1,8 +1,8 @@
 # PCAOS
 
 PCAOS package allows to perform Single and MultiBlock exploratory analysis of datasets composed of variables with different natures.
-How do you install an use the latest version of PCAOS available on GitHub?
 
+#How do you install an use the latest version of PCAOS available on GitHub?
 
 ```{r}
 if (!require("devtools")) install.packages("devtools")
@@ -12,7 +12,7 @@ library(PCA.OS)
 help(PCA.OS)
 ```
 
-# Data
+# 1. Single block data
 ```{r}
 data("antibiotic")
 help(antibiotic)
@@ -35,7 +35,7 @@ level.scale [res.nature$p.quali] <- "nom"
 level.scale[c(1,15)] <- "ord"
 ```
 
-# Choice of number of components
+# Choice of number of component
 ```{r}
 help(choice.component)
 res.choice <- choice.componentlevel.scale
@@ -70,7 +70,7 @@ plot.PCAOS(
 plot.PCAOS(res.PCAOS = res.PCAOS,choice = "all.var")
 ```
 
-# Multiblock data
+# 2. Multiblock data
 ```{r}
 data('antibiotic')
 antb.uses <- antibiotic[,c('Atb.conso','Atb.Sys')]
@@ -95,7 +95,7 @@ level.scale.MB [res.nature$p.quali] <- "nom"
 level.scale.MB[c(1,14)] <- "ord"
 ```
 
-# Choice of number of components
+# Choice of number of component
 ```{r}
 help(choice.component.MB)
 res.choice.MB <- choice.component.MB(antibiotic.MB,level.scale.MB, blocs , blocs.name, block.scaling = 'inertia')
@@ -112,7 +112,7 @@ res.MBPCAOS <- MBPCAOS(data = antibiotic.MB,
 
 ```
 
-# Blocks graphs
+# Blocks graph
 ```{r}
 plot.MBPCAOS(res.MBPCAOS,choice = 'blocs')
 ```
