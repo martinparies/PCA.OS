@@ -2,7 +2,7 @@
 
 PCAOS package allows to perform Single and MultiBlock exploratory analysis of datasets composed of variables with different natures.
 
-#How do you install an use the latest version of PCAOS available on GitHub?
+# How do you install an use the latest version of PCAOS available on GitHub?
 
 ```{r}
 if (!require("devtools")) install.packages("devtools")
