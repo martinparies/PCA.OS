@@ -18,7 +18,7 @@ data("antibiotic")
 help(antibiotic)
 ```
 
-# Setting nature of each variable
+# 1.1 Setting nature of each variable
 ```{r}
 #Manually
 level.scale <- rep(NA,ncol(antibiotic)) #Setting level.scale argument
@@ -35,14 +35,14 @@ level.scale [res.nature$p.quali] <- "nom"
 level.scale[c(1,15)] <- "ord"
 ```
 
-# Choice of number of component
+# 1.2 Choice of number of component
 ```{r}
 help(choice.component)
 res.choice <- choice.componentlevel.scale
 res.choice
 ```
 
-# Single block exploratory analysis : PCAOS
+# 1.3 Single block exploratory analysis : PCAOS
 ```{r}
 help(PCAOS)
 res.PCAOS <- PCAOS(
@@ -52,7 +52,7 @@ res.PCAOS <- PCAOS(
     nb.comp = 2)
 ```
 
-# Plots
+# 1.4 Plots
 ```{r}
 help(plot.PCAOS)
 #Individuals
@@ -79,13 +79,13 @@ vet.practices <- antibiotic[,c(6:15)]
 antibiotic.MB <- data.frame(antb.uses,health,vet.practices)
  ```
 
-# Defining the blocks
+# 2.1 Defining the blocks
  ```{r}
 blocs.name =  c("antibiotic.uses","Health.of.turkeys","Veterinary.practices")
 blocs <- c(2,2,10)
 ```
 
-# Level of scaling
+# 2.2 Level of scaling
 ```{r}
 level.scale.MB <- rep(NA,ncol(antibiotic.MB))
 res.nature <- nature.variables(antibiotic.MB)
@@ -95,14 +95,14 @@ level.scale.MB [res.nature$p.quali] <- "nom"
 level.scale.MB[c(1,14)] <- "ord"
 ```
 
-# Choice of number of component
+# 2.3 Choice of number of component
 ```{r}
 help(choice.component.MB)
 res.choice.MB <- choice.component.MB(antibiotic.MB,level.scale.MB, blocs , blocs.name, block.scaling = 'inertia')
 res.choice.MB
 ```
 
-Multiblock exploratory analysis : MBPCAOS
+# 2.4 Multiblock exploratory analysis : MBPCAOS
 ```{r}
 res.MBPCAOS <- MBPCAOS(data = antibiotic.MB,
                        level.scale = level.scale.MB,
@@ -112,7 +112,7 @@ res.MBPCAOS <- MBPCAOS(data = antibiotic.MB,
 
 ```
 
-# Blocks graph
+# 2.5 Blocks graph
 ```{r}
 plot.MBPCAOS(res.MBPCAOS,choice = 'blocs')
 ```
