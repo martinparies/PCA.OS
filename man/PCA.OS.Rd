@@ -5,7 +5,8 @@
 \alias{PCA.OS}
 \title{PCA.OS}
 \description{
-Principal Component Analysis with Optimal Scaling features
+Principal Component Analysis with Optimal Scaling features (main function : PCAOS).
+Multiblock version of the algorithm also available (MBPCAOS)
 }
 \details{
 \itemize{

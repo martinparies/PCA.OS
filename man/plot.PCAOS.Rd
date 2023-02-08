@@ -16,7 +16,7 @@
   size.label = 3.5,
   size.legend = 10,
   min.contribution = 0,
-  label.size.freq = TRUE,
+  label.size.freq = FALSE,
   ordinal.as.direction = FALSE,
   label.cat = "var+cat"
 )
@@ -43,6 +43,8 @@
 \item{size.legend}{size of label in graphs}
 
 \item{min.contribution}{variables with a contribution (i.e loading) lower than this value will not be plotted in the 'all.var' graph (useful for dataset with a lot of variables)}
+
+\item{label.size.freq}{boolean (FALSE by default); if TRUE size of categories are proportional to their citation frequencies.}
 
 \item{ordinal.as.direction}{boolean (FALSE by default); if TRUE ordinal variables are represented as vectors (from the first categorie to the last one)}
 

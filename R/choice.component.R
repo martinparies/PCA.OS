@@ -34,7 +34,7 @@
 #' @export
 #'
 choice.component <- function(data,level.scale = rep("num",ncol(data)),nb.comp.to.investigate = ncol(data),rank.restriction = 'one'){
-  res <- sapply(1:nb.comp.to.investigate,function(x){PCAOS(data,level.scale,nb.comp = x,print.order = FALSE,rank.restriction = rank.restriction,init = 'svd')$loss.tot})
+  res <- sapply(1:nb.comp.to.investigate,function(x){PCAOS(data,level.scale,nb.comp = x,print.order = FALSE,rank.restriction = rank.restriction,init = 'rdm',threshold = 10e-6)$loss.tot})
 
   percentage <-
     sapply(1:nb.comp.to.investigate, function(x) {

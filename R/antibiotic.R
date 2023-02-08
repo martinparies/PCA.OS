@@ -26,7 +26,7 @@
 #' @references
 #' Chauvin, C., Bouvarel, I., Beloil, P. A., Orand, J. P., Guillemot, D., & Sanders, P. (2005). A pharmaco-epidemiological analysis of factors associated with antimicrobial consumption level in turkey broiler flocks. Veterinary research, 36(2), 199-211.
 #'
-#' @example
+#' @examples
 #' #Charging the data
 #' data("antibiotic")
 #' summary(antibiotic)

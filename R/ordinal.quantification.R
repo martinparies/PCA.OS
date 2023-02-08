@@ -18,7 +18,7 @@
 # Do NOT use this function unless you are ME, a package developer, or a jedi user who really knows what is doing.
 #
 ordinal.quantification <- function (var, t, ord) {
-
+  decreased <- FALSE
   #missing data
   na <- which(is.na(var))
 
@@ -108,7 +108,7 @@ ordinal.quantification <- function (var, t, ord) {
     SSQ1=as.numeric((nbindiv-1)*var(quantifRESTRICTED1))
     SSQ2=as.numeric((nbindiv-1)*var(quantifRESTRICTED2))
 
-    if (abs(SSQ1-SSQ2)<1e-5) {
+    if (abs(SSQ1-SSQ2)<1e-2) {
       if (cor(var.quant.nom,quantifRESTRICTED1)>cor(var.quant.nom,quantifRESTRICTED2)) {
         dataDIS <- dataDIS1
         Yj=Yj1
@@ -121,6 +121,7 @@ ordinal.quantification <- function (var, t, ord) {
         aj<-aj2
         qj<-qj2
         var.quant <- (quantifRESTRICTED2)
+        decreased <- TRUE
       }
     } else {
       if (SSQ1>SSQ2) {
@@ -166,7 +167,12 @@ ordinal.quantification <- function (var, t, ord) {
 
     #Correction avec gpava si la quantification n'est tjrs pas parfaite
     if(!sum(order(qj)==seq(1,ncol(var.dis)))==ncol(var.dis)){
-      qj.order <- gpava(z = 1:length(qj), y = qj, weights = 1/f12)$x
+      if(decreased == TRUE){
+        qj.order <- gpava(z = length(qj):1, y = qj, weights = 1/f12)$x
+      }
+      if(decreased == FALSE){
+        qj.order <- gpava(z = 1:length(qj), y = qj, weights = 1/f12)$x
+      }
       qqj <- qj.order/as.numeric(sqrt(t(qj.order)%*%qj.order))
       #qqj=diag(1/f12)%*%qj.order   #t(qqj)%*%t(var.dis)%*%var.dis%*%qqj=1
       var.quant <- var.dis %*% qqj

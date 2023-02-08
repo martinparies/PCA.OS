@@ -15,6 +15,7 @@
 #' @param min.contribution variables with a contribution (i.e loading) lower than this value will not be plotted in the 'all.var' graph (useful for dataset with a lot of variables)
 #' @param label.cat If == 'var+cat', the name of the variable is included in the labels of the categories; if == 'cat', only the name of the categorie is plotted (name of categories should be unique)
 #' @param ordinal.as.direction boolean (FALSE by default); if TRUE ordinal variables are represented as vectors (from the first categorie to the last one)
+#' @param label.size.freq boolean (FALSE by default); if TRUE size of categories are proportional to their citation frequencies.
 
 #' @return
 #'A ggplot object
@@ -93,7 +94,7 @@ plot.PCAOS <-
            size.label = 3.5,
            size.legend = 10,
            min.contribution = 0,
-           label.size.freq = TRUE,
+           label.size.freq = FALSE,
            ordinal.as.direction = FALSE,
            label.cat = 'var+cat'
            ) {
@@ -418,13 +419,10 @@ plot.PCAOS <-
           category.coord[[compteur]] <- data.frame(category.coord[[compteur]])
           compteur <- compteur + 1
         }
-        names(category.coord) <- colnames(data[,var.quali])
-
-        data.modal <- category.coord[[1]]
-        for (i in 2:length(category.coord)){
-          data.modal <- rbind(data.modal,category.coord[[i]])
-        }
+        names(category.coord) <- colnames(data[,var.quali,drop = F])
+        data.modal <- do.call(rbind.data.frame,category.coord)
         colnames(data.modal) <- colnames(category.coord[[1]])
+
       }
 
       if (res.PCAOS$summary$rank == "no.restriction"){
@@ -751,7 +749,7 @@ plot.PCAOS <-
             yend = y.max,
             col = "black",
             arrow = ggplot2::arrow(length = grid::unit(0.45, "cm")),size = 0.70
-          )+
+          ) +
           ggplot2::ggtitle("Factorial representation of all variables") +
           ggplot2::xlab(paste(nom.comp[1], inertie[comp[1],1]," %")) +
           ggplot2::ylab(paste(nom.comp[2], inertie[comp[2],1]," %")) +
@@ -798,7 +796,6 @@ plot.PCAOS <-
           ggplot2::theme_classic(base_size = size.legend)  + ggplot2::guides(size = ggplot2::guide_legend(title = "Citation frequency (%)")) +
           ggplot2::theme(legend.position = legend)
       }
-
 
       if(supp.var == TRUE){
         if(any(res.PCAOS$level.scale.supp == "num" )){

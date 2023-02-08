@@ -13,8 +13,8 @@ ellipses.coord <- function (var.quali, components, modal,level.conf){
     #Moyenne (place le centre de l'ellipse)
     moy = colMeans(components[which(var.quali == modalites[modal]), ])
     #Ecar-type des deux composantes
-    sd.CP1 <- sd(CP1)/sqrt(length(CP1))
-    sd.CP2 <- sd(CP2)/sqrt(length(CP2))
+    sd.CP1 <- sd(CP1) #/sqrt(length(CP1))
+    sd.CP2 <- sd(CP2) #/sqrt(length(CP2))
     #Cov entre CP1 et CP2
     dat <- data.frame(x = CP1, y = CP2)
     dat.cov <- cov(dat)

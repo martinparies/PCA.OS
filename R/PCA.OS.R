@@ -1,7 +1,7 @@
 #' PCA.OS
 #'
-#' Principal Component Analysis with Optimal Scaling features
-#'
+#' Principal Component Analysis with Optimal Scaling features (main function : PCAOS).
+#' Multiblock version of the algorithm also available (MBPCAOS)
 #'
 #' @docType package
 #'

@@ -23,13 +23,20 @@
 #' }
 #'
 #' @param print.order  boolean (TRUE by default), if TRUE ther order of the categories of ordinal variables are print
-
+#'
+#' @param init  Intitialization strategy, possible values are :
+#' \itemize{
+#'   \item "rdm" (default) : random initialisation
+#'   \item "svd": components are initialized with the singular value decomposition of the concatenated and pretreated variables (numeric variables are standardized and categorical variables are coded as pseudo disjunctive and weighted by the frequencies of the categories)
+#' }
+#'
+#'
 #' @return
 #'
 #' \itemize{
 #'   \item weigths : list of weights of the variables (loadings and weights are the same in PCA-like model)
 #'   \item components : data.frame with individuals scores for each dimension
-#'   \item quantified.data : Optimally quantified variables
+#'   \item quantified.data : optimally quantified variables
 #'   \item summary : summary of the number of variables according to their nature
 #'   \item quantification.categories.nom : list of optimally quantified categories (nominal variables)
 #'   \item quantification.categories.ord : list of optimally quantified categories (ordinal variables)
@@ -37,29 +44,48 @@
 #'   \item loss.tot : global loss for all variables
 #'   \item stockiter : evolution of the criterion for each ieration
 #'   \item data : orginal dataset
-#'   \item nature : nature of scaling choosen for each variable
-#'   \item quali.var.supp : supplementary variable
+#'   \item level.scale : nature of scaling choosen for each variable
+#'   \item coord.supp.quali : coordinates of the supplementary qualitatives variables,
+#'   \item coord.supp.num : coordinates of the supplementary numeric variables
+#'   \item quali.var.supp : qualitative supplementary variable
 #'
 #' }
 #'
+#'
+#'
 #' @examples
+#'
 #' data (antibiotic)
-#' level.scale <- rep(NA,ncol(antibiotic)) #Setting nature argument
-#' level.scale[c(2,3,4)] <- "num"
-#' level.scale[c(1,5,6,7,8,9,10,11,12,13,14,15)] <- "nom"
-#' level.scale[c(1,15)] <- "ord"
-#' level.scale
+#'# Level of scaling of each variable
+#'# Manually
+#'level.scale <- rep(NA,ncol(antibiotic)) #Setting level.scale argument
+#'level.scale[c(3,4)] <- "num"
+#'level.scale[c(6:14)] <- "nom"
+#'level.scale[c(1,15)] <- "ord"
+
+#'# Or using nature.variables()
+#'level.scale <- rep(NA,ncol(antibiotic))
+#'res.nature <- nature.variables(antibiotic)
+#'level.scale [res.nature$p.numeric] <- "num"
+#'level.scale [res.nature$p.quali] <- "nom"
+#'#Warning; the ordinal nature of variables can not be detected automaticaly.
+#'level.scale[c(1,15)] <- "ord"
 #'
-#'res.PCAOS <- PCA.OS::PCAOS(
-#'  data = antibiotic,
-#'  level.scale = level.scale,
-#'  supp.var = 1
-#')
+#'# PCAOS
+#'res.PCAOS <- PCAOS(
+#' data = antibiotic,
+#' level.scale = level.scale,
+#' rank.restriction = "one",
+#' nb.comp = 2)
 #'
-#'PCA.OS::plot.PCAOS(
+#'# Plot (individuals)
+#'plot.PCAOS(
 #'  res.PCAOS = res.PCAOS,
 #'  choice = "ind",
-#'  coloring = antibiotic$Atb.conso)
+#'  coloring.indiv = antibiotic$Atb.conso,
+#'  size.legend = 12,
+#'  size.label = 4
+#')
 #'
 #' @author
 #' \itemize{
@@ -84,6 +110,8 @@ PCAOS <- function(data,
                   init = 'rdm') {
   #Checking arguments
   check.arg(data,level.scale,rank.restriction,print.order)
+
+
 
   #Supplementary variable
   level.scale.supp = NULL
@@ -359,7 +387,7 @@ PCAOS <- function(data,
   if (any(level.scale == "ord")){
     for (j in 1:tri$nbvarORD) {
       var.quant <- quantified.data[[tri$emplacement.ord[j]]]
-      var<-as.numeric(data[,tri$emplacement.ord[j]])
+      var <- as.numeric(data[,tri$emplacement.ord[j]])
       na <- which(is.na(var))
       var[na] <- mean(var,na.rm = T)
       w<-weights[[tri$emplacement.ord[j]]]

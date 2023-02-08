@@ -7,13 +7,11 @@
 #
 # @return dummy coded variables
 #
-polynom.data<- function(var,D){
+polynom.data <- function(var,D){
   var[which(is.na(var)),] <- 0
-
   nbINDIV <- nrow(var)
   nbCOL <- ncol(var)
   nbCOL <- nbCOL * (D+1)
-
   res <- matrix(0,nbINDIV,nbCOL)
 
   if (D==1){
