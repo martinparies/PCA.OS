@@ -266,7 +266,7 @@ MBPCAOS <- function(data,
     # -Ordinal variables
     if(!is.null(tri$nbvarORD)){
       for (j in 1:tri$nbvarORD){
-        resordquant<-ordinal.quantification(tri$data.ord[,j,drop = FALSE],t)
+        resordquant <- ordinal.quantification(tri$data.ord[,j,drop = FALSE],t)
         quantified.data[[tri$emplacement.ord[j]]]  <- resordquant$var.quant
         weights[[tri$emplacement.ord[j]]] <- resordquant$w
         stock.phi[[tri$emplacement.ord[j]]]<-resordquant$Yj
@@ -469,7 +469,7 @@ MBPCAOS <- function(data,
         num <- num + 1
       }
       w<-weights[[tri$emplacement.ord[j]]]
-      s=as.numeric(sign(cor(as.numeric(var),var.quant)))
+      s=as.numeric(sign(cor(as.numeric(var.lev),var.quant)))
       quantified.data[[tri$emplacement.ord[j]]] <- var.quant * s
       weights[[tri$emplacement.ord[j]]]<- w*s
     }
