@@ -39,7 +39,7 @@
 #' }
 #' For blocs
 #'  \itemize{
-#'   \item  blocs: contribution of each block to principal components. The contribution of one block is calculated as the squared sum of the loading of the variables in the block, divided by the block scaling of the block.
+#'   \item  blocks: contribution of each block to principal components. The contribution of one block is calculated as the squared sum of the loading of the variables in the block, divided by the block scaling of the block.
 #' }
 #'
 #' All graph are ggplot object
@@ -536,7 +536,7 @@ plot.MBPCAOS <-function(
         y = as.numeric(contrib[,comp[2]]),
         label = rownames(contrib)
       ), size = size.label) +
-      ggplot2::ggtitle("Blocks according to their contributions to components") +
+      ggplot2::ggtitle("blocks according to their contributions to components") +
       ggplot2::xlab(paste(nom.comp[1], res.MBPCAOS$inertia[comp[1],1]," %")) +
       ggplot2::ylab(paste(nom.comp[2], res.MBPCAOS$inertia[comp[2],1]," %")) +
       ggplot2::geom_hline(
@@ -557,7 +557,7 @@ plot.MBPCAOS <-function(
   #Squared loadings
   if (choice =="squared.loading"){
     sq.load  <- data.frame(t(data.frame(res.MBPCAOS$weights)))^2
-    identification.blocs <- unlist(sapply(1:nb.bloc,function(x)rep(res.MBPCAOS$blocs.name[x],res.MBPCAOS$blocs[x],)))
+    identification.blocks <- unlist(sapply(1:nb.bloc,function(x)rep(res.MBPCAOS$blocs.name[x],res.MBPCAOS$blocs[x],)))
 
     sq.load.graph <- ggplot2::ggplot(data = sq.load) +
       ggplot2::geom_label( ggplot2::aes(
@@ -581,7 +581,7 @@ plot.MBPCAOS <-function(
       )+
       ggplot2::theme_classic(base_size = size.legend) + ggplot2::guides(
         fill = ggplot2::guide_legend(
-          title = "Blocs",
+          title = "Blocks",
           override.aes =  ggplot2::aes(label = "")
         )
       ) + ggplot2::annotate(
@@ -636,11 +636,11 @@ plot.MBPCAOS <-function(
           label = row.names(mixed[p.nom,]),
           size = mixed[p.nom,6]
         )) +
-        ggplot2::ggtitle(paste("Variables of blocs",blocs.name[sub.bloc])) +
+        ggplot2::ggtitle(paste("Variables of block",blocs.name[sub.bloc])) +
         ggplot2::xlab(paste(nom.comp[1], res.MBPCAOS$inertia[comp[1], 1], " %")) +
         ggplot2::ylab(paste(nom.comp[2], res.MBPCAOS$inertia[comp[2], 1], " %")) +
         ggplot2::theme_classic(base_size = size.legend) +
-        ggplot2::guides(fill = ggplot2::guide_legend(title = "Blocs",override.aes = ggplot2::aes(label = "")))
+        ggplot2::guides(fill = ggplot2::guide_legend(title = "Block",override.aes = ggplot2::aes(label = "")))
 
     }else{
 
@@ -721,7 +721,7 @@ plot.MBPCAOS <-function(
         ggplot2::xlab(paste(nom.comp[1], res.MBPCAOS$inertia[comp[1], 1], " %")) +
         ggplot2::ylab(paste(nom.comp[2], res.MBPCAOS$inertia[comp[2], 1], " %")) +
         ggplot2::theme_classic(base_size = size.legend) +
-        ggplot2::guides(fill = ggplot2::guide_legend(title = "Blocs",override.aes = ggplot2::aes(label = "")))
+        ggplot2::guides(fill = ggplot2::guide_legend(title = "Block",override.aes = ggplot2::aes(label = "")))
 
     }
 

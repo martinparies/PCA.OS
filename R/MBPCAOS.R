@@ -363,8 +363,6 @@ MBPCAOS <- function(data,
       valp=ressvd$d^2
     }
 
-
-
   }
   ############  end while #####################################
 
@@ -428,7 +426,7 @@ MBPCAOS <- function(data,
         rownames( coord.supp.quali[[var]]) <- modal
         nbvar <- ncol(data)
         for (mod in 1:nb.modal) {
-          coord.supp.quali[[var]][mod,] <- colMeans(components[which(var.supp.quali == modal[mod]), ])
+          coord.supp.quali[[var]][mod,] <- colMeans(components[which(var.supp.quali == modal[mod]), ,drop = F])
         }
       }
     }
