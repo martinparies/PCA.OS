@@ -6,9 +6,9 @@
 #'
 #' @param level.scale vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num"
 #'
-#' @param blocs vector(length k) with number of variables in each bloc
+#' @param blocks vector(length k) with number of variables in each bloc
 #'
-#' @param blocs.name vector(length k) with names of each bloc
+#' @param blocks.name vector(length k) with names of each bloc
 #'
 #' @param block.scaling scaling applied to each block. Possible value are : \itemize{
 #'   \item "inertia"(default): each quantified block is divided by its total inertia (sum of square).
@@ -27,6 +27,33 @@
 #'   \item Stephanie Bougeard
 #' }
 #'
+#' @examples
+#' data('antibiotic')
+#' antb.uses <- antibiotic[,c('Atb.conso','Atb.Sys')]
+#' health <- antibiotic[,c('Age','Loss')]
+#' vet.practices <- antibiotic[,c(6:15)]
+#' antibiotic.MB <- data.frame(antb.uses,health,vet.practices)
+#'
+#'# Defining the blocks
+#' blocks.name =  c("antibiotic.uses","Health.of.turkeys","Veterinary.practices")
+#' blocks <- c(2,2,10)
+#'
+#'# Level of scaling
+#' level.scale.MB <- rep(NA,ncol(antibiotic.MB))
+#' res.nature <- nature.variables(antibiotic.MB)
+#' level.scale.MB [res.nature$p.numeric] <- "num"
+#' level.scale.MB [res.nature$p.quali] <- "nom"
+#' #Warning; the ordinal nature of variables can not be detected automaticaly.
+#' level.scale.MB[c(1,14)] <- "ord"
+#'
+#'# Choice of number of components
+#' help(choice.component.MB)
+#' res.choice.MB <- choice.component.MB(antibiotic.MB,
+#'                                      level.scale.MB,
+#'                                      blocks,
+#'                                      blocks.name,
+#'                                      block.scaling = 'inertia')
+#'res.choice.MB
 #'
 #' @export
 #'
@@ -35,21 +62,21 @@
 choice.component.MB <-
   function(data,
            level.scale,
-           blocs,
-           blocs.name,
-           nb.comp.to.investigate = ncol(data),
+           blocks,
+           blocks.name,
+           nb.comp.to.investigate = 5,
            block.scaling = 'inertia') {
     percentage <-
       sapply(1:nb.comp.to.investigate, function(x) {
         PCA.OS::MBPCAOS(data = data,
                 level.scale = level.scale,
-                blocs = blocs,
-                blocs.name = blocs.name,
+                blocks = blocks,
+                blocks.name = blocks.name,
                 nb.comp = x,
-                print.order = FALSE,
+                print = FALSE,
                 maxiter = 50,
                 threshold = 10e-5,
-                block.scaling = block.scaling)$inertia[x,2]
+                block.scaling = block.scaling)$Dimension.reduction$inertia[x,2]
       })
 
     pourcentage = rep(NA,nb.comp.to.investigate)

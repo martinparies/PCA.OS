@@ -12,12 +12,12 @@
 # @return stop function if argument are wrong
 #
 check.plot.MB.arg <- function(choice,level.scale,level.scale.supp,supp.var, comp, nb.comp){
-  if (!(choice %in% c("screeplot","numeric","qualitative","quantif","ind","all.var","squared.loading","blocks","block.components","block.var"))){
-    stop("Values of choice should be one of : screeplot,numeric,qualitative,quantif,ind,mixed,squared.loading, blocks,block.components,block.components")
+  if (!(choice %in% c("screeplot","numeric","qualitative","quantif","ind","all.var","squared.loading","blocks"))){
+    stop("Values of choice should be one of : screeplot, numeric, qualitative, quantif,ind, all.var, squared.loading ")
   }
   if (choice == "qualitative"){
-    if (!any(level.scale == "nom")){
-      stop("No variable defined as qualitative (i.e nominal or ordinal")
+    if (!any(level.scale == "nom") & !any(level.scale == "ord")){
+      stop("No variable defined as qualitative (i.e nominal or ordinal)")
     }
     if(supp.var == TRUE & !any(level.scale.supp == "nom" | level.scale.supp == "ord")){
       stop("Supplementary variable is not qualitative")

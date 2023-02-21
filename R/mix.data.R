@@ -26,8 +26,8 @@
 #' nature <- rep(NA,ncol(antibiotic)) #Setting nature argument for PCAOS function
 #' nature[res.mix$p.numeric] <- "num"
 #' nature[res.mix$p.quali] <- "nom"
-#  nature[2] <- "ord"
-
+#'   nature[2] <- "ord"
+#'
 #' @export nature.variables
 #' @export
 #

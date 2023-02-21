@@ -5,7 +5,7 @@
 \title{plot.MBPCAOS}
 \usage{
 \method{plot}{MBPCAOS}(
-  res.MBPCAOS,
+  x,
   choice,
   comp = c(1, 2),
   coloring.indiv = NULL,
@@ -15,37 +15,52 @@
   size.label = 3.5,
   size.legend = 12,
   label.cat = "var+cat",
-  min.contribution = 0
+  min.contribution = 0,
+  ellipse = FALSE,
+  level.conf = 0.95,
+  ordinal.as.direction = FALSE,
+  label.size.freq = FALSE,
+  ...
 )
 }
 \arguments{
-\item{res.MBPCAOS}{an object of class MBPCAOS}
+\item{x}{an object of class MBPCAOS}
 
 \item{choice}{the graph to plot possible values are "screeplot","quantif","indiv","cor","modalities","mixed","squared loadings". See Details.}
 
 \item{comp}{a length 2 vector with the components to plot}
 
-\item{coloring.indiv}{A vector of length N to color individuals. If NULL, no coloring is applied.}
+\item{coloring.indiv}{a vector of length N to color individuals. If NULL, no coloring is applied (individuals plot).}
 
 \item{supp.var}{boolean (FALSE by default), if TRUE supplementary variables are added in factorial representation}
 
-\item{sub.var.quantif}{a vector with variable of interest}
+\item{sub.var.quantif}{a vector with variable of interest (quantification plots).}
 
-\item{sub.bloc}{A scalar indicating the block to plot for variables graphs, works only with 'all.var' graphs (i.e if sub.bloc == 1, variables of the first block are plotted)}
+\item{sub.bloc}{a scalar indicating the block to plot for variables graphs (i.e if sub.bloc == 1, variables of the first block are plotted) (all.var plot).}
 
-\item{size.label}{size of label in graphs}
+\item{size.label}{size of label in graphs (all plots).}
 
-\item{size.legend}{size of label in graphs}
+\item{size.legend}{size of label in graphs (all plots).}
 
-\item{label.cat}{If == 'var+cat', the name of the variable is included in the labels of the categories; if == 'cat', only the name of the categorie is plotted (name of categories should be unique)}
+\item{label.cat}{if == 'var+cat', the name of the variable is included in the labels of the categories; if == 'cat', only the name of the categorie is plotted (name of categories should be unique) (qualitative and all.var plot)}
 
-\item{min.contribution}{variables with a contribution (i.e loading) lower than this value will not be plotted in the 'all.var' graph (useful for dataset with a lot of variables)}
+\item{min.contribution}{(all.var plot) Variables with a contribution (i.e loading) lower than this value will not be plotted in the 'all.var' graph (useful for dataset with a lot of variables)}
+
+\item{ellipse}{boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable considered as supplementary (individuals plot).}
+
+\item{level.conf}{level of confidence ellipses (individuals plot).}
+
+\item{ordinal.as.direction}{boolean (FALSE by default); if TRUE ordinal variables are represented as vectors, from the first categorie to the last one (qualitative and all.var plot).}
+
+\item{label.size.freq}{boolean (FALSE by default); if TRUE size of categories are proportional to their citation frequencies (qualitative and all.var plot).}
+
+\item{...}{further arguments passed to or from other methods, such as cex, cex.main, ...}
 }
 \value{
 A ggplot object
 }
 \description{
-Visualisation of results from MBPCAOS method. See details for available plot.
+Visualisation of results from MBPCAOS method. See details for available plots.
 }
 \details{
 \itemize{
@@ -69,8 +84,38 @@ For mixed  variables
 }
 For blocs
  \itemize{
-  \item  blocs: contribution of each block to principal components. The contribution of one block is calculated as the squared sum of the loading of the variables in the block, divided by the block scaling of the block.
+  \item  blocks: contribution of each block to principal components. The contribution of one block is calculated as the squared sum of the loading of the variables in the block, divided by the block scaling of the block.
 }
 
 All graph are ggplot object
+}
+\examples{
+
+#'data('antibiotic')
+antb.uses <- antibiotic[,c('Atb.conso','Atb.Sys')]
+health <- antibiotic[,c('Age','Loss')]
+vet.practices <- antibiotic[,c(6:15)]
+antibiotic <- data.frame(antb.uses,health,vet.practices)
+# Defining blocks
+blocks.name =  c("antibiotic.uses","Health.of.turkeys","Veterinary.practices")
+blocks <- c(2,2,10)
+
+# Level of scaling
+level.scale <- rep(NA,ncol(antibiotic))
+res.nature <- nature.variables(antibiotic)
+level.scale [res.nature$p.numeric] <- "num"
+level.scale [res.nature$p.quali] <- "nom"
+#Warning; the ordinal nature of variables can not be detected automaticaly.
+level.scale[c(1,14)] <- "ord"
+
+# MBPCAOS
+res.MBPCAOS <- MBPCAOS(data = antibiotic,
+                     level.scale = level.scale,
+                      blocks = blocks,
+                      blocks.name = blocks.name,
+                      nb.comp = 3)
+
+# Blocks graphs
+plot.MBPCAOS(x = res.MBPCAOS,choice = 'blocks')
+
 }

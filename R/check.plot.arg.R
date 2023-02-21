@@ -23,7 +23,7 @@ check.plot.arg <- function(choice,level.scale,level.scale.supp,supp.var, comp, n
 
   if (choice == "ind"){
     if(supp.var == TRUE & !any(level.scale.supp == "nom" | level.scale.supp == "ord")){
-      stop("Supplementary variable is not qualitative")
+      message("No qualitative variable detected")
     }
   }
 
@@ -36,7 +36,7 @@ check.plot.arg <- function(choice,level.scale,level.scale.supp,supp.var, comp, n
       stop("No variable defined as numeric")
     }
     if(supp.var == TRUE & !any(level.scale.supp == "num")){
-      stop("Supplementary variable is not numeric")
+      stop("No supplementary numeric variable detected")
     }
   }
 

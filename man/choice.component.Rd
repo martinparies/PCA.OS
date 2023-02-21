@@ -7,7 +7,7 @@
 choice.component(
   data,
   level.scale = rep("num", ncol(data)),
-  nb.comp.to.investigate = ncol(data),
+  nb.comp.to.investigate = 5,
   rank.restriction = "one"
 )
 }

@@ -16,13 +16,8 @@
 #
 #' @param supp.var a vector indicating the indexes of the supplementary variables
 #'
-#' @param rank.restriction restriction of the quantification matrix for nominal variable, possible values are :
-#' \itemize{
-#'   \item "one" (default) : apply a rank-one restriction (i.e single quantification of each variable)
-#'   \item "no.restriction": apply no restriction (i.e multiple quantification of each variable)
-#' }
 #'
-#' @param print.order  boolean (TRUE by default), if TRUE ther order of the categories of ordinal variables are print
+#' @param print  boolean (TRUE by default), if TRUE convergence information and order of the categories of ordinal variables are printed.
 #'
 #' @param init  Intitialization strategy, possible values are :
 #' \itemize{
@@ -33,24 +28,34 @@
 #'
 #' @return
 #'
-#' \itemize{
+#' Dimension reduction
+#'  \itemize{
 #'   \item weigths : list of weights of the variables (loadings and weights are the same in PCA-like model)
 #'   \item components : data.frame with individuals scores for each dimension
+#'   \item inertia : percentage and cumulative percentage of variance of the quantified variables explained
+#'   }
+#'
+#' Quantifications
+#'   \itemize{
 #'   \item quantified.data : optimally quantified variables
-#'   \item summary : summary of the number of variables according to their nature
 #'   \item quantification.categories.nom : list of optimally quantified categories (nominal variables)
 #'   \item quantification.categories.ord : list of optimally quantified categories (ordinal variables)
-#'   \item inertia : percentage and cumulative percentage of variance of the quantified variables explained
+#'   \item level.scale : nature of scaling choosen for each variable
+#'   \item data : orginal dataset
+#'   }
+#'  Algorithm
+#' \itemize{
+#'   \item summary : summary of the number of variables according to their nature
 #'   \item loss.tot : global loss for all variables
 #'   \item stockiter : evolution of the criterion for each ieration
-#'   \item data : orginal dataset
-#'   \item level.scale : nature of scaling choosen for each variable
-#'   \item coord.supp.quali : coordinates of the supplementary qualitatives variables,
-#'   \item coord.supp.num : coordinates of the supplementary numeric variables
-#'   \item quali.var.supp : qualitative supplementary variable
-#'
 #' }
-#'
+#' Supplementary variables
+#' \itemize{
+#'   \item var.supp : original supplementary variables
+#'   \item level.scale.supp : level of scaling of supplementary variables
+#'   \item coord.supp.num : coordinates of supplementary numeric variables (correlation with components)
+#'   \item coord.supp.quali : coordinates of qualitatve variables (barycenters)
+#' }
 #'
 #'
 #' @examples
@@ -75,12 +80,11 @@
 #'res.PCAOS <- PCAOS(
 #' data = antibiotic,
 #' level.scale = level.scale,
-#' rank.restriction = "one",
 #' nb.comp = 2)
 #'
 #'# Plot (individuals)
 #'plot.PCAOS(
-#'  res.PCAOS = res.PCAOS,
+#'  x = res.PCAOS,
 #'  choice = "ind",
 #'  coloring.indiv = antibiotic$Atb.conso,
 #'  size.legend = 12,
@@ -104,17 +108,16 @@ PCAOS <- function(data,
                   maxiter = 100,
                   threshold = 1e-6,
                   D = 1,
-                  rank.restriction = "one",
+                  #rank.restriction = "one",
                   supp.var = NULL,
-                  print.order = TRUE,
+                  print = TRUE,
                   init = 'rdm') {
   #Checking arguments
-  check.arg(data,level.scale,rank.restriction,print.order)
-
-
+  rank.restriction = "one"
+  check.arg(data,level.scale,rank.restriction,print)
 
   #Supplementary variable
-  level.scale.supp = NULL
+  level.scale.supp = data.var.supp = NULL
   tri.supp <- list()
   if(!is.null(supp.var)){
     data.var.supp <- data[, supp.var,drop = FALSE]
@@ -184,8 +187,8 @@ PCAOS <- function(data,
     if(any(level.scale == "nom")){rank.restriction.nom <- rep("one",tri$nbvarNOM)}
   }
 
-  # # Not useful if random initialisation of t
-  #-NUMERIQUE
+  # 4. Initialisation
+  #by svd solution
   if(init == 'svd'){
     if(!is.null(tri$nbvarNUM)){
       dataQUANTI <- scale(tri$data.num, scale = TRUE)
@@ -206,7 +209,6 @@ PCAOS <- function(data,
     for (i in 1:ncol(init.dat)){init.dat[which(is.na(init.dat[,i])),i] <- 0}
     ressvd<- svd(init.dat)
   }
-  # 5. Initialisation
   # random
   if(init == 'rdm'){
     t<-matrix(rnorm(n=nb.indiv*nb.var.init,mean=0,sd=1),nb.indiv,nb.var.init)
@@ -219,14 +221,9 @@ PCAOS <- function(data,
   loss.by.var = rep(loss/nb.var.init,nb.var.init)
   deltaloss=10000
 
-  # #6.Missing values
-  # na <- sapply(1:ncol(data), function(col){which(is.na(data[,col]))},simplify = F)
-  # names(na) <- colnames(data)
-  # unlist(na)
-
-  # 6. OPTIMAL SCALING / MODEL ESTIMATION
+  # 5. OPTIMAL SCALING / MODEL ESTIMATION
   while(continue){
-    # 6.1 QUANTIFICATION
+    # 5.1 QUANTIFICATION
     # -Qualitative variables
     if (!is.null(tri$nbvarNOM)){
       for (j in 1:tri$nbvarNOM){
@@ -240,7 +237,7 @@ PCAOS <- function(data,
     # -Ordinal variables
     if(!is.null(tri$nbvarORD)){
       for (j in 1:tri$nbvarORD){
-        resordquant<-ordinal.quantification(tri$data.ord[,j,drop = FALSE],t,ord)
+        resordquant<-ordinal.quantification(tri$data.ord[,j,drop = FALSE],t)
         quantified.data[[tri$emplacement.ord[j]]]  <- resordquant$var.quant
         weights[[tri$emplacement.ord[j]]] <- resordquant$w
         stock.phi[[tri$emplacement.ord[j]]]<-resordquant$Yj
@@ -258,7 +255,7 @@ PCAOS <- function(data,
       }
     }
 
-    # 6.2  loss function
+    # 5.2  loss function
     lossANCIEN <- loss
     loss.by.var.ancien <- loss.by.var
     deltaloss.ancien<-deltaloss
@@ -291,7 +288,7 @@ PCAOS <- function(data,
     # print("======================================")
     loss.by.var<-critd[,2]
 
-    # 6.3 Incrementation and convergence test
+    # 5.3 Incrementation and convergence test
     iter <- iter + 1
     if (iter > 0) {
       deltaloss = (lossANCIEN - loss)
@@ -305,6 +302,7 @@ PCAOS <- function(data,
       }
     }
 
+    #5.4 Computation of components
     if(rank.restriction == "one"){
       XX=NULL
       ressvd<-svd(data.frame(quantified.data))
@@ -330,7 +328,7 @@ PCAOS <- function(data,
   }
   ############  end while #####################################
 
-  # 7. Solution
+  # 6. Solution
   names(weights) <- colnames(data)
   rownames(components) = rownames(data)
   components <- t
@@ -356,6 +354,7 @@ PCAOS <- function(data,
         }
       }
     }
+    names(coord.supp.quali) <- colnames(data.var.supp[,which(level.scale.supp == 'nom'|level.scale.supp =='ord')])
 
     if(any(level.scale.supp == "num")){
       for(var in 1:tri.supp$nb.var.supp.num){
@@ -371,6 +370,7 @@ PCAOS <- function(data,
   summary <- data.frame(NB.var.nom = tri$nbvarNOM,NB.var.ord = tri$nbvarORD,NB.var.num = tri$nbvarNUM)
   summary <- list(summary = summary,rank = rank.restriction)
 
+  # 7. Sign of loadings
   if (any(level.scale == "num")){
     for (j in 1:tri$nbvarNUM) {
       var.quant<-quantified.data[[tri$emplacement.num[j]]]
@@ -429,7 +429,7 @@ PCAOS <- function(data,
     names(quant.MODAL.ord) <- colnames(data[,level.scale == "ord"])
   }
 
-  # Computing Matj
+  # 8. Computing inertia
   S<-matrix(0,nb.indiv,nb.comp)
   Matj<- list(NULL)
   for (j in 1:nb.var.init){
@@ -461,24 +461,72 @@ PCAOS <- function(data,
     names(quantified.data) <-  colnames(data)
   }
 
-  res <-
+
+  # res <-
+  #   list(
+  #     weights = lapply(weights,as.vector),
+  #     components = components,
+  #     quantified.data = quantified.data,
+  #     summary = summary,
+  #     quantification.categories.nom = quant.MODAL.nom,
+  #     quantification.categories.ord = quant.MODAL.ord,
+  #     inertia = inertia,
+  #     loss.tot = loss,
+  #     stockiter = stockiter,
+  #     data = data,
+  #     level.scale = level.scale,
+  #     level.scale.supp = level.scale.supp,
+  #     coord.supp.quali = coord.supp.quali,
+  #     coord.supp.num = coord.supp.num,
+  #     quali.var.supp = tri.supp$data.supp.quali
+  #   )
+
+  # 9 . Final results list
+  dimension.reduction <-
     list(
-      weights = lapply(weights,as.vector),
       components = components,
+      weights = lapply(weights, as.vector),
+      inertia = inertia
+    )
+
+  quantification <-
+    list(
       quantified.data = quantified.data,
-      summary = summary,
       quantification.categories.nom = quant.MODAL.nom,
       quantification.categories.ord = quant.MODAL.ord,
-      inertia = inertia,
-      loss.tot = loss,
-      stockiter = stockiter,
       data = data,
       level.scale = level.scale,
-      level.scale.supp = level.scale.supp,
-      coord.supp.quali = coord.supp.quali,
-      coord.supp.num = coord.supp.num,
-      quali.var.supp = tri.supp$data.supp.quali
+      summary = summary)
+
+  algo <- list(loss.tot = loss,
+               stockiter = stockiter)
+
+  supp.var <- list(var.supp = data.var.supp,
+                   level.scale.supp = level.scale.supp,
+                   coord.supp.num = coord.supp.num,
+                   coord.supp.quali = coord.supp.quali)
+
+  # 10. Print end message
+  if (print == TRUE){
+    print(
+      paste(
+        'PCAOS algorithm converged in',
+        nrow(stockiter),
+        'iteration.'))
+    print(
+      paste('The',
+            nb.comp,
+            'optimized components explain a total of',
+            inertia[nrow(inertia),2],'% of the',
+            ncol(data),'quantified variables'
+      )
     )
+  }
+
+  res <- list(Dimension.reduction = dimension.reduction,
+              Quantification = quantification,
+              Algo = algo,
+              Supp.var = supp.var)
 
   class(res) = "PCAOS"
   return(res)

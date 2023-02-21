@@ -7,9 +7,9 @@
 choice.component.MB(
   data,
   level.scale,
-  blocs,
-  blocs.name,
-  nb.comp.to.investigate = ncol(data),
+  blocks,
+  blocks.name,
+  nb.comp.to.investigate = 5,
   block.scaling = "inertia"
 )
 }
@@ -18,9 +18,9 @@ choice.component.MB(
 
 \item{level.scale}{vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num"}
 
-\item{blocs}{vector(length k) with number of variables in each bloc}
+\item{blocks}{vector(length k) with number of variables in each bloc}
 
-\item{blocs.name}{vector(length k) with names of each bloc}
+\item{blocks.name}{vector(length k) with names of each bloc}
 
 \item{nb.comp.to.investigate}{Number of components to investigate (default=ncol(data))}
 
@@ -35,6 +35,35 @@ Data frame with global Loss value and percentage of the quantified variables ine
 }
 \description{
 Helps the user to choose the appropriate number of MBPCAOS component to optimize
+}
+\examples{
+data('antibiotic')
+antb.uses <- antibiotic[,c('Atb.conso','Atb.Sys')]
+health <- antibiotic[,c('Age','Loss')]
+vet.practices <- antibiotic[,c(6:15)]
+antibiotic.MB <- data.frame(antb.uses,health,vet.practices)
+
+# Defining the blocks
+blocks.name =  c("antibiotic.uses","Health.of.turkeys","Veterinary.practices")
+blocks <- c(2,2,10)
+
+# Level of scaling
+level.scale.MB <- rep(NA,ncol(antibiotic.MB))
+res.nature <- nature.variables(antibiotic.MB)
+level.scale.MB [res.nature$p.numeric] <- "num"
+level.scale.MB [res.nature$p.quali] <- "nom"
+#Warning; the ordinal nature of variables can not be detected automaticaly.
+level.scale.MB[c(1,14)] <- "ord"
+
+# Choice of number of components
+help(choice.component.MB)
+res.choice.MB <- choice.component.MB(antibiotic.MB,
+                                     level.scale.MB,
+                                     blocks,
+                                     blocks.name,
+                                     block.scaling = 'inertia')
+res.choice.MB
+
 }
 \author{
 \itemize{

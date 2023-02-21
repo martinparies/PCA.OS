@@ -11,9 +11,8 @@ PCAOS(
   maxiter = 100,
   threshold = 1e-06,
   D = 1,
-  rank.restriction = "one",
   supp.var = NULL,
-  print.order = TRUE,
+  print = TRUE,
   init = "rdm"
 )
 }
@@ -30,15 +29,9 @@ PCAOS(
 
 \item{D}{degree of the relation between quantified variables and components (only for numeric variables, default = 1)}
 
-\item{rank.restriction}{restriction of the quantification matrix for nominal variable, possible values are :
-\itemize{
-  \item "one" (default) : apply a rank-one restriction (i.e single quantification of each variable)
-  \item "no.restriction": apply no restriction (i.e multiple quantification of each variable)
-}}
-
 \item{supp.var}{a vector indicating the indexes of the supplementary variables}
 
-\item{print.order}{boolean (TRUE by default), if TRUE ther order of the categories of ordinal variables are print}
+\item{print}{boolean (TRUE by default), if TRUE convergence information and order of the categories of ordinal variables are printed.}
 
 \item{init}{Intitialization strategy, possible values are :
 \itemize{
@@ -47,22 +40,33 @@ PCAOS(
 }}
 }
 \value{
-\itemize{
+Dimension reduction
+ \itemize{
   \item weigths : list of weights of the variables (loadings and weights are the same in PCA-like model)
   \item components : data.frame with individuals scores for each dimension
+  \item inertia : percentage and cumulative percentage of variance of the quantified variables explained
+  }
+
+Quantifications
+  \itemize{
   \item quantified.data : optimally quantified variables
-  \item summary : summary of the number of variables according to their nature
   \item quantification.categories.nom : list of optimally quantified categories (nominal variables)
   \item quantification.categories.ord : list of optimally quantified categories (ordinal variables)
-  \item inertia : percentage and cumulative percentage of variance of the quantified variables explained
+  \item level.scale : nature of scaling choosen for each variable
+  \item data : orginal dataset
+  }
+ Algorithm
+\itemize{
+  \item summary : summary of the number of variables according to their nature
   \item loss.tot : global loss for all variables
   \item stockiter : evolution of the criterion for each ieration
-  \item data : orginal dataset
-  \item level.scale : nature of scaling choosen for each variable
-  \item coord.supp.quali : coordinates of the supplementary qualitatives variables,
-  \item coord.supp.num : coordinates of the supplementary numeric variables
-  \item quali.var.supp : qualitative supplementary variable
-
+}
+Supplementary variables
+\itemize{
+  \item var.supp : original supplementary variables
+  \item level.scale.supp : level of scaling of supplementary variables
+  \item coord.supp.num : coordinates of supplementary numeric variables (correlation with components)
+  \item coord.supp.quali : coordinates of qualitatve variables (barycenters)
 }
 }
 \description{
@@ -89,12 +93,11 @@ level.scale[c(1,15)] <- "ord"
 res.PCAOS <- PCAOS(
 data = antibiotic,
 level.scale = level.scale,
-rank.restriction = "one",
 nb.comp = 2)
 
 # Plot (individuals)
 plot.PCAOS(
- res.PCAOS = res.PCAOS,
+ x = res.PCAOS,
  choice = "ind",
  coloring.indiv = antibiotic$Atb.conso,
  size.legend = 12,

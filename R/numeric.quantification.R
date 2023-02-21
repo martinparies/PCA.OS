@@ -38,9 +38,8 @@ numeric.quantification <- function (var,t,D){
   Yjhat = qj %*% t(aj)
   var.quant <- var.poly %*% qj
   w <- aj
-  # var.quant <- scale(var)
-  # w = t(var.quant) %*% t
-  # w <- w / norm_vec(w)
+  # var.quant.2 <- scale(var)
+  # w.2 =  t(var.quant)  %*% t / nrow(var)
   #print(sum((var.quant%*%as.vector(aj)-t)^2))
   #ne pas faire ce changement de signe avant que l'algo n'ait convergÃ©
   #var.quant <- var.quant * as.numeric(sign(cor(var,var.quant)))

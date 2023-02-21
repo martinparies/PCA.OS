@@ -34,4 +34,6 @@ head(res.mix$data.quali)
 nature <- rep(NA,ncol(antibiotic)) #Setting nature argument for PCAOS function
 nature[res.mix$p.numeric] <- "num"
 nature[res.mix$p.quali] <- "nom"
+  nature[2] <- "ord"
+
 }

@@ -9,15 +9,19 @@
 #
 # @return stop function if argument or data ar wrong
 #
-check.arg <- function(data,level.scale,rank.restriction,print.order){
+check.arg <- function(data,level.scale,rank.restriction,print){
   check = list(NULL)
   #Structure of data
   if(!is.data.frame(data)){
     stop("Argument data should be a data.frame")
   }else{
-    #nature
+    #Size of dataset
     if (ncol(data) != length(level.scale)){
       stop(paste("Error, the length of level.scale is different from the number of variable data."))
+    }
+    if (ncol(data) == 1){
+      stop(paste("Error, only one variable in the dataset"))
+
     }
 
     # #Données manquantes
@@ -30,6 +34,7 @@ check.arg <- function(data,level.scale,rank.restriction,print.order){
     if(!(rank.restriction %in% c("one","no.restriction"))){
       stop(paste("Error, rank.restriction argument should be one of these: one; no.restriction"))
     }
+
 
     #Nature of variables
     mix <- nature.variables(data,print.nature = FALSE)
@@ -54,7 +59,7 @@ check.arg <- function(data,level.scale,rank.restriction,print.order){
       }
     }
 
-    if(any(level.scale == "ord") & print.order == TRUE){
+    if(any(level.scale == "ord") & print == TRUE){
       data.ord <-  data[,which(level.scale =="ord"),drop = F]
       order.detect <- list(NULL)
       order.detect <- sapply(1:ncol(data.ord),function(var){levels(as.factor(data.ord[,var]))},simplify = F)

@@ -33,13 +33,13 @@
 #'
 #' @export
 #'
-choice.component <- function(data,level.scale = rep("num",ncol(data)),nb.comp.to.investigate = ncol(data),rank.restriction = 'one'){
-  res <- sapply(1:nb.comp.to.investigate,function(x){PCAOS(data,level.scale,nb.comp = x,print.order = FALSE,rank.restriction = rank.restriction,init = 'rdm',threshold = 10e-6)$loss.tot})
-
-  percentage <-
-    sapply(1:nb.comp.to.investigate, function(x) {
-      PCAOS(data,level.scale,nb.comp = x,print.order = FALSE,rank.restriction = rank.restriction)$inertia[x,2]
-    })
+choice.component <- function(data,level.scale = rep("num",ncol(data)),nb.comp.to.investigate = 5,rank.restriction = 'one'){
+  res <- percentage <- NULL
+  for (i in 1:nb.comp.to.investigate){
+    res.PCAOS <- PCA.OS::PCAOS(data,level.scale,nb.comp = i,print = FALSE,init = 'rdm',threshold = 10e-6)
+    res[i] <- res.PCAOS$Algo$loss.tot
+    percentage[i] <- res.PCAOS$Dimension.reduction$inertia[i,2]
+  }
 
   pourcentage = rep(NA,nb.comp.to.investigate)
   for (H in 1:nb.comp.to.investigate){

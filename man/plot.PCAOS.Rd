@@ -5,7 +5,7 @@
 \title{plot.PCAOS}
 \usage{
 \method{plot}{PCAOS}(
-  res.PCAOS,
+  x,
   choice = "ind",
   comp = c(1, 2),
   coloring.indiv = NULL,
@@ -18,37 +18,40 @@
   min.contribution = 0,
   label.size.freq = FALSE,
   ordinal.as.direction = FALSE,
-  label.cat = "var+cat"
+  label.cat = "var+cat",
+  ...
 )
 }
 \arguments{
-\item{res.PCAOS}{an object of class PCAOS}
+\item{x}{an object of class PCAOS}
 
 \item{choice}{the available graphs are "screeplot","quantif","ind","numeric","qualitative","all.var". See Details.}
 
-\item{comp}{a length 2 vector with the components to plot}
+\item{comp}{a length 2 vector with the components to plot.}
 
-\item{coloring.indiv}{A vector of length N to color individuals. If NULL, no coloring is applied (works only if choice == 'ind').}
+\item{coloring.indiv}{a vector of length N to color individuals. If NULL, no coloring is applied (individuals plot).}
 
-\item{supp.var}{TRUE or FALSE; if TRUE supplementary variables are added in factorial representation.}
+\item{supp.var}{TRUE or FALSE; if TRUE supplementary variables are added in factorial representation (individuals and variables plot).}
 
-\item{sub.var.quantif}{a vector with variable of interest (works only if choice == 'quantif')}
+\item{sub.var.quantif}{a vector with variable of interest (quantification plots).}
 
-\item{ellipse}{boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable considered as supplementary.}
+\item{ellipse}{boolean (FALSE by default), if TRUE, draw ellipses around categories of the qualitative variable considered as supplementary (individuals plot).}
 
-\item{level.conf}{level of confidence ellipses}
+\item{level.conf}{level of confidence ellipses (individuals plot).}
 
-\item{size.label}{size of label in graphs}
+\item{size.label}{size of label in graphs (all plots).}
 
-\item{size.legend}{size of label in graphs}
+\item{size.legend}{size of label in graphs (all plots).}
 
-\item{min.contribution}{variables with a contribution (i.e loading) lower than this value will not be plotted in the 'all.var' graph (useful for dataset with a lot of variables)}
+\item{min.contribution}{variables with a contribution (i.e loading) lower than this value will not be plotted in the 'all.var' graph (useful for dataset with a lot of variables) (all.var plot).}
 
-\item{label.size.freq}{boolean (FALSE by default); if TRUE size of categories are proportional to their citation frequencies.}
+\item{label.size.freq}{boolean (FALSE by default); if TRUE size of categories are proportional to their citation frequencies (qualitative and all.var plot).}
 
-\item{ordinal.as.direction}{boolean (FALSE by default); if TRUE ordinal variables are represented as vectors (from the first categorie to the last one)}
+\item{ordinal.as.direction}{boolean (FALSE by default); if TRUE ordinal variables are represented as vectors, from the first categorie to the last one (qualitative and all.var plot).}
 
-\item{label.cat}{If == 'var+cat', the name of the variable is included in the labels of the categories; if == 'cat', only the name of the categorie is plotted (name of categories should be unique)}
+\item{label.cat}{If == 'var+cat', the name of the variable is included in the labels of the categories; if == 'cat', only the name of the categorie is plotted (name of categories should be unique) (qualitative and all.var plot).}
+
+\item{...}{further arguments passed to or from other methods, such as cex, cex.main, ...}
 }
 \value{
 A ggplot object
@@ -93,20 +96,20 @@ res.PCAOS <- PCA.OS::PCAOS(
 )
 
 #Individuals graph
-PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "ind",coloring = antibiotic$Atb.conso)
-PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "ind",supp.var = TRUE,ellipse = TRUE)
+PCA.OS::plot.PCAOS(x = res.PCAOS,choice = "ind",coloring = antibiotic$Atb.conso)
+PCA.OS::plot.PCAOS(x = res.PCAOS,choice = "ind",supp.var = TRUE,ellipse = TRUE)
 
 #Quantifications
-PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "quantif",sub.var.quantif =  c(4,8))
+PCA.OS::plot.PCAOS(x = res.PCAOS,choice = "quantif",sub.var.quantif =  c(4,8))
 
 #Qualitative variables
-PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "qualitative",supp.var = TRUE)
+PCA.OS::plot.PCAOS(x = res.PCAOS,choice = "qualitative",supp.var = TRUE)
 
 #Numeric variables
-PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "numeric",supp.var = TRUE)
+PCA.OS::plot.PCAOS(x = res.PCAOS,choice = "numeric",supp.var = TRUE)
 
 #All variables
-PCA.OS::plot.PCAOS(res.PCAOS = res.PCAOS,choice = "all.var",supp.var = TRUE)
+PCA.OS::plot.PCAOS(x = res.PCAOS,choice = "all.var",supp.var = TRUE)
 
 }
 \author{

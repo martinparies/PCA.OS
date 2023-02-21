@@ -11,7 +11,7 @@
 #
 # @return stop function if argument or data ar wrong
 #
-check.arg.MB <- function(data,level.scale,rank.restriction,blocs,blocs.name,print.order){
+check.arg.MB <- function(data,level.scale,rank.restriction,blocs,blocs.name,print){
   #Structure of data
   if(!is.data.frame(data)){
     stop("Argument data should be a data.frame")
@@ -56,7 +56,7 @@ check.arg.MB <- function(data,level.scale,rank.restriction,blocs,blocs.name,prin
       }
     }
 
-    if(any(level.scale == "ord") & print.order == TRUE){
+    if(any(level.scale == "ord") & print == TRUE){
       data.ord <-  data[,which(level.scale =="ord"),drop = F]
       order.detect <- list(NULL)
       order.detect <- sapply(1:ncol(data.ord),function(var){levels(as.factor(data.ord[,var]))},simplify = F)
@@ -69,11 +69,11 @@ check.arg.MB <- function(data,level.scale,rank.restriction,blocs,blocs.name,prin
 
     #Blocs
     if(sum(blocs) != ncol(data) ){
-      stop(paste("Error, number of variables indicated in blocs argument not equal to number of variable (columns) in data"))
+      stop(paste("Error, number of variables indicated in blocks argument not equal to number of variable (columns) in data"))
     }
 
     if(length(blocs.name) != length(blocs) ){
-      stop(paste("Error, number of blocs indicated in blocs.name argument not equal to number of blocs in blocs argument"))
+      stop(paste("Error, length of blocks.name argument is not equal to number of blocks in blocks argument"))
     }
 
   }

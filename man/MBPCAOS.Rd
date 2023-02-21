@@ -7,14 +7,14 @@
 MBPCAOS(
   data,
   level.scale = rep("num", ncol(data)),
-  blocs,
-  blocs.name = paste("Bloc", 1:length(blocs)),
+  blocks,
+  blocks.name = paste("Bloc", 1:length(blocks)),
   block.scaling = "inertia",
   nb.comp = 2,
   maxiter = 100,
   threshold = 1e-06,
   supp.var = NULL,
-  print.order = TRUE,
+  print = TRUE,
   init = "rdm"
 )
 }
@@ -23,9 +23,9 @@ MBPCAOS(
 
 \item{level.scale}{vector(length p) giving the nature of each variable. Possible values: "nom", "ord", "num"}
 
-\item{blocs}{vector(length k) with number of variables in each bloc}
+\item{blocks}{vector(length k) with number of variables in each bloc}
 
-\item{blocs.name}{vector(length k) with names of each bloc}
+\item{blocks.name}{vector(length k) with names of each bloc}
 
 \item{block.scaling}{scaling applied to each block. Possible value are : \itemize{
   \item "inertia"(default): each quantified block is divided by its total inertia (sum of square).
@@ -41,7 +41,7 @@ MBPCAOS(
 
 \item{supp.var}{a vector indicating the indexes of the supplementary variables}
 
-\item{print.order}{boolean (TRUE by default), if TRUE ther order of the categories of ordinal variables are print}
+\item{print}{boolean (TRUE by default), if TRUE ther order of the categories of ordinal variables are print}
 
 \item{init}{Intitialization strategy, possible values are :
 \itemize{
@@ -50,21 +50,42 @@ MBPCAOS(
 }}
 }
 \value{
-\itemize{
-  \item weigths : list of weights of the variables (loadings and weights are the same in PCA like model)
-  \item components : data.frame with individuals scores on each dimension.
-  \item quantified.data : Optimally quantified variables
-  \item quantified.data.list : Optimally quantified blocks (list form)
-  \item block.components : components associated with each block
-  \item summary : summary of number of variables and it's nature
+Dimension reduction
+ \itemize{
+  \item weigths : list of weights of the variables (loadings and weights are the same in PCA-like model)
+  \item components : data.frame with individuals scores for each dimension
+  \item inertia : percentage and cumulative percentage of variance of the quantified variables explained
+  }
+Quantifications
+  \itemize{
+  \item quantified.data : optimally quantified variables
   \item quantification.categories.nom : list of optimally quantified categories (nominal variables)
   \item quantification.categories.ord : list of optimally quantified categories (ordinal variables)
-  \item inertia : percentage and cumulative percentage of variance of the quantified variables explained
-  \item stockiter : evolution of criterion for each ieration
+  \item level.scale : nature of scaling choosen for each variable
   \item data : orginal dataset
-  \item level.scale : level.scale of scaling choosen for each variable
-  \item blocs : number of variable in each block
-  \item blocs.name : name of each block
+  }
+
+  Blocks results
+\itemize{
+  \item block.components : components associated with each block
+  \item block.weight : weights associated with each block
+  \item blocks : number of variable in each block
+  \item blocks.name : name of each block
+}
+
+ Algorithm
+\itemize{
+  \item summary : summary of the number of variables according to their nature
+  \item loss.tot : global loss for all variables
+  \item stockiter : evolution of the criterion for each ieration
+}
+
+Supplementary variables
+\itemize{
+  \item var.supp : original supplementary variables
+  \item level.scale.supp : level of scaling of supplementary variables
+  \item coord.supp.num : coordinates of supplementary numeric variables (correlation with components)
+  \item coord.supp.quali : coordinates of qualitatve variables (barycenters)
 }
 }
 \description{
@@ -78,8 +99,8 @@ health <- antibiotic[,c('Age','Loss')]
 vet.practices <- antibiotic[,c(6:15)]
 antibiotic <- data.frame(antb.uses,health,vet.practices)
 # Defining blocks
-blocs.name =  c("antibiotic.uses","Health.of.turkeys","Veterinary.practices")
-blocs <- c(2,2,10)
+blocks.name =  c("antibiotic.uses","Health.of.turkeys","Veterinary.practices")
+blocks <- c(2,2,10)
 
 # Level of scaling
 level.scale <- rep(NA,ncol(antibiotic))
@@ -89,14 +110,15 @@ level.scale [res.nature$p.quali] <- "nom"
 #Warning; the ordinal nature of variables can not be detected automaticaly.
 level.scale[c(1,14)] <- "ord"
 
+# MBPCAOS
 res.MBPCAOS <- MBPCAOS(data = antibiotic,
                      level.scale = level.scale,
-                      blocs = blocs,
-                      blocs.name = blocs.name,
-                     nb.comp = 3)
-# Blocs graphs
-plot.MBPCAOS(res.MBPCAOS,choice = 'blocs')
+                      blocks = blocks,
+                      blocks.name = blocks.name,
+                      nb.comp = 3)
 
+# Blocks graphs
+plot.MBPCAOS(x = res.MBPCAOS,choice = 'blocks')
 
 
 

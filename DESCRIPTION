@@ -4,7 +4,7 @@ Title: PCA.OS
 Version: 0.1.0
 Author: Martin PARIES, Evelyne Vigneau, Stephanie Bougeard
 Maintainer: Martin PARIES <martinparies@gmail.com>
-Description: Principal Components Analysis with Optimal Scaling features
+Description: The PCA.OS pacakge allows for single and multi-block exploratory analysis of variables of different nature. It allows both the dimension reduction and the quantification of datasets trough Optimal Scaling. Main functions are PCAOS for Principal Component Analysis with Optimal Scaling features and MBPCAOS for Multiblock version.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
