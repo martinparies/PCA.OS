@@ -130,10 +130,10 @@ MBPCAOS <- function(data,
   #blocks before supp var
   nb.block <- length(blocks)
   blocks.list <- list(NULL)
-  cumul <- c(1,sapply(1:nb.bloc,function(j){sum(blocks[1:j])}))
+  cumul <- c(1,sapply(1:nb.block,function(j){sum(blocks[1:j])}))
   cumul2 <- c(1,sapply(2:length(cumul),function(x)cumul[x]+1))
-  blocks.list <- sapply(1:nb.bloc,function(j){cumul2[j]:cumul[j+1]},simplify = F)
-  data.list <- sapply(1:nb.bloc,function(j)data[,blocks.list[[j]],drop = F],simplify = F)
+  blocks.list <- sapply(1:nb.block,function(j){cumul2[j]:cumul[j+1]},simplify = F)
+  data.list <- sapply(1:nb.block,function(j)data[,blocks.list[[j]],drop = F],simplify = F)
 
   #Supplementary variable
   level.scale.supp = data.var.supp = NULL
