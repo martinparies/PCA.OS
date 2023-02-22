@@ -144,7 +144,7 @@ MBPCAOS <- function(data,
     blocks.supp <- NULL
     compteur =  1
     for (supp in supp.var){
-      for (b in 1:nb.bloc){
+      for (b in 1:nb.block){
         if(supp %in% blocks.list[[b]]){
           blocks.supp[compteur] <- b
           compteur =  compteur + 1
@@ -452,7 +452,7 @@ MBPCAOS <- function(data,
   for (i in 1:ncol(contrib)){
     contrib[,i] <- (contrib[,i]^2) #/ sum(contrib[,i]^2)*100
   }
-  contrib.list <- sapply(1:nb.block,function(j) (contrib[blocks.list[[j]],]) / (b.scale[j]),simplify = F)
+  contrib.list <- sapply(1:nb.block,function(j) (contrib[blocks.list[[j]],]),simplify = F) #/ (b.scale[j])
 
   contrib.b <- matrix(NA,nb.block,nb.comp)
   for (i in which(unlist(lapply(contrib.list,is.matrix)))) {
