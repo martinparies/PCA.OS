@@ -383,6 +383,7 @@ MBPCAOS <- function(data,
     # }
 
   }
+
   ############  end while #####################################
 
   # 6. Solution
@@ -448,18 +449,14 @@ MBPCAOS <- function(data,
   #Contributions of blocks
   #cor.bloc <- data.frame(t(sapply(1:length(res.MBPCAOS$block.components),function(b)diag(cor(res.MBPCAOS$block.components[[b]],res.MBPCAOS$components)))))
   index.group <- unlist(sapply(1:nb.block,function(i) rep(i,blocks[i])))
-  contrib <- t(data.frame(weights))
-  for (i in 1:ncol(contrib)){
-    contrib[,i] <- (contrib[,i]^2) #/ sum(contrib[,i]^2)*100
-  }
-  contrib.list <- sapply(1:nb.block,function(j) (contrib[blocks.list[[j]],]),simplify = F) #/ (b.scale[j])
-
-  contrib.b <- matrix(NA,nb.block,nb.comp)
-  for (i in which(unlist(lapply(contrib.list,is.matrix)))) {
-    contrib.list[[i]] <- apply(contrib.list[[i]],2,sum)
+  contrib <-  do.call(rbind.data.frame,weights)
+  contrib.list <- sapply(1:nb.block,function(b) ((contrib[blocks.list[[b]],])^2/b.scale[b]),simplify = F)
+  contrib.b <- list(NULL)
+  for (i in 1:nb.block) {
+    contrib.b[[i]] <- apply(contrib.list[[i]],2,sum)
   }
 
-  contrib.b <- data.frame(t(data.frame(contrib.list)))
+  contrib.b <- do.call(rbind.data.frame,contrib.b)
   rownames(contrib.b) <- blocks.name
   colnames(contrib.b) <- paste("CP",1:ncol(contrib.b),sep="")
 
