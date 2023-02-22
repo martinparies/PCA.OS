@@ -450,7 +450,10 @@ MBPCAOS <- function(data,
   #cor.bloc <- data.frame(t(sapply(1:length(res.MBPCAOS$block.components),function(b)diag(cor(res.MBPCAOS$block.components[[b]],res.MBPCAOS$components)))))
   index.group <- unlist(sapply(1:nb.block,function(i) rep(i,blocks[i])))
   contrib <-  do.call(rbind.data.frame,weights)
-  contrib.list <- sapply(1:nb.block,function(b) ((contrib[blocks.list[[b]],])^2/b.scale[b]),simplify = F)
+  rownames(contrib) <- names(weights)
+  colnames(contrib) <- paste("CP",1:ncol(contrib),sep="")
+  contrib.list <- sapply(1:nb.block,function(b) ((contrib[blocks.list[[b]],])^2),simplify = F) #/b.scale[b]
+  contrib <- do.call(rbind.data.frame,contrib.list)
   contrib.b <- list(NULL)
   for (i in 1:nb.block) {
     contrib.b[[i]] <- apply(contrib.list[[i]],2,sum)
@@ -569,7 +572,7 @@ MBPCAOS <- function(data,
       paste(
         'MBPCAOS algorithm converged in',
         nrow(stockiter),
-        'iteration.'))
+        'iterations.'))
     print(
       paste('The',
             nb.comp,
@@ -582,6 +585,7 @@ MBPCAOS <- function(data,
 
   dimension.reduction <- list(weights = lapply(weights,as.vector),
                               components = components,
+                              contrib.var = contrib,
                               inertia = inertia)
 
   quantification <- list(quantified.data = quantified.data,
