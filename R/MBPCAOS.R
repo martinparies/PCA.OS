@@ -128,7 +128,7 @@ MBPCAOS <- function(data,
   check.arg.MB(data,level.scale,rank.restriction,blocks,blocks.name,print = print)
 
   #blocks before supp var
-  nb.bloc <- length(blocks)
+  nb.block <- length(blocks)
   blocks.list <- list(NULL)
   cumul <- c(1,sapply(1:nb.bloc,function(j){sum(blocks[1:j])}))
   cumul2 <- c(1,sapply(2:length(cumul),function(x)cumul[x]+1))
