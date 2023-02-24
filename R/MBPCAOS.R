@@ -452,7 +452,7 @@ MBPCAOS <- function(data,
   contrib <-  do.call(rbind.data.frame,weights)
   rownames(contrib) <- names(weights)
   colnames(contrib) <- paste("CP",1:ncol(contrib),sep="")
-  contrib.list <- sapply(1:nb.block,function(b) ((contrib[blocks.list[[b]],])^2),simplify = F) #/b.scale[b]
+  contrib.list <- sapply(1:nb.block,function(b) ((contrib[blocks.list[[b]],,drop=F])^2/b.scale[b]),simplify = F)
   contrib <- do.call(rbind.data.frame,contrib.list)
   contrib.b <- list(NULL)
   for (i in 1:nb.block) {
@@ -618,32 +618,6 @@ MBPCAOS <- function(data,
               Algo = algo,
               Supp.var = supp.var)
 
-  # res <-
-  #   list(
-  #     weights = lapply(weights,as.vector),
-  #     components = components,
-  #     quantified.data = quantified.data,
-  #     quantified.data.list = quantified.data.list,
-  #     block.components = block.components,
-  #     block.weight = block.weight,
-  #     summary = summary,
-  #     quantification.categories.nom = quant.MODAL.nom,
-  #     quantification.categories.ord = quant.MODAL.ord,
-  #     inertia = inertia,
-  #     block.explained=block.explained,
-  #     loss.tot = loss,
-  #     stockiter = stockiter,
-  #     data = data,
-  #     blocs = blocs,
-  #     blocs.name = blocs.name,
-  #     level.scale = level.scale,
-  #     level.scale.supp = level.scale.supp,
-  #     coord.supp.quali = coord.supp.quali,
-  #     coord.supp.num = coord.supp.num,
-  #     crit.var = crit$critd,
-  #     block.scaling = b.scale,
-  #     b.scale.stock = b.scale.stock
-  #   )
 
   class(res) = "MBPCAOS"
   return(res)

@@ -34,7 +34,7 @@ nominal.quantification <- function (var,t,rank.restriction){
   Yjhat=qj%*%t(aj)
   var.quant <- var.dis %*% qj
   var.quant <- var.quant * coefnorm
-  w<-aj/coefnorm
+  w <- aj/coefnorm
 
   return(list(var.quant=var.quant,w=t(w),Yj=Yj,Yjhat=Yjhat,qj=qj))
 }
