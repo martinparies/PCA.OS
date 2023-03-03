@@ -69,7 +69,7 @@ choice.component.MB <-
            block.scaling = 'inertia') {
     percentage <-
       sapply(1:nb.comp.to.investigate, function(x) {
-        MBPCAOS(data = data,
+        PCA.OS::MBPCAOS(data = data,
                 level.scale = level.scale,
                 blocks = blocks,
                 blocks.name = blocks.name,
@@ -99,5 +99,5 @@ choice.component.MB <-
       ggplot2::ylab("Improvement of inertia") +
       ggplot2::geom_text(ggplot2::aes(label=paste(round(delta,2),"%")), vjust= -0.1, hjust = 0.3, color="black", size=3.5)
     print(choice.inertia)
-    return(list('graph' = choice.inertia, 'res' = data))
+    return(data)
   }
