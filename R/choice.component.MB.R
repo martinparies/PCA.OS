@@ -28,6 +28,7 @@
 #' }
 #'
 #' @examples
+#'
 #' data('antibiotic')
 #' antb.uses <- antibiotic[,c('Atb.conso','Atb.Sys')]
 #' health <- antibiotic[,c('Age','Loss')]
@@ -55,8 +56,8 @@
 #'                                      block.scaling = 'inertia')
 #'res.choice.MB
 #'
+#' @export choice.component.MB
 #' @export
-#'
 #'
 
 choice.component.MB <-
@@ -68,14 +69,14 @@ choice.component.MB <-
            block.scaling = 'inertia') {
     percentage <-
       sapply(1:nb.comp.to.investigate, function(x) {
-        PCA.OS::MBPCAOS(data = data,
+        MBPCAOS(data = data,
                 level.scale = level.scale,
                 blocks = blocks,
                 blocks.name = blocks.name,
                 nb.comp = x,
                 print = FALSE,
                 maxiter = 50,
-                threshold = 10e-5,
+                threshold = 10e-4,
                 block.scaling = block.scaling)$Dimension.reduction$inertia[x,2]
       })
 
@@ -98,5 +99,5 @@ choice.component.MB <-
       ggplot2::ylab("Improvement of inertia") +
       ggplot2::geom_text(ggplot2::aes(label=paste(round(delta,2),"%")), vjust= -0.1, hjust = 0.3, color="black", size=3.5)
     print(choice.inertia)
-    return(data)
+    return(list('graph' = choice.inertia, 'res' = data))
   }

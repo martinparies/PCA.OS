@@ -39,7 +39,7 @@ check.plot.MB.arg <- function(choice,level.scale,level.scale.supp,supp.var, comp
     }
   }
 
-  if (any(comp > nb.comp)){
+  if (any(comp > nb.comp) & choice != 'quantif' & choice != 'screeplot'){
     stop("Wrong axes to plot")
   }
 

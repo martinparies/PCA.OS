@@ -381,7 +381,6 @@ MBPCAOS <- function(data,
     #   t<-torth
     #   valp=ressvd$d^2
     # }
-
   }
 
   ############  end while #####################################
@@ -446,14 +445,17 @@ MBPCAOS <- function(data,
   rownames(block.explained) = blocks.name
   names(weights) <- colnames(data)
 
-  #Contributions of blocks
+  #Contributions of variables and blocks
   #cor.bloc <- data.frame(t(sapply(1:length(res.MBPCAOS$block.components),function(b)diag(cor(res.MBPCAOS$block.components[[b]],res.MBPCAOS$components)))))
   index.group <- unlist(sapply(1:nb.block,function(i) rep(i,blocks[i])))
   contrib <-  do.call(rbind.data.frame,weights)
+  for (i in 1:nb.comp){contrib[,i] <- contrib[,i]^2}
+  for (i in 1:nb.comp){contrib[,i] <- contrib[,i] / sum(contrib[,i]) * 100}
+
   rownames(contrib) <- names(weights)
   colnames(contrib) <- paste("CP",1:ncol(contrib),sep="")
   contrib.list <- sapply(1:nb.block,function(b) ((contrib[blocks.list[[b]],,drop=F])^2/b.scale[b]),simplify = F)
-  contrib <- do.call(rbind.data.frame,contrib.list)
+  #contrib <- contrib^2
   contrib.b <- list(NULL)
   for (i in 1:nb.block) {
     contrib.b[[i]] <- apply(contrib.list[[i]],2,sum)
@@ -471,27 +473,40 @@ MBPCAOS <- function(data,
   coord.supp.quali = list(NULL)
   coord.supp.num = list(NULL)
   if(!is.null(supp.var)){
+    # if(any(level.scale.supp == "nom" | level.scale.supp == "ord")){
+    #   for(var in 1:tri.supp$nb.var.supp.quali){
+    #     var.supp.quali <- (tri.supp$data.supp.quali[,var])
+    #     modal <- levels(as.factor(var.supp.quali))
+    #     nb.modal <- length(modal)
+    #     coord.supp.quali[[var]] <- matrix(NA, nb.modal, ncol(components))
+    #     colnames( coord.supp.quali[[var]]) <- colnames(components)
+    #     rownames( coord.supp.quali[[var]]) <- modal
+    #     nbvar <- ncol(data)
+    #     for (mod in 1:nb.modal) {
+    #       coord.supp.quali[[var]][mod,] <- colMeans(components[which(var.supp.quali == modal[mod]), ,drop = F])
+    #     }
+    #   }
+    # }
     if(any(level.scale.supp == "nom" | level.scale.supp == "ord")){
-      for(var in 1:tri.supp$nb.var.supp.quali){
-        var.supp.quali <- (tri.supp$data.supp.quali[,var])
-        modal <- levels(as.factor(var.supp.quali))
-        nb.modal <- length(modal)
-        coord.supp.quali[[var]] <- matrix(NA, nb.modal, ncol(components))
-        colnames( coord.supp.quali[[var]]) <- colnames(components)
-        rownames( coord.supp.quali[[var]]) <- modal
-        nbvar <- ncol(data)
-        for (mod in 1:nb.modal) {
-          coord.supp.quali[[var]][mod,] <- colMeans(components[which(var.supp.quali == modal[mod]), ,drop = F])
-        }
+      for (var in 1:tri.supp$nb.var.supp.quali){
+        var.supp.quali <- (tri.supp$data.supp.quali[,var,drop= F])
+        coord.supp.rk1 <- nominal.quantification(var = var.supp.quali,t = t,rank.restriction = 'one')
+        coord.supp.rk1 <- coord.supp.rk1$qj %*% coord.supp.rk1$w * sqrt(nrow(var.supp.quali))
+        cat  <- levels(factor(var.supp.quali[,1]))
+        rownames(coord.supp.rk1) <- cat
+        colnames(coord.supp.rk1) <- paste('CP',1:nb.comp,sep = '')
+        coord.supp.quali[[var]] <- coord.supp.rk1
       }
+      names(coord.supp.quali) <- colnames(tri.supp$data.supp.quali)
     }
-
     if(any(level.scale.supp == "num")){
       for(var in 1:tri.supp$nb.var.supp.num){
         coord.supp.num[[var]] <- cor(scale(tri.supp$data.supp.num),components)
       }
+      names(coord.supp.num) <- colnames(tri.supp$data.supp.num)
     }
   }
+
 
   #Summary
   if(is.null(tri$nbvarNOM)){tri$nbvarNOM <- 0 }

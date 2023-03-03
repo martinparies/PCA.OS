@@ -370,6 +370,14 @@ PCAOS <- function(data,
   summary <- data.frame(NB.var.nom = tri$nbvarNOM,NB.var.ord = tri$nbvarORD,NB.var.num = tri$nbvarNUM)
   summary <- list(summary = summary,rank = rank.restriction)
 
+  #Contribution of variables
+  contrib <-  do.call(rbind.data.frame,weights)
+  for (i in 1:nb.comp){contrib[,i] <- contrib[,i]^2}
+  for (i in 1:nb.comp){contrib[,i] <- contrib[,i] / sum(contrib[,i])*100}
+  rownames(contrib) <- names(weights)
+  colnames(contrib) <- paste("CP",1:ncol(contrib),sep="")
+
+
   # 7. Sign of loadings
   if (any(level.scale == "num")){
     for (j in 1:tri$nbvarNUM) {
@@ -486,7 +494,8 @@ PCAOS <- function(data,
     list(
       components = components,
       weights = lapply(weights, as.vector),
-      inertia = inertia
+      inertia = inertia,
+      contrib.var = contrib
     )
 
   quantification <-
