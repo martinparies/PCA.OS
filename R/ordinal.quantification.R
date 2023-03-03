@@ -167,28 +167,28 @@ ordinal.quantification <- function (var, t) {
 
   }
 
-  #Correction avec gpava si la quantification n'est tjrs pas parfaite
-  if(!sum(order(qj)==seq(1,ncol(var.dis)))==ncol(var.dis)){
-    if(decreased == TRUE){
-      qj.order <- gpava(z = length(qj):1, y = qj, weights = 1/f12)$x
-    }
-    if(decreased == FALSE){
-      qj.order <- gpava(z = 1:length(qj), y = qj, weights = 1/f12)$x
-    }
-    qqj <- qj.order/as.numeric(sqrt(t(qj.order)%*%qj.order))
-    #qqj=diag(1/f12)%*%qj.order   #t(qqj)%*%t(var.dis)%*%var.dis%*%qqj=1
-    var.quant <- var.dis %*% qqj
-    # centré var.quant
-    if(qj.order[1] != qj.order[length(qj.order)]){
-      var.quant=scale(var.quant,center=TRUE,scale=FALSE)
-    }
-    var.quant=var.quant/as.numeric(sqrt(t(var.quant)%*%var.quant))
-    aj=aj%*%t(var.quant.nom)%*%var.quant
-    Yjhat=qj%*%t(aj)
-    coefnorm<-sqrt(nbindiv)
-    var.quant=var.quant*coefnorm
-    w<-aj/coefnorm
-  }
+  # #Correction avec gpava si la quantification n'est tjrs pas parfaite
+  # if(!sum(order(qj)==seq(1,ncol(var.dis)))==ncol(var.dis)){
+  #   if(decreased == TRUE){
+  #     qj.order <- gpava(z = length(qj):1, y = qj, weights = 1/f12)$x
+  #   }
+  #   if(decreased == FALSE){
+  #     qj.order <- gpava(z = 1:length(qj), y = qj, weights = 1/f12)$x
+  #   }
+  #   qqj <- qj.order/as.numeric(sqrt(t(qj.order)%*%qj.order))
+  #   #qqj=diag(1/f12)%*%qj.order   #t(qqj)%*%t(var.dis)%*%var.dis%*%qqj=1
+  #   var.quant <- var.dis %*% qqj
+  #   # centré var.quant
+  #   if(qj.order[1] != qj.order[length(qj.order)]){
+  #     var.quant=scale(var.quant,center=TRUE,scale=FALSE)
+  #   }
+  #   var.quant=var.quant/as.numeric(sqrt(t(var.quant)%*%var.quant))
+  #   aj=aj%*%t(var.quant.nom)%*%var.quant
+  #   Yjhat=qj%*%t(aj)
+  #   coefnorm<-sqrt(nbindiv)
+  #   var.quant=var.quant*coefnorm
+  #   w<-aj/coefnorm
+  # }
 
 
   return(list(var.quant=var.quant, w=t(w),Yj=Yj,Yjhat=Yjhat))
