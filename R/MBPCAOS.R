@@ -450,11 +450,11 @@ MBPCAOS <- function(data,
   index.group <- unlist(sapply(1:nb.block,function(i) rep(i,blocks[i])))
   contrib <-  do.call(rbind.data.frame,weights)
   for (i in 1:nb.comp){contrib[,i] <- contrib[,i]^2}
-  for (i in 1:nb.comp){contrib[,i] <- contrib[,i] / sum(contrib[,i]) * 100}
+  for (i in 1:nb.comp){contrib[,i] <- contrib[,i] / sum(contrib[,i]) }
 
   rownames(contrib) <- names(weights)
   colnames(contrib) <- paste("CP",1:ncol(contrib),sep="")
-  contrib.list <- sapply(1:nb.block,function(b) ((contrib[blocks.list[[b]],,drop=F])^2/b.scale[b]),simplify = F)
+  contrib.list <- sapply(1:nb.block,function(b) ((contrib[blocks.list[[b]],,drop=F])/b.scale[b]),simplify = F)
   #contrib <- contrib^2
   contrib.b <- list(NULL)
   for (i in 1:nb.block) {
