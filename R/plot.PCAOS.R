@@ -296,8 +296,7 @@ plot.PCAOS <-
 
       #Si il y a une variable qualitative supplementaire
       if (supp.var == TRUE){
-        barycentre <-
-          do.call(rbind.data.frame, coord.supp.quali)
+        barycentre <- do.call(rbind.data.frame, res.PCAOS$Supp.var$barycenters)
 
         Graph.observations <-
           Graph.observations  + ggplot2::annotate(geom = "label",x = barycentre[,comp[1]], y = barycentre[,comp[2]],label =  rownames(barycentre),size = size.label,col = "blue")
@@ -415,7 +414,7 @@ plot.PCAOS <-
 
     }
 
-    #COMMON ELEMENTS (between qualita)
+    #COMMON ELEMENTS
     if (choice == "qualitative" | choice == "all.var"){
       category.coord <- list(NULL)
       compteur <- 1
@@ -520,9 +519,7 @@ plot.PCAOS <-
 
     #MODALITIES REPRESENTATION
     if (choice == "qualitative"){
-      if(supp.var == TRUE){
-        message('Qualitative supplementary variables can be represented as barycenters in the individuals plot')
-      }
+
       nb.modal <- unlist(lapply(category.coord,nrow))
       nb.var <- length(nb.modal)
       identification.variable <- as.vector(unlist(sapply(1:nb.var, function(j) {rep(colnames(data[,var.quali])[j],nb.modal[j])})))
@@ -597,6 +594,13 @@ plot.PCAOS <-
             size = size.label
           )
       }
+      if(supp.var == TRUE){
+        if(any(level.scale.supp == "nom" ) | any(level.scale.supp == "ord" )){
+          coord.supp.quali <- do.call(rbind.data.frame,res.PCAOS$Supp.var$coord.supp.quali)
+          graph.modalites <-
+            graph.modalites  + ggplot2::annotate(geom = "label",x = coord.supp.quali[,comp[1]], y = coord.supp.quali[,comp[2]],label =  rownames(coord.supp.quali),size = size.label,col = "blue")
+        }
+      }
 
 
       return(graph.modalites)
@@ -605,18 +609,6 @@ plot.PCAOS <-
 
     #MIXED VARIABLES
     if (choice == "all.var"){
-
-      # #NUM DATA
-      # data.graph.var <- data.frame(t(data.frame(res.PCAOS$weights)))
-      # weight.num <- data.graph.var[which(level.scale == "num"),]
-      #
-      # #NOM ET ORD DATA
-      # #Identification of the number of modalities per variable (for fill argument)
-      # nb.modal <- unlist(lapply(category.coord,nrow))
-      # nb.var <- length(nb.modal)
-      # identification.variable <- as.vector(unlist(sapply(1:nb.var, function(j) {rep(colnames(data[,var.quali])[j],nb.modal[j])})))
-      # data.modal <- data.frame(data.modal,identification.variable)
-      # data.modal <- data.frame(data.modal,freq)
 
       #invisible.var
       if (min.contribution > 0){
@@ -731,52 +723,10 @@ plot.PCAOS <-
         }
 
         if(any(level.scale.supp == "nom" ) | any(level.scale.supp == "ord" )){
-          message('Only numeric supplementary variables are plotted, qualitative supplementary variables are represented as barycenters in the individuals plot')
-        #   barycentre <-
-        #     do.call(rbind.data.frame, coord.supp.quali)
-        #
-        #   mix.graph <-
-        #     mix.graph  + ggplot2::annotate(geom = "label",x = barycentre[,comp[1]], y = barycentre[,comp[2]],label =  rownames(barycentre),size = size.label,col = "blue")
-        #
-        #   if(ellipse == TRUE){
-        #     mat = list(NULL)
-        #
-        #     for (var in which(level.scale.supp == 'nom' | level.scale.supp == 'ord')){
-        #
-        #       var.quali = res.PCAOS$Supp.var$var.supp[,var]
-        #       coord.ellipse <- cbind.data.frame(ellipses.coord(var.quali = var.quali,components = components[,comp],level.conf = level.conf))
-        #       modalites <- levels(as.factor(var.quali))
-        #       nb.modal <- length(modalites)
-        #
-        #       x <- matrix(NA,nrow(coord.ellipse),nb.modal)
-        #       y <- matrix(NA,nrow(coord.ellipse),nb.modal)
-        #
-        #       compteur <- 1
-        #       for (modal in seq(from = 1,
-        #                         to = (nb.modal * 2),
-        #                         by = 2)) {
-        #         x[, compteur] <- coord.ellipse[, modal]
-        #         y[, compteur] <- coord.ellipse[, modal + 1]
-        #         compteur <- compteur + 1
-        #       }
-        #
-        #       mat[[var]] <- cbind(c(x),c(y))
-        #       mat[[var]] <- cbind.data.frame(mat[[var]], as.vector(unlist(sapply(1:nb.modal, function(j) {rep(modalites[j],nrow(coord.ellipse))}))))
-        #
-        #
-        #     }
-        #     mat.d <- do.call(rbind.data.frame,mat)
-        #     mix.graph <- mix.graph +  ggplot2::annotate(
-        #       geom = "path",
-        #       x =  mat.d[,1],
-        #       y = mat.d[,2],
-        #       size = 0.5,
-        #       color = "darkblue",
-        #       group = as.factor(mat.d[,3])
-        #     )
-        #
-        #   }
-         }
+          coord.supp.quali <- do.call(rbind.data.frame,res.PCAOS$Supp.var$coord.supp.quali)
+          mix.graph <-
+            mix.graph  + ggplot2::annotate(geom = "label",x = coord.supp.quali[,comp[1]], y = coord.supp.quali[,comp[2]],label =  rownames(coord.supp.quali),size = size.label,col = "blue")
+        }
 
       }
 

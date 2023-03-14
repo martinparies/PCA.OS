@@ -10,7 +10,8 @@ choice.component.MB(
   blocks,
   blocks.name,
   nb.comp.to.investigate = 5,
-  block.scaling = "inertia"
+  block.scaling = "inertia",
+  supp.var = NULL
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ choice.component.MB(
   \item "lambda1" : each quantified block is divided by its the first singular value.
   \item "null" : no scaling is applied
 }}
+
+\item{supp.var}{a vector indicating the indexes of the supplementary variables}
 }
 \value{
 Data frame with global Loss value and percentage of the quantified variables inertia explained, for different model dimensionality (H). The last column provides the variation in percentage between to two successive size of dimensionality.
@@ -37,6 +40,7 @@ Data frame with global Loss value and percentage of the quantified variables ine
 Helps the user to choose the appropriate number of MBPCAOS component to optimize
 }
 \examples{
+
 data('antibiotic')
 antb.uses <- antibiotic[,c('Atb.conso','Atb.Sys')]
 health <- antibiotic[,c('Age','Loss')]

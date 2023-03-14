@@ -8,8 +8,8 @@
 #'
 #' @param nb.comp.to.investigate Number of components to investigate (default=ncol(data))
 #'
-#' @param rank.restriction rank restriction
-
+#' @param supp.var a vector indicating the indexes of the supplementary variables
+#'
 #' @return Data frame with global Loss value and percentage of the quantified variables inertia explained, for different model dimensionality (H). The last column provides the variation in percentage between to two successive size of dimensionality.
 #'
 #' @author
@@ -33,10 +33,14 @@
 #'
 #' @export
 #'
-choice.component <- function(data,level.scale = rep("num",ncol(data)),nb.comp.to.investigate = 5,rank.restriction = 'one'){
-  res <- percentage <- NULL
+choice.component <-
+  function(data,
+           level.scale = rep("num", ncol(data)),
+           nb.comp.to.investigate = 5,
+           supp.var = NULL) {
+    res <- percentage <- NULL
   for (i in 1:nb.comp.to.investigate){
-    res.PCAOS <- PCA.OS::PCAOS(data,level.scale,nb.comp = i,print = FALSE,init = 'rdm',threshold = 10e-6)
+    res.PCAOS <- PCAOS(data,level.scale,nb.comp = i,print = FALSE,init = 'rdm',threshold = 10e-6,supp.var = supp.var)
     res[i] <- res.PCAOS$Algo$loss.tot
     percentage[i] <- res.PCAOS$Dimension.reduction$inertia[i,2]
   }

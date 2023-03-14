@@ -460,8 +460,11 @@ MBPCAOS <- function(data,
   for (i in 1:nb.block) {
     contrib.b[[i]] <- apply(contrib.list[[i]],2,sum)
   }
-
   contrib.b <- do.call(rbind.data.frame,contrib.b)
+  for (i in 1:nb.comp) {
+    contrib.b[,i] <- contrib.b[,i]  / sum(contrib.b[,i]) * 100
+  }
+
   rownames(contrib.b) <- blocks.name
   colnames(contrib.b) <- paste("CP",1:ncol(contrib.b),sep="")
 
@@ -470,23 +473,26 @@ MBPCAOS <- function(data,
   #colnames(stockiter)=c("iter","loss","multipleloss","singleloss")
 
   #Supplementary variable
-  coord.supp.quali = list(NULL)
+  coord.supp.quali = barycenters = list(NULL)
   coord.supp.num = list(NULL)
   if(!is.null(supp.var)){
-    # if(any(level.scale.supp == "nom" | level.scale.supp == "ord")){
-    #   for(var in 1:tri.supp$nb.var.supp.quali){
-    #     var.supp.quali <- (tri.supp$data.supp.quali[,var])
-    #     modal <- levels(as.factor(var.supp.quali))
-    #     nb.modal <- length(modal)
-    #     coord.supp.quali[[var]] <- matrix(NA, nb.modal, ncol(components))
-    #     colnames( coord.supp.quali[[var]]) <- colnames(components)
-    #     rownames( coord.supp.quali[[var]]) <- modal
-    #     nbvar <- ncol(data)
-    #     for (mod in 1:nb.modal) {
-    #       coord.supp.quali[[var]][mod,] <- colMeans(components[which(var.supp.quali == modal[mod]), ,drop = F])
-    #     }
-    #   }
-    # }
+    #Supp var quali as barycenters
+    if(any(level.scale.supp == "nom" | level.scale.supp == "ord")){
+      for(var in 1:tri.supp$nb.var.supp.quali){
+        var.supp.quali <- (tri.supp$data.supp.quali[,var])
+        modal <- levels(as.factor(var.supp.quali))
+        nb.modal <- length(modal)
+        barycenters[[var]] <- matrix(NA, nb.modal, ncol(components))
+        colnames(barycenters[[var]]) <- colnames(components)
+        rownames(barycenters[[var]]) <- modal
+        nbvar <- ncol(data)
+        for (mod in 1:nb.modal) {
+          barycenters[[var]][mod,] <- colMeans(components[which(var.supp.quali == modal[mod]), ,drop = F])
+        }
+      }
+    }
+
+    #Supp var quali with rk1
     if(any(level.scale.supp == "nom" | level.scale.supp == "ord")){
       for (var in 1:tri.supp$nb.var.supp.quali){
         var.supp.quali <- (tri.supp$data.supp.quali[,var,drop= F])
@@ -499,6 +505,7 @@ MBPCAOS <- function(data,
       }
       names(coord.supp.quali) <- colnames(tri.supp$data.supp.quali)
     }
+
     if(any(level.scale.supp == "num")){
       for(var in 1:tri.supp$nb.var.supp.num){
         coord.supp.num[[var]] <- cor(scale(tri.supp$data.supp.num),components)
@@ -506,7 +513,6 @@ MBPCAOS <- function(data,
       names(coord.supp.num) <- colnames(tri.supp$data.supp.num)
     }
   }
-
 
   #Summary
   if(is.null(tri$nbvarNOM)){tri$nbvarNOM <- 0 }
@@ -618,7 +624,8 @@ MBPCAOS <- function(data,
   supp.var <- list(var.supp = data.var.supp,
                    level.scale.supp = level.scale.supp,
                    coord.supp.num = coord.supp.num,
-                   coord.supp.quali = coord.supp.quali)
+                   coord.supp.quali = coord.supp.quali,
+                   barycenters = barycenters)
 
   blocks <- list(block.components = block.components,
                  block.weight = block.weight,

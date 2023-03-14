@@ -337,7 +337,7 @@ PCAOS <- function(data,
   colnames(stockiter)=c("iter","loss","multipleloss","singleloss")
 
   #Supplementary variable
-  coord.supp.quali = list(NULL)
+  coord.supp.quali = barycenters = list(NULL)
   coord.supp.num = list(NULL)
   if(!is.null(supp.var)){
     if(any(level.scale.supp == "nom" | level.scale.supp == "ord")){
@@ -345,14 +345,24 @@ PCAOS <- function(data,
         var.supp.quali <- (tri.supp$data.supp.quali[,var])
         modal <- levels(as.factor(var.supp.quali))
         nb.modal <- length(modal)
-        coord.supp.quali[[var]] <- matrix(NA, nb.modal, ncol(components))
-        colnames( coord.supp.quali[[var]]) <- colnames(components)
-        rownames( coord.supp.quali[[var]]) <- modal
+        barycenters[[var]] <- matrix(NA, nb.modal, ncol(components))
+        colnames(barycenters[[var]]) <- colnames(components)
+        rownames(barycenters[[var]]) <- modal
         nbvar <- ncol(data)
         for (mod in 1:nb.modal) {
-          coord.supp.quali[[var]][mod,] <- colMeans(components[which(var.supp.quali == modal[mod]), ,drop = F])
+          barycenters[[var]][mod,] <- colMeans(components[which(var.supp.quali == modal[mod]), ,drop = F])
         }
       }
+      for (var in 1:tri.supp$nb.var.supp.quali){
+        var.supp.quali <- (tri.supp$data.supp.quali[,var,drop= F])
+        coord.supp.rk1 <- nominal.quantification(var = var.supp.quali,t = t,rank.restriction = 'one')
+        coord.supp.rk1 <- coord.supp.rk1$qj %*% coord.supp.rk1$w * sqrt(nrow(var.supp.quali))
+        cat  <- levels(factor(var.supp.quali[,1]))
+        rownames(coord.supp.rk1) <- cat
+        colnames(coord.supp.rk1) <- paste('CP',1:nb.comp,sep = '')
+        coord.supp.quali[[var]] <- coord.supp.rk1
+      }
+      names(coord.supp.quali) <- colnames(tri.supp$data.supp.quali)
     }
     names(coord.supp.quali) <- colnames(data.var.supp[,which(level.scale.supp == 'nom'|level.scale.supp =='ord')])
 
@@ -469,26 +479,6 @@ PCAOS <- function(data,
     names(quantified.data) <-  colnames(data)
   }
 
-
-  # res <-
-  #   list(
-  #     weights = lapply(weights,as.vector),
-  #     components = components,
-  #     quantified.data = quantified.data,
-  #     summary = summary,
-  #     quantification.categories.nom = quant.MODAL.nom,
-  #     quantification.categories.ord = quant.MODAL.ord,
-  #     inertia = inertia,
-  #     loss.tot = loss,
-  #     stockiter = stockiter,
-  #     data = data,
-  #     level.scale = level.scale,
-  #     level.scale.supp = level.scale.supp,
-  #     coord.supp.quali = coord.supp.quali,
-  #     coord.supp.num = coord.supp.num,
-  #     quali.var.supp = tri.supp$data.supp.quali
-  #   )
-
   # 9 . Final results list
   dimension.reduction <-
     list(
@@ -513,7 +503,8 @@ PCAOS <- function(data,
   supp.var <- list(var.supp = data.var.supp,
                    level.scale.supp = level.scale.supp,
                    coord.supp.num = coord.supp.num,
-                   coord.supp.quali = coord.supp.quali)
+                   coord.supp.quali = coord.supp.quali,
+                   barycenters = barycenters)
 
   # 10. Print end message
   if (print == TRUE){

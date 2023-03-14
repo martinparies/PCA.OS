@@ -290,7 +290,7 @@ plot.MBPCAOS <-function(
     #Si il y a une variable qualitative supplementaire
     if (supp.var == TRUE){
       barycentre <-
-        do.call(rbind.data.frame, coord.supp.quali)
+        do.call(rbind.data.frame, res.MBPCAOS$Supp.var$barycenters)
 
       Graph.observations <-
         Graph.observations  + ggplot2::annotate(geom = "label",x = barycentre[,comp[1]], y = barycentre[,comp[2]],label =  rownames(barycentre),size = size.label,col = "blue")
@@ -506,9 +506,6 @@ plot.MBPCAOS <-function(
   #MODALITIES REPRESENTATION
   if(choice == "all.var" & !any(level.scale == 'num')){choice <- 'qualitative'}
   if (choice == "qualitative" ){
-    if(supp.var == TRUE){
-      message('Qualitative supplementary variables can be represented as barycenters in the individuals plot')
-    }
     nb.var <- length(nb.modal)
     graph.modalites <- ggplot2::ggplot(data = data.modal) +
       ggplot2::geom_hline(
@@ -577,6 +574,14 @@ plot.MBPCAOS <-function(
           size = size.label
         )
     }
+
+    if(any(level.scale.supp == "nom" ) | any(level.scale.supp == "ord" )){
+      coord.supp.quali <- do.call(rbind.data.frame,res.MBPCAOS$Supp.var$coord.supp.quali)
+      graph.modalites <-
+        graph.modalites  + ggplot2::annotate(geom = "label",x = coord.supp.quali[,comp[1]], y = coord.supp.quali[,comp[2]],label =  rownames(coord.supp.quali),size = size.label,col = "blue")
+    }
+
+
     return(graph.modalites)
 
   }
@@ -586,6 +591,10 @@ plot.MBPCAOS <-function(
     #cor.bloc <- data.frame(t(sapply(1:length(res.MBPCAOS$block.components),function(b)diag(cor(res.MBPCAOS$block.components[[b]],res.MBPCAOS$components)))))
 
     contrib <- res.MBPCAOS$Blocks$contrib.blocks
+    for (i in 1:ncol(contrib)){
+      contrib[,i] <- contrib[,i] / sum(contrib[,i]) * 100
+
+    }
 
     graph.bloc <- ggplot2::ggplot(data = contrib) +
       ggplot2::geom_label(ggplot2::aes(
@@ -778,7 +787,9 @@ plot.MBPCAOS <-function(
       }
 
       if(any(level.scale.supp == "nom" ) | any(level.scale.supp == "ord" )){
-        message('Only numeric supplementary variables are plotted, qualitative supplementary variables are represented as barycenters in the individuals plot')
+        coord.supp.quali <- do.call(rbind.data.frame,res.MBPCAOS$Supp.var$coord.supp.quali)
+        mixed.graph <-
+          mixed.graph  + ggplot2::annotate(geom = "label",x = coord.supp.quali[,comp[1]], y = coord.supp.quali[,comp[2]],label =  rownames(coord.supp.quali),size = size.label,col = "blue")
       }
 
     }

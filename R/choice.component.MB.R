@@ -18,6 +18,8 @@
 #'
 #' @param nb.comp.to.investigate Number of components to investigate (default=ncol(data))
 #'
+#' @param supp.var a vector indicating the indexes of the supplementary variables
+#'
 #' @return Data frame with global Loss value and percentage of the quantified variables inertia explained, for different model dimensionality (H). The last column provides the variation in percentage between to two successive size of dimensionality.
 #'
 #' @author
@@ -66,10 +68,11 @@ choice.component.MB <-
            blocks,
            blocks.name,
            nb.comp.to.investigate = 5,
-           block.scaling = 'inertia') {
+           block.scaling = 'inertia',
+           supp.var = NULL) {
     percentage <-
       sapply(1:nb.comp.to.investigate, function(x) {
-        PCA.OS::MBPCAOS(data = data,
+        MBPCAOS(data = data,
                 level.scale = level.scale,
                 blocks = blocks,
                 blocks.name = blocks.name,
@@ -77,6 +80,7 @@ choice.component.MB <-
                 print = FALSE,
                 maxiter = 50,
                 threshold = 10e-4,
+                supp.var = supp.var,
                 block.scaling = block.scaling)$Dimension.reduction$inertia[x,2]
       })
 

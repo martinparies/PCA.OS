@@ -16,7 +16,6 @@ The PCA.OS pacakge allows for single and multi-block exploratory analysis of var
 }
 }
 \references{
-Paries, M., Bougeard, S., & Vigneau, E. (2022). Multivariate analysis of Just-About-Right data with optimal scaling approach. Food Quality and Preference, 102, 104681.
 De Leeuw, J. (2013). History of nonlinear principal component analysis. eScholarship, University of California.
 }
 \author{

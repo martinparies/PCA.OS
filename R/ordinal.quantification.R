@@ -31,11 +31,11 @@ ordinal.quantification <- function (var, t) {
   rownames(qj) <- rownames(qj1) <- rownames(qj2) <- colnames(dataDIS2)
   aj<-aj1<-aj2<-ressvd$v*ressvd$d[1]
   var.quant.nom <-var.dis %*% qj
+  coefnorm<-sqrt(nbindiv)
 
   #Si quantif bien ordonnee on renvoie les resultats de la quantif nominal
   if(sum(order(qj)==seq(1,ncol(var.dis)))==ncol(var.dis)){
     Yjhat=qj%*%t(aj)
-    coefnorm<-sqrt(nbindiv)
     var.quant <- var.quant.nom* coefnorm
     w<-aj/coefnorm
     return(list(var.quant=var.quant, w=t(w),Yj=Yj,Yjhat=Yjhat))
@@ -161,7 +161,6 @@ ordinal.quantification <- function (var, t) {
     }
 
     Yjhat= qj%*%t(aj)
-    coefnorm<-sqrt(nbindiv)
     var.quant <- var.quant* coefnorm
     w<-aj/coefnorm
 

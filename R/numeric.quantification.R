@@ -19,7 +19,7 @@
 #
 numeric.quantification <- function (var,t,D){
   nbindiv <- nrow(var)
-  var=scale(var)*sqrt(nbindiv/(nbindiv-1))
+  var=scale(var) #* sqrt(nbindiv/(nbindiv-1))
   var.poly=polynom.data(var,D)
   var.poly <- rep(1,nbindiv)
   for (puiss in 1:D) {var.poly <- cbind(var.poly,var^puiss)}
@@ -38,8 +38,9 @@ numeric.quantification <- function (var,t,D){
   Yjhat = qj %*% t(aj)
   var.quant <- var.poly %*% qj
   w <- aj
-  # var.quant.2 <- scale(var)
-  # w.2 =  t(var.quant)  %*% t / nrow(var)
+
+  #var.quant.2 <- scale(var)
+  #w.2 =  t(var.quant)  %*% t / nrow(var)
   #print(sum((var.quant%*%as.vector(aj)-t)^2))
   #ne pas faire ce changement de signe avant que l'algo n'ait convergÃ©
   #var.quant <- var.quant * as.numeric(sign(cor(var,var.quant)))

@@ -8,7 +8,7 @@ choice.component(
   data,
   level.scale = rep("num", ncol(data)),
   nb.comp.to.investigate = 5,
-  rank.restriction = "one"
+  supp.var = NULL
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ choice.component(
 
 \item{nb.comp.to.investigate}{Number of components to investigate (default=ncol(data))}
 
-\item{rank.restriction}{rank restriction}
+\item{supp.var}{a vector indicating the indexes of the supplementary variables}
 }
 \value{
 Data frame with global Loss value and percentage of the quantified variables inertia explained, for different model dimensionality (H). The last column provides the variation in percentage between to two successive size of dimensionality.
